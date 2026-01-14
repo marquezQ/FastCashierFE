@@ -13,7 +13,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Login */}
+        {/* ============================================ */}
+        {/* RUTA PÚBLICA: LOGIN */}
+        {/* ============================================ */}
         <Route
           path="/login"
           element={
@@ -25,37 +27,33 @@ function App() {
           }
         />
 
-        {/* Admin */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute allowedRoles={['ADMIN']}>
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* ============================================ */}
+        {/* RUTAS PROTEGIDAS: ADMIN */}
+        {/* ============================================ */}
+        <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+          <Route path="/admin" element={<AdminPage />} />
+        
+        </Route>
 
-        {/* Cashier */}
-        <Route
-          path="/cashier"
-          element={
-            <ProtectedRoute allowedRoles={['CASHIER']}>
-              <CashierPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* ============================================ */}
+        {/* RUTAS PROTEGIDAS: CASHIER */}
+        {/* ============================================ */}
+        <Route element={<ProtectedRoute allowedRoles={['CASHIER']} />}>
+          <Route path="/cashier" element={<CashierPage />} />
+          
+        </Route>
 
-        {/* Kitchen */}
-        <Route
-          path="/kitchen"
-          element={
-            <ProtectedRoute allowedRoles={['KITCHEN']}>
-              <KitchenPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* ============================================ */}
+        {/* RUTAS PROTEGIDAS: KITCHEN */}
+        {/* ============================================ */}
+        <Route element={<ProtectedRoute allowedRoles={['KITCHEN']} />}>
+          <Route path="/kitchen" element={<KitchenPage />} />
+          
+        </Route>
 
-        {/* Root */}
+        {/* ============================================ */}
+        {/* RUTA RAÍZ: REDIRIGIR SEGÚN ESTADO */}
+        {/* ============================================ */}
         <Route
           path="/"
           element={
@@ -67,7 +65,9 @@ function App() {
           }
         />
 
-        {/* 404 */}
+        {/* ============================================ */}
+        {/* 404: CUALQUIER OTRA RUTA */}
+        {/* ============================================ */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

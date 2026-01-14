@@ -1,14 +1,13 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { getRoleRoute } from '../constants/roles';
 import type { RoleName } from '../types/auth';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
   allowedRoles: RoleName[];
 }
 
-export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { isAuthenticated, role, user } = useAuthStore();
 
   // No autenticado → login
@@ -22,6 +21,6 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
     return <Navigate to={redirectTo} replace />;
   }
 
-  // Todo OK
-  return <>{children}</>;
+  // Todo OK → Renderizar las rutas hijas con Outlet
+  return <Outlet />;
 };
