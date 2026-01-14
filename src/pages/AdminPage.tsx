@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { useTest } from '../hooks/useTest';
 
 export const AdminPage = () => {
   const navigate = useNavigate();
@@ -9,7 +10,10 @@ export const AdminPage = () => {
     logout();
     navigate('/login');
   };
+  const { data, isLoading, error } = useTest();
+  console.log('Estado de React Query:', { data, isLoading, error });
 
+  
   return (
     <div style={{ padding: '2rem' }}>
       <div style={{ 
