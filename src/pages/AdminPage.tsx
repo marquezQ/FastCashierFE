@@ -61,6 +61,9 @@ export const AdminPage = () => {
           </ul>
         </div>
       </div>
+            <div className="bg-red-500 text-white p-4">
+  Tailwind funcionando
+</div>
     </div>
   );
 };
