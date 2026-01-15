@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useTest } from '../hooks/useTest';
+import { Button } from '@/components/ui/button';
 
 export const AdminPage = () => {
   const navigate = useNavigate();
@@ -61,9 +62,13 @@ export const AdminPage = () => {
           </ul>
         </div>
       </div>
-            <div className="bg-red-500 text-white p-4">
-  Tailwind funcionando
-</div>
+      <div className="bg-amber-300 flex gap-4">
+        <Button>Default</Button>
+        <Button variant="destructive">Destructive</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="ghost">Ghost</Button>
+      </div>
     </div>
   );
 };
