@@ -31,7 +31,7 @@ function App() {
         {/* RUTAS PROTEGIDAS: ADMIN */}
         {/* ============================================ */}
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/*" element={<AdminPage />} />
         
         </Route>
 
