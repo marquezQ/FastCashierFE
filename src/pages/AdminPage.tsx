@@ -1,73 +1,53 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { useTest } from '../hooks/useTest';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
+import { useAdminNavigation } from '@/hooks/useAdminNavigation';
+import { Sidebar } from '@/components/layout/Sidebar/Sidebar';
+import { Navbar } from '@/components/layout/Navbar/Navbar';
+import { DashboardView } from './admin/DashboardView';
+import { UsuariosView } from './admin/UsuariosView';
+import { ProductosView } from './admin/ProductosView';
+import { TurnosView } from './admin/TurnosView';
+import { OrdenesView } from './admin/OrdenesView';
+import { ReportesView } from './admin/ReportesView';
+import { SettingsView } from './admin/SettingsView';
+import { ProfileView } from './admin/ProfileView';
 
 export const AdminPage = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
+  const { handleNavigate, handleLogout } = useAdminNavigation();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-  const { data, isLoading, error } = useTest();
-  console.log('Estado de React Query:', { data, isLoading, error });
+  if (!user) return null;
 
-  
   return (
-    <div style={{ padding: '2rem' }}>
-      <div style={{ 
-        backgroundColor: 'white', 
-        padding: '2rem', 
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <h1 style={{ marginBottom: '1rem' }}>🔧 Panel Administrador</h1>
-        
-        <div style={{ 
-          backgroundColor: '#f8f9fa', 
-          padding: '1rem', 
-          borderRadius: '4px',
-          marginBottom: '1rem'
-        }}>
-          <p><strong>Usuario:</strong> {user?.fullName}</p>
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>Rol:</strong> Administrador</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <Sidebar onNavigate={handleNavigate} />
 
-        <button 
-          onClick={handleLogout}
-          style={{
-            padding: '0.5rem 1.5rem',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          Cerrar Sesión
-        </button>
+      <div className="lg:pl-64">
+        <Navbar
+          user={user}
+          isMobileSidebarOpen={isMobileSidebarOpen}
+          onMobileSidebarChange={setIsMobileSidebarOpen}
+          onNavigate={handleNavigate}
+          onLogout={handleLogout}
+        />
 
-        <div style={{ marginTop: '2rem', color: '#666' }}>
-          <h3>Módulos disponibles:</h3>
-          <ul>
-            <li>✅ Gestión de usuarios</li>
-            <li>✅ Gestión de productos</li>
-            <li>✅ Ver todas las órdenes</li>
-            <li>✅ Gestión de turnos</li>
-            <li>✅ Reportes y estadísticas</li>
-          </ul>
-        </div>
-      </div>
-      <div className="bg-amber-300 flex gap-4">
-        <Button>Default</Button>
-        <Button variant="destructive">Destructive</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button variant="ghost">Ghost</Button>
+        <main className="p-6">
+          <div className="max-w-7xl mx-auto">
+            <Routes>
+              <Route index element={<DashboardView userName={user.fullName} />} />
+              <Route path="/usuarios" element={<UsuariosView />} />
+              <Route path="/productos" element={<ProductosView />} />
+              <Route path="/turnos" element={<TurnosView />} />
+              <Route path="/ordenes" element={<OrdenesView />} />
+              <Route path="reportes" element={<ReportesView />} />
+              <Route path="/profile" element={<ProfileView />} />
+              <Route path="/settings" element={<SettingsView />} />
+              <Route path="*" element={<Navigate to="/admin" replace />} />
+            </Routes>
+          </div>
+        </main>
       </div>
     </div>
   );
