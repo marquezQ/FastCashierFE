@@ -6,6 +6,23 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from './config/queryClient';
 import './index.css';
 
+// Inicializar tema desde localStorage antes de renderizar
+const initializeTheme = () => {
+  const savedTheme = localStorage.getItem('theme-storage');
+  if (savedTheme) {
+    try {
+      const { state } = JSON.parse(savedTheme);
+      if (state?.theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (error) {
+      console.error('Error loading theme:', error);
+    }
+  }
+};
+
+initializeTheme();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
