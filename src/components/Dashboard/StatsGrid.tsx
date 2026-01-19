@@ -72,9 +72,11 @@ const BUSINESS_STATS = [
 
 export const StatsGrid = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-lg font-semibold mb-4">Estadísticas del Día</h2>
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-xl font-semibold">Estadísticas del Día</h2>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {DAILY_STATS.map((stat) => (
             <StatCard key={stat.label} {...stat} />
@@ -83,7 +85,9 @@ export const StatsGrid = () => {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-4">Resumen del Negocio</h2>
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-xl font-semibold">Resumen del Negocio</h2>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {BUSINESS_STATS.map((stat) => (
             <StatCard key={stat.label} {...stat} />

@@ -22,7 +22,7 @@ export const MobileSidebar = ({ isOpen, onOpenChange, onNavigate }: MobileSideba
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-64">
+      <SheetContent side="left" className="p-0 w-64 bg-sidebar border-sidebar-border">
         <SidebarContent onNavigate={handleNavigate} />
       </SheetContent>
     </Sheet>

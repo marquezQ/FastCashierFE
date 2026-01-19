@@ -6,7 +6,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ onNavigate }: SidebarProps) => {
   return (
-    <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col border-r bg-card">
+    <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col bg-sidebar border-r border-sidebar-border shadow-sm">
       <SidebarContent onNavigate={onNavigate} />
     </aside>
   );

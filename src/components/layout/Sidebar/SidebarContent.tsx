@@ -11,20 +11,27 @@ export const SidebarContent = ({ onNavigate }: SidebarContentProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="h-16 flex items-center px-6 border-b">
-        <h2 className="text-2xl font-bold text-primary">POS Admin</h2>
+      {/* Header con gradiente */}
+      <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-linear-to-r from-sidebar-primary/5 to-transparent">
+        <h2 className="text-2xl font-bold text-gradient-primary">
+          POS Admin
+        </h2>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1">
         {MENU_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
+
           return (
             <Button
               key={item.path}
               variant={isActive ? 'secondary' : 'ghost'}
-              className="w-full justify-start gap-3 hover:bg-accent"
+              className={`w-full justify-start gap-3 transition-all ${isActive
+                  ? 'bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 font-medium'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
+                }`}
               onClick={() => onNavigate(item.path)}
             >
               <Icon className="h-5 w-5" />
@@ -34,8 +41,9 @@ export const SidebarContent = ({ onNavigate }: SidebarContentProps) => {
         })}
       </nav>
 
-      <div className="p-4 border-t text-sm text-muted-foreground">
-        <p>v1.0.0</p>
+      {/* Footer */}
+      <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/30">
+        <p className="text-xs text-sidebar-foreground/60 text-center">v1.0.0</p>
       </div>
     </div>
   );
