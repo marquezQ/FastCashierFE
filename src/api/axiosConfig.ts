@@ -1,10 +1,5 @@
 import axios from 'axios';
 
-// ============================================
-// CONFIGURACIÓN DE AXIOS
-// ============================================
-// Configuración base + interceptors
-
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export const api = axios.create({
@@ -25,11 +20,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Manejar token expirado
+// Manejar token expirado (SOLO para rutas protegidas)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Solo redirigir al login si:
+    // 1. Es un 401
+    // 2. NO es la ruta de login (para permitir mostrar errores)
+    // 3. El usuario ya tenía un token (estaba autenticado)
+    const isLoginRequest = error.config?.url?.includes('/auth/login');
+    const hadToken = !!localStorage.getItem('token');
+    
+    if (error.response?.status === 401 && !isLoginRequest && hadToken) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
