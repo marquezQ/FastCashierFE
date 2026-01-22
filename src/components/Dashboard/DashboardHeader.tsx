@@ -1,14 +1,11 @@
+import { formatDateLong } from '@/utils/date.utils';
+
 interface DashboardHeaderProps {
   userName: string;
 }
 
 export const DashboardHeader = ({ userName }: DashboardHeaderProps) => {
-  const currentDate = new Date().toLocaleDateString('es-ES', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
+  const currentDate = formatDateLong();
 
   return (
     <div className="mb-8">
