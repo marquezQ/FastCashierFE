@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import type { LoginFormValues } from '@/schemas/auth.schema';
 
 interface LoginFormProps {
@@ -75,16 +76,14 @@ export const LoginForm = ({ form, onSubmit, isLoading }: LoginFormProps) => {
               <FormItem>
                 <FormLabel>Contraseña</FormLabel>
                 <FormControl>
-                  <div className="relative group">
-                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      className="pl-9 h-11 bg-secondary/10 border-border/60 focus:bg-background transition-all"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                  </div>
+                  <PasswordInput
+                    placeholder="••••••••"
+                    className="h-11 bg-secondary/10 border-border/60 focus:bg-background transition-all"
+                    disabled={isLoading}
+                    Icon={Lock}
+                    iconPosition="left"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

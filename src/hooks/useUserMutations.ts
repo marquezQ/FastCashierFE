@@ -6,9 +6,8 @@ import type { UserWithRole } from '@/types/auth';
 interface CreateUserData {
   fullName: string;
   email: string;
-  phone: string;
-  roleId: number;
   password: string;
+  roleId: number;
 }
 
 interface UpdateUserData {
@@ -16,6 +15,7 @@ interface UpdateUserData {
   email?: string;
   phone?: string;
   roleId?: number;
+  isActive?: boolean;
 }
 
 // Hook para crear usuario
@@ -24,7 +24,7 @@ export const useCreateUser = () => {
 
   return useMutation({
     mutationFn: async (userData: CreateUserData) => {
-      const { data } = await api.post<UserWithRole>('/users', userData);
+      const { data } = await api.post<UserWithRole>('/auth/register', userData);
       return data;
     },
     onSuccess: () => {
@@ -40,7 +40,7 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateUserData }) => {
-      const { data: updatedUser } = await api.put<UserWithRole>(`/users/${id}`, data);
+      const { data: updatedUser } = await api.patch<UserWithRole>(`/users/${id}`, data);
       return updatedUser;
     },
     onSuccess: () => {

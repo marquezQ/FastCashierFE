@@ -5,11 +5,9 @@ import { UsersTableHeader } from './UsersTableHeader';
 
 interface UsersTableProps {
   users: UserWithRole[];
-  onEdit?: (user: UserWithRole) => void;
-  onDelete?: (user: UserWithRole) => void;
 }
 
-export const UsersTable = ({ users, onEdit, onDelete }: UsersTableProps) => {
+export const UsersTable = ({ users }: UsersTableProps) => {
   return (
     <div className="rounded-lg border bg-card">
       <Table>
@@ -26,8 +24,6 @@ export const UsersTable = ({ users, onEdit, onDelete }: UsersTableProps) => {
               <UserTableRow
                 key={user.idUser}
                 user={user}
-                onEdit={onEdit}
-                onDelete={onDelete}
               />
             ))
           )}
