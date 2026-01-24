@@ -10,7 +10,7 @@ export const queryClient = new QueryClient({
       // Tiempo que los datos permanecen en cache DESPUÉS de no usarse
       gcTime: 1000 * 60 * 10, // 10 minutos
       // Refetch cuando el usuario vuelve a la pestaña
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       // Refetch cuando se recupera la conexión a internet
       refetchOnReconnect: true,
       // Cuántas veces reintentar si falla una petición
