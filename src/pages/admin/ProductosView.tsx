@@ -1,30 +1,101 @@
+import { useState } from 'react';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductsGrid } from '@/components/products/ProductsGrid';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { CreateProductDialog } from '@/components/products/CreateProductDialog';
+import { EditProductDialog } from '@/components/products/EditProductDialog';
+import { useCreateProduct, useUpdateProduct } from '@/hooks/useProductMutations';
 import type { Product } from '@/types/products';
+import type { CreateProductFormValues } from '@/schemas/products.schema';
+import type { UpdateProductFormValues } from '@/schemas/products.schema';
+import { toast } from 'sonner';
 
 export const ProductosView = () => {
   const { data: categories, isLoading, error } = useProducts();
+  const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [activeCategoryId, setActiveCategoryId] = useState<number | undefined>(undefined);
 
   const handleCreate = () => {
-    // TODO: Abrir modal/dialog para crear producto
-    console.log('Crear nuevo producto');
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleCreateSubmit = async (data: CreateProductFormValues) => {
+    try {
+      if (!data.idCategory || data.idCategory < 1) {
+        throw new Error('Debe seleccionar una categoría');
+      }
+
+      await createProduct.mutateAsync({
+        code: data.code,
+        name: data.name,
+        price: data.price,
+        description: data.description,
+        idCategory: data.idCategory,
+        image: data.image,
+        isActive: data.isActive,
+      });
+      
+      toast.success('Producto creado exitosamente');
+      setIsCreateDialogOpen(false);
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || error?.message || 'Error al crear el producto';
+      toast.error(errorMessage);
+      throw error;
+    }
   };
 
   const handleEdit = (product: Product) => {
-    // TODO: Abrir modal/dialog para editar producto
-    console.log('Editar producto:', product);
+    setSelectedProduct(product);
+    setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (product: Product) => {
-    // TODO: Abrir modal/dialog para eliminar producto
-    console.log('Eliminar producto:', product);
-  };
+  const handleUpdateSubmit = async (data: UpdateProductFormValues) => {
+    try {
+      if (!selectedProduct) return;
 
-  const handleToggleStatus = (product: Product) => {
-    // TODO: Implementar toggle de estado
-    console.log('Toggle estado producto:', product);
+      // Preparar datos para enviar (solo campos que cambiaron)
+      const updateData: UpdateProductFormValues = {};
+
+      if (data.code !== undefined && data.code !== selectedProduct.code) {
+        updateData.code = data.code;
+      }
+      if (data.name !== undefined && data.name !== selectedProduct.name) {
+        updateData.name = data.name;
+      }
+      if (data.price !== undefined && data.price !== parseFloat(selectedProduct.price)) {
+        updateData.price = data.price;
+      }
+      if (data.description !== undefined && data.description !== selectedProduct.description) {
+        updateData.description = data.description;
+      }
+      if (data.idCategory !== undefined) {
+        updateData.idCategory = data.idCategory;
+      }
+      if (data.isActive !== undefined && data.isActive !== selectedProduct.isActive) {
+        updateData.isActive = data.isActive;
+      }
+      if (data.imageUrl !== undefined) {
+        updateData.imageUrl = data.imageUrl;
+      }
+
+      await updateProduct.mutateAsync({
+        id: selectedProduct.idProduct,
+        data: updateData,
+      });
+
+      toast.success('Producto actualizado exitosamente');
+      setIsEditDialogOpen(false);
+      setSelectedProduct(null);
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || error?.message || 'Error al actualizar el producto';
+      toast.error(errorMessage);
+      throw error;
+    }
   };
 
   const handleCreateCategory = () => {
@@ -63,9 +134,33 @@ export const ProductosView = () => {
         <ProductsGrid
           categories={categories}
           onEditProduct={handleEdit}
-          onDeleteProduct={handleDelete}
-          onToggleProductStatus={handleToggleStatus}
           onCreateCategory={handleCreateCategory}
+          onActiveTabChange={setActiveCategoryId}
+        />
+      )}
+
+      <CreateProductDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        categories={categories || []}
+        defaultCategoryId={activeCategoryId}
+        onSubmit={handleCreateSubmit}
+        isLoading={createProduct.isPending}
+      />
+
+      {selectedProduct && (
+        <EditProductDialog
+          open={isEditDialogOpen}
+          onOpenChange={(open) => {
+            setIsEditDialogOpen(open);
+            if (!open) {
+              setSelectedProduct(null);
+            }
+          }}
+          product={selectedProduct}
+          categories={categories || []}
+          onSubmit={handleUpdateSubmit}
+          isLoading={updateProduct.isPending}
         />
       )}
     </div>

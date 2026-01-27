@@ -10,17 +10,15 @@ import type { Product } from '@/types/products';
 interface ProductsGridProps {
   categories: ProductsGroupedByCategory;
   onEditProduct?: (product: Product) => void;
-  onDeleteProduct?: (product: Product) => void;
-  onToggleProductStatus?: (product: Product) => void;
   onCreateCategory?: () => void;
+  onActiveTabChange?: (categoryId: number) => void;
 }
 
 export const ProductsGrid = ({
   categories,
   onEditProduct,
-  onDeleteProduct,
-  onToggleProductStatus,
   onCreateCategory,
+  onActiveTabChange,
 }: ProductsGridProps) => {
   const [activeTab, setActiveTab] = useState(categories[0]?.idCategory.toString() || '');
 
@@ -30,6 +28,13 @@ export const ProductsGrid = ({
       setActiveTab(categories[0].idCategory.toString());
     }
   }, [categories, activeTab]);
+
+  // Notificar cambio de tab activo
+  useEffect(() => {
+    if (activeTab && onActiveTabChange) {
+      onActiveTabChange(Number(activeTab));
+    }
+  }, [activeTab, onActiveTabChange]);
 
   if (categories.length === 0) {
     return (
@@ -43,7 +48,7 @@ export const ProductsGrid = ({
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <div className="flex items-center justify-between mb-6">
-        <TabsList className="flex-1 justify-start overflow-x-auto">
+        <TabsList className="flex-1 justify-start overflow-x-auto h-10 overflow-y-hidden">
           {categories.map((category) => (
             <TabsTrigger
               key={category.idCategory}
@@ -92,8 +97,6 @@ export const ProductsGrid = ({
                   key={product.idProduct}
                   product={product}
                   onEdit={onEditProduct}
-                  onDelete={onDeleteProduct}
-                  onToggleStatus={onToggleProductStatus}
                 />
               ))}
             </div>

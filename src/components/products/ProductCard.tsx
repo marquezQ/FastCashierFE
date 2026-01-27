@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -8,15 +8,11 @@ import { getProductImageUrl, formatPrice } from '@/utils/product.utils';
 interface ProductCardProps {
   product: Product;
   onEdit?: (product: Product) => void;
-  onDelete?: (product: Product) => void;
-  onToggleStatus?: (product: Product) => void;
 }
 
 export const ProductCard = ({
   product,
   onEdit,
-  onDelete,
-  onToggleStatus,
 }: ProductCardProps) => {
   return (
     <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg border-0 shadow-sm gap-0 py-0">
@@ -76,31 +72,11 @@ export const ProductCard = ({
         <Button
           variant="outline"
           size="sm"
-          className="flex-1"
+          className="w-full"
           onClick={() => onEdit?.(product)}
         >
           <Pencil className="size-4 mr-2" />
           Editar
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onToggleStatus?.(product)}
-          className={product.isActive ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
-        >
-          {product.isActive ? (
-            <EyeOff className="size-4" />
-          ) : (
-            <Eye className="size-4" />
-          )}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onDelete?.(product)}
-          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-        >
-          <Trash2 className="size-4" />
         </Button>
       </CardFooter>
     </Card>
