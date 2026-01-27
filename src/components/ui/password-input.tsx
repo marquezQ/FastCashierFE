@@ -20,7 +20,6 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
 
     const inputType = showPassword ? 'text' : 'password';
     const hasLeftIcon = showIcon && iconPosition === 'left' && Icon;
-    const hasRightIcon = showIcon && iconPosition === 'right' && Icon;
 
     return (
       <div className="relative group">
