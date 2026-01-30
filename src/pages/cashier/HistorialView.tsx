@@ -2,7 +2,15 @@ import { Clock, Search } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
+import { useCashierStore } from '@/store/useCashierStore';
+import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
+
 export const HistorialView = () => {
+    const { isSessionActive } = useCashierStore();
+
+    if (!isSessionActive) {
+        return <OpenRegisterForm />;
+    }
     return (
         <div className="space-y-6">
             {/* Header */}

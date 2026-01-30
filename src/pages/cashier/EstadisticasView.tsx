@@ -1,7 +1,15 @@
 import { BarChart3, DollarSign, Clock, Receipt } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+import { useCashierStore } from '@/store/useCashierStore';
+import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
+
 export const EstadisticasView = () => {
+    const { isSessionActive } = useCashierStore();
+
+    if (!isSessionActive) {
+        return <OpenRegisterForm />;
+    }
     return (
         <div className="space-y-6">
             {/* Header */}
