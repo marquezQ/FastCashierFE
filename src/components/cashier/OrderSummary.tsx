@@ -58,7 +58,7 @@ export const OrderSummary = () => {
     };
 
     return (
-        <Card className="flex flex-col h-auto lg:h-full overflow-hidden border-(--cashier-sidebar-border) shadow-lg bg-background/95 backdrop-blur-sm pt-0">
+        <Card className="flex flex-col h-auto lg:h-full overflow-hidden border-(--cashier-sidebar-border) shadow-lg bg-card backdrop-blur-none pt-0">
             {/* Compact Header */}
             <CardHeader className="border-b bg-muted/40 py-3 h-12 px-3 shrink-0">
                 <div className="flex items-center justify-between">

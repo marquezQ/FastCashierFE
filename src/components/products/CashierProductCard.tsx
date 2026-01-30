@@ -16,7 +16,7 @@ export const CashierProductCard = ({
     return (
         <Card
             onClick={() => onAdd(product)}
-            className="group flex h-full flex-col overflow-hidden transition-all duration-300 hover:shadow-lg border-0 shadow-sm gap-0 py-0 cursor-pointer hover:ring-2 hover:ring-(--cashier-sidebar-primary)/50"
+            className="group flex h-full flex-col overflow-hidden transition-all duration-300 hover:shadow-lg border shadow-sm gap-0 py-0 cursor-pointer hover:ring-2 hover:ring-(--cashier-sidebar-primary)/50"
         >
             <div className="relative aspect-video w-full overflow-hidden bg-muted">
                 <img

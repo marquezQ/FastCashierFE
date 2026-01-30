@@ -53,7 +53,7 @@ export const ProductCatalog = () => {
                                 <TabsTrigger
                                     key={category.idCategory}
                                     value={category.idCategory.toString()}
-                                    className="px-3 whitespace-nowrap text-xs gap-2 data-[state=active]:bg-(--cashier-sidebar-primary) data-[state=active]:text-(--cashier-sidebar-primary-foreground)"
+                                    className="px-3 whitespace-nowrap text-xs gap-2 data-[state=active]:bg-(--cashier-sidebar-primary)! data-[state=active]:text-(--cashier-sidebar-primary-foreground)!"
                                 >
                                     <Package className="h-3.5 w-3.5" />
                                     {category.name}
