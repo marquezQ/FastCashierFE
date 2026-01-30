@@ -19,11 +19,14 @@ export const ProductCard = ({
       <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
         <img
           src={getProductImageUrl(product)}
-          alt={product.name}
+          alt={`Imagen de ${product.name}`}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
           onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
+            const target = e.target as HTMLImageElement;
+            if (target.src !== 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop') {
+              target.src = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
+            }
           }}
         />
         {!product.isActive && (
@@ -35,7 +38,7 @@ export const ProductCard = ({
         )}
       </div>
 
-      <CardContent className="flex flex-1 flex-col p-5 gap-3 px-5">
+      <CardContent className="flex flex-1 flex-col p-5 gap-3">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-base leading-tight line-clamp-2 flex-1">
             {product.name}
@@ -68,14 +71,15 @@ export const ProductCard = ({
         </div>
       </CardContent>
 
-      <CardFooter className="border-t p-4 bg-muted/30 flex gap-2 px-5">
+      <CardFooter className="border-t p-4 bg-muted/30 flex gap-2">
         <Button
           variant="outline"
           size="sm"
           className="w-full"
           onClick={() => onEdit?.(product)}
+          aria-label={`Editar producto ${product.name}`}
         >
-          <Pencil className="size-4 mr-2" />
+          <Pencil className="size-4 mr-2" aria-hidden="true" />
           Editar
         </Button>
       </CardFooter>

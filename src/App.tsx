@@ -32,15 +32,14 @@ function App() {
         {/* ============================================ */}
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
           <Route path="/admin/*" element={<AdminPage />} />
-        
+
         </Route>
 
         {/* ============================================ */}
         {/* RUTAS PROTEGIDAS: CASHIER */}
         {/* ============================================ */}
         <Route element={<ProtectedRoute allowedRoles={['CASHIER']} />}>
-          <Route path="/cashier" element={<CashierPage />} />
-          
+          <Route path="/cashier/*" element={<CashierPage />} />
         </Route>
 
         {/* ============================================ */}
@@ -48,7 +47,7 @@ function App() {
         {/* ============================================ */}
         <Route element={<ProtectedRoute allowedRoles={['KITCHEN']} />}>
           <Route path="/kitchen" element={<KitchenPage />} />
-          
+
         </Route>
 
         {/* ============================================ */}

@@ -47,31 +47,37 @@ export const ProductsGrid = ({
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <div className="flex items-center justify-between mb-6">
-        <TabsList className="flex-1 justify-start overflow-x-auto h-10 overflow-y-hidden">
-          {categories.map((category) => (
-            <TabsTrigger
-              key={category.idCategory}
-              value={category.idCategory.toString()}
-              className="flex items-center gap-2"
-            >
-              <Package className="size-4" />
-              {category.name}
-              <Badge variant="secondary" className="ml-1">
-                {category.productCount}
-              </Badge>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="w-full sm:flex-1 min-w-0">
+          <div className="overflow-x-auto overflow-y-hidden">
+            <TabsList className="inline-flex! justify-start! h-10 w-max! p-1!">
+              {categories.map((category) => (
+                <TabsTrigger
+                  key={category.idCategory}
+                  value={category.idCategory.toString()}
+                  className="flex-none! flex items-center gap-2 whitespace-nowrap shrink-0"
+                >
+                  <Package className="size-4 shrink-0" />
+                  <span className="hidden sm:inline">{category.name}</span>
+                  <span className="sm:hidden">{category.name.length > 12 ? `${category.name.substring(0, 12)}...` : category.name}</span>
+                  <Badge variant="secondary" className="ml-1 shrink-0">
+                    {category.productCount}
+                  </Badge>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+        </div>
         {onCreateCategory && (
           <Button
             variant="outline"
             size="sm"
             onClick={onCreateCategory}
-            className="ml-4 shrink-0"
+            className="w-full sm:w-auto shrink-0"
           >
             <Plus className="size-4 mr-2" />
-            Nueva Categoría
+            <span className="hidden sm:inline">Nueva Categoría</span>
+            <span className="sm:hidden">Nueva</span>
           </Button>
         )}
       </div>
@@ -91,15 +97,31 @@ export const ProductsGrid = ({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-              {category.products.map((product) => (
-                <ProductCard
-                  key={product.idProduct}
-                  product={product}
-                  onEdit={onEditProduct}
-                />
-              ))}
-            </div>
+            <>
+              {/* Móvil: Scroll horizontal */}
+              <div className="overflow-x-auto overflow-y-hidden -mx-4 sm:hidden px-4 pb-2">
+                <div className="flex gap-4 min-w-max">
+                  {category.products.map((product) => (
+                    <div key={product.idProduct} className="w-70 shrink-0">
+                      <ProductCard
+                        product={product}
+                        onEdit={onEditProduct}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Desktop: Grid normal */}
+              <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {category.products.map((product) => (
+                  <ProductCard
+                    key={product.idProduct}
+                    product={product}
+                    onEdit={onEditProduct}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </TabsContent>
       ))}

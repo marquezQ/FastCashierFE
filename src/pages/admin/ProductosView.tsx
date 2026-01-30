@@ -10,6 +10,7 @@ import type { Product } from '@/types/products';
 import type { CreateProductFormValues } from '@/schemas/products.schema';
 import type { UpdateProductFormValues } from '@/schemas/products.schema';
 import { toast } from 'sonner';
+import { AxiosError } from 'axios';
 
 export const ProductosView = () => {
   const { data: categories, isLoading, error } = useProducts();
@@ -42,8 +43,16 @@ export const ProductosView = () => {
       
       toast.success('Producto creado exitosamente');
       setIsCreateDialogOpen(false);
-    } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || error?.message || 'Error al crear el producto';
+    } catch (error) {
+      let errorMessage = 'Error al crear el producto';
+      if (error instanceof AxiosError) {
+        const data = error.response?.data as { message?: string | string[] };
+        errorMessage = Array.isArray(data?.message) 
+          ? data.message[0] 
+          : data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       toast.error(errorMessage);
       throw error;
     }
@@ -91,8 +100,16 @@ export const ProductosView = () => {
       toast.success('Producto actualizado exitosamente');
       setIsEditDialogOpen(false);
       setSelectedProduct(null);
-    } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || error?.message || 'Error al actualizar el producto';
+    } catch (error) {
+      let errorMessage = 'Error al actualizar el producto';
+      if (error instanceof AxiosError) {
+        const data = error.response?.data as { message?: string | string[] };
+        errorMessage = Array.isArray(data?.message) 
+          ? data.message[0] 
+          : data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       toast.error(errorMessage);
       throw error;
     }
@@ -100,7 +117,7 @@ export const ProductosView = () => {
 
   const handleCreateCategory = () => {
     // TODO: Abrir modal/dialog para crear categoría
-    console.log('Crear nueva categoría');
+    toast.info('Funcionalidad de crear categoría próximamente');
   };
 
   return (
