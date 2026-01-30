@@ -113,6 +113,23 @@
   --sidebar-border: oklch(0.28 0.03 250);
   /* Borde sutil */
   --sidebar-ring: oklch(0.62 0.22 250);
+
+  /* CASHIER SIDEBAR - Modo Claro: Verde/Teal Oscuro Profesional */
+  --cashier-sidebar: oklch(0.28 0.08 180);
+  /* Verde azulado oscuro (teal/cyan) */
+  --cashier-sidebar-foreground: oklch(0.90 0.02 180);
+  /* Texto claro con tinte verde */
+  --cashier-sidebar-primary: oklch(0.55 0.14 180);
+  /* Verde azulado vibrante para items activos */
+  --cashier-sidebar-primary-foreground: oklch(0.98 0.01 180);
+  /* Blanco casi puro */
+  --cashier-sidebar-accent: oklch(0.35 0.09 180);
+  /* Hover: verde oscuro más claro */
+  --cashier-sidebar-accent-foreground: oklch(0.95 0.02 180);
+  /* Texto hover */
+  --cashier-sidebar-border: oklch(0.32 0.06 180);
+  /* Borde sutil */
+  --cashier-sidebar-ring: oklch(0.55 0.14 180);
 }
 
 .dark {
@@ -180,6 +197,23 @@
   --sidebar-border: oklch(0.22 0.03 250);
   /* Borde sutil */
   --sidebar-ring: oklch(0.68 0.24 250);
+
+  /* CASHIER SIDEBAR - Modo Oscuro: Verde/Teal más oscuro */
+  --cashier-sidebar: oklch(0.20 0.07 180);
+  /* Verde azulado muy oscuro */
+  --cashier-sidebar-foreground: oklch(0.88 0.02 180);
+  /* Texto claro */
+  --cashier-sidebar-primary: oklch(0.60 0.16 180);
+  /* Verde brillante para items activos */
+  --cashier-sidebar-primary-foreground: oklch(0.98 0.01 180);
+  /* Blanco */
+  --cashier-sidebar-accent: oklch(0.28 0.08 180);
+  /* Hover verde oscuro */
+  --cashier-sidebar-accent-foreground: oklch(0.90 0.02 180);
+  /* Texto hover */
+  --cashier-sidebar-border: oklch(0.24 0.06 180);
+  /* Borde sutil */
+  --cashier-sidebar-ring: oklch(0.60 0.16 180);
 }
 
 @layer base {
@@ -212,6 +246,16 @@
     @apply bg-muted-foreground/30 rounded-md hover:bg-muted-foreground/50;
   }
 
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE y Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari y Opera */
+  }
+
   /* Animaciones suaves globales */
   .transition-smooth {
     @apply transition-all duration-200 ease-in-out;
@@ -229,5 +273,24 @@
 
   .text-gradient-primary {
     @apply bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent;
+  }
+
+  /* Mejoras de accesibilidad y UX */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Mejora de contraste para texto en móvil */
+  @media (max-width: 640px) {
+    body {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
   }
 }

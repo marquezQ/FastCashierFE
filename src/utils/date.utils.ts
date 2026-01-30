@@ -16,3 +16,11 @@ export const formatDateLong = (date?: Date | string): string => {
     day: 'numeric',
   });
 };
+
+export const formatTime = (date?: Date | string): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date || new Date();
+  return dateObj.toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
