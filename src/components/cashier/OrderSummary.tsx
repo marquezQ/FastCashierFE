@@ -7,52 +7,97 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useCashierStore } from '@/store/useCashierStore';
+import { useAuthStore } from '@/store/authStore';
+import { useCreateOrder } from '@/hooks/useCreateOrder';
 import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
+import type { PaymentMethod, Order } from '@/types/order';
+import { OrderProcessDialog } from './OrderSuccessDialog';
 
 export const OrderSummary = () => {
-    const { orderItems, updateQuantity, removeItem, clearCart } = useCashierStore();
+    const { orderItems, updateQuantity, removeItem, clearCart, currentSession } = useCashierStore();
+    const { user } = useAuthStore();
+    const { mutate: createOrder, isPending } = useCreateOrder();
+
     const [customerName, setCustomerName] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qr'>('cash');
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
     const [cashReceived, setCashReceived] = useState('');
     const [observations, setObservations] = useState('');
+
+    // Dialog State
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogMode, setDialogMode] = useState<'confirm' | 'success'>('confirm');
+    const [lastCreatedOrder, setLastCreatedOrder] = useState<Order | null>(null);
 
     // Calculate totals
     const subtotal = orderItems.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
     const total = subtotal;
 
-    // Calculate change
-    const cashValue = parseFloat(cashReceived) || 0;
-    const change = cashValue >= total ? cashValue - total : 0;
+    // Calculate totals professionally
+    const cashValue = paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : 0;
+    const change = paymentMethod === 'CASH' && cashValue >= total ? cashValue - total : 0;
 
-    const handleCreateOrder = () => {
-        if (orderItems.length === 0) return;
+    const handleOpenReview = () => {
+        if (orderItems.length === 0) {
+            toast.error('El carrito está vacío');
+            return;
+        }
 
-        console.log('Crear pedido:', {
-            customerName,
-            items: orderItems.map(item => ({ id: item.idProduct, quantity: item.quantity })),
+        if (!currentSession) {
+            toast.error('No hay una sesión de caja activa');
+            return;
+        }
+
+        if (!user) {
+            toast.error('No se encontró información del cajero');
+            return;
+        }
+
+        const amountPaid = paymentMethod === 'CASH'
+            ? (parseFloat(cashReceived) || 0)
+            : total;
+
+        if (paymentMethod === 'CASH' && amountPaid < total) {
+            toast.error('El monto recibido es insuficiente');
+            return;
+        }
+
+        setDialogMode('confirm');
+        setIsDialogOpen(true);
+    };
+
+    const handleConfirmOrder = () => {
+        const amountPaid = paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : total;
+
+        createOrder({
+            sessionId: currentSession!.idSession,
+            cashierId: user!.idUser,
             paymentMethod,
-            cashReceived: paymentMethod === 'cash' ? cashReceived : null,
-            observations,
-            total,
+            amountPaid,
+            items: orderItems.map(item => ({
+                productId: item.idProduct,
+                quantity: item.quantity
+            })),
+            customer: customerName || undefined,
+            observations: observations || undefined,
+        }, {
+            onSuccess: (data) => {
+                setLastCreatedOrder(data);
+                setDialogMode('success');
+
+                // Clear fields for the next order
+                setCustomerName('');
+                setPaymentMethod('CASH');
+                setCashReceived('');
+                setObservations('');
+            }
         });
-
-        toast.success('Pedido generado exitosamente');
-
-        // Clear form and store
-        clearCart();
-        setCustomerName('');
-        setPaymentMethod('cash');
-        setCashReceived('');
-        setObservations('');
-
-        // TODO: Implement backend submission
     };
 
     const handleClearForm = () => {
         clearCart();
         setCustomerName('');
-        setPaymentMethod('cash');
+        setPaymentMethod('CASH');
         setCashReceived('');
         setObservations('');
     };
@@ -149,18 +194,21 @@ export const OrderSummary = () => {
                             <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Método</Label>
                             <div className="flex gap-1">
                                 <Button
-                                    variant={paymentMethod === 'cash' ? 'default' : 'outline'}
+                                    variant={paymentMethod === 'CASH' ? 'default' : 'outline'}
                                     size="sm"
-                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'cash' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
-                                    onClick={() => setPaymentMethod('cash')}
+                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'CASH' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
+                                    onClick={() => setPaymentMethod('CASH')}
                                 >
                                     <DollarSign className="h-3 w-3 mr-1" /> Efec.
                                 </Button>
                                 <Button
-                                    variant={paymentMethod === 'qr' ? 'default' : 'outline'}
+                                    variant={paymentMethod === 'QR' ? 'default' : 'outline'}
                                     size="sm"
-                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'qr' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
-                                    onClick={() => setPaymentMethod('qr')}
+                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'QR' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
+                                    onClick={() => {
+                                        setPaymentMethod('QR');
+                                        setCashReceived('0');
+                                    }}
                                 >
                                     QR
                                 </Button>
@@ -177,7 +225,7 @@ export const OrderSummary = () => {
                                     placeholder="0.00"
                                     value={cashReceived}
                                     onChange={(e) => setCashReceived(e.target.value)}
-                                    disabled={paymentMethod !== 'cash'}
+                                    disabled={paymentMethod !== 'CASH'}
                                 />
                             </div>
                         </div>
@@ -211,8 +259,8 @@ export const OrderSummary = () => {
                             Limpiar
                         </Button>
                         <Button
-                            onClick={handleCreateOrder}
-                            disabled={orderItems.length === 0}
+                            onClick={handleOpenReview}
+                            disabled={orderItems.length === 0 || isPending}
                             className="h-10 text-sm font-semibold bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90 shadow-md shadow-(--cashier-sidebar-primary)/20"
                         >
                             Cobrar <span className="ml-1 opacity-90">{formatPrice(total.toString())}</span>
@@ -220,6 +268,24 @@ export const OrderSummary = () => {
                     </div>
                 </div>
             </div>
+
+            <OrderProcessDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                mode={dialogMode}
+                previewData={{
+                    items: orderItems,
+                    total,
+                    paymentMethod,
+                    amountPaid: paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : total,
+                    change,
+                    customer: customerName,
+                    observations
+                }}
+                order={lastCreatedOrder}
+                onConfirm={handleConfirmOrder}
+                isProcessing={isPending}
+            />
         </Card>
     );
 };
