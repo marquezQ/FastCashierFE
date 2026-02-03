@@ -15,9 +15,9 @@ export const useCreateOrder = () => {
             // Clear the cart in the store
             clearCart();
 
-            // Invalidate relevant queries if any (e.g., order history, session stats)
+            // Invalidate relevant queries
             queryClient.invalidateQueries({ queryKey: ['orders'] });
-            queryClient.invalidateQueries({ queryKey: ['session-stats'] });
+            queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
         },
         onError: (error: any) => {
             const errorMessage = error.response?.data?.message || 'Error al procesar el pedido';

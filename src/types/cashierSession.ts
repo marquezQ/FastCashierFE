@@ -30,3 +30,23 @@ export interface CloseSessionDto {
     closingQrAmount: number;
     observations?: string;
 }
+
+export interface SessionStatistics {
+    sessionId: number;
+    expectedCash: number;
+    expectedQr: number;
+    totalOrders: number;
+    cashOrderCount: number;
+    qrOrderCount: number;
+    initialAmount: number;
+    openingDate: string;
+    responsiblePerson: {
+        userId: number;
+        name: string;
+        email: string;
+        role: string;
+    };
+    averageOrderValue: number;
+    totalSales: number;
+    status: SessionStatus;
+}

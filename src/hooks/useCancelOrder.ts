@@ -10,6 +10,7 @@ export const useCancelOrder = () => {
             orderService.cancelOrder(orderId, reason),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['orders', 'session'] });
+            queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
             toast.success('Pedido anulado correctamente');
         },
         onError: (error: any) => {
