@@ -17,6 +17,7 @@ export const useCashierSession = () => {
             setSession(session);
             toast.success('Sesión de caja abierta correctamente');
             queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
+            queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
         },
         onError: (error: any) => {
             console.error('Error opening session:', error);
@@ -34,6 +35,7 @@ export const useCashierSession = () => {
             closeSession();
             toast.success('Sesión de caja cerrada correctamente');
             queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
+            queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
         },
         onError: (error: any) => {
             console.error('Error closing session:', error);

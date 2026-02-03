@@ -133,15 +133,14 @@
 }
 
 .dark {
-  /* MODO OSCURO - Fondo oscuro moderno */
-  --background: oklch(0.12 0.03 264);
-  /* Casi negro azulado */
+  /* MODO OSCURO - Estrategia de Elevación de Superficies */
+  --background: oklch(0.11 0.01 264);
+  /* Base profunda (nivel 0) */
   --foreground: oklch(0.98 0.003 264);
   /* Texto casi blanco */
 
-  /* Cards en dark mode */
-  --card: oklch(0.18 0.03 264);
-  /* Más claro que el fondo */
+  /* Cards en dark mode - Superficie elevada clara (nivel 2) */
+  --card: oklch(0.22 0.02 264);
   --card-foreground: oklch(0.98 0.003 264);
 
   /* Popovers */
@@ -157,8 +156,8 @@
   --secondary: oklch(0.25 0.04 264);
   --secondary-foreground: oklch(0.98 0.003 264);
 
-  /* Muted en dark */
-  --muted: oklch(0.25 0.04 264);
+  /* Muted en dark - Superficie intermedia (nivel 1) */
+  --muted: oklch(0.18 0.02 264);
   --muted-foreground: oklch(0.65 0.03 264);
 
   /* Accent en dark */
@@ -168,10 +167,9 @@
   /* Destructive en dark */
   --destructive: oklch(0.65 0.20 25);
 
-  /* Bordes e inputs en dark */
+  /* Bordes e inputs en dark - Mejor definición */
   --border: oklch(1 0 0 / 12%);
-  /* Blanco con transparencia */
-  --input: oklch(1 0 0 / 15%);
+  --input: oklch(1 0 0 / 10%);
   --ring: oklch(0.65 0.20 255);
 
   /* Charts en dark mode */
@@ -203,7 +201,8 @@
   /* Verde azulado muy oscuro */
   --cashier-sidebar-foreground: oklch(0.88 0.02 180);
   /* Texto claro */
-  --cashier-sidebar-primary: oklch(0.60 0.16 180);
+  --cashier-sidebar-primary: oklch(0.65 0.18 160);
+  /* Verde más vibrante para modo oscuro */
   /* Verde brillante para items activos */
   --cashier-sidebar-primary-foreground: oklch(0.98 0.01 180);
   /* Blanco */
@@ -248,12 +247,15 @@
 
   /* Ocultar scrollbar pero mantener funcionalidad */
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE y Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE y Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 
   .no-scrollbar::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari y Opera */
+    display: none;
+    /* Chrome, Safari y Opera */
   }
 
   /* Animaciones suaves globales */
@@ -277,6 +279,7 @@
 
   /* Mejoras de accesibilidad y UX */
   @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {

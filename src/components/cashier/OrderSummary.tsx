@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Minus, Trash2, ShoppingCart, DollarSign } from 'lucide-react';
+import { Plus, Minus, Trash2, ShoppingCart, DollarSign, UtensilsCrossed, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,58 +7,107 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useCashierStore } from '@/store/useCashierStore';
+import { useAuthStore } from '@/store/authStore';
+import { useCreateOrder } from '@/hooks/useCreateOrder';
 import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
+import type { PaymentMethod, Order, OrderType } from '@/types/order';
+import { OrderProcessDialog } from './OrderSuccessDialog';
 
 export const OrderSummary = () => {
-    const { orderItems, updateQuantity, removeItem, clearCart } = useCashierStore();
+    const { orderItems, updateQuantity, removeItem, clearCart, currentSession } = useCashierStore();
+    const { user } = useAuthStore();
+    const { mutate: createOrder, isPending } = useCreateOrder();
+
     const [customerName, setCustomerName] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qr'>('cash');
+    const [selectedOrderType, setSelectedOrderType] = useState<OrderType>('DINE_IN');
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
     const [cashReceived, setCashReceived] = useState('');
     const [observations, setObservations] = useState('');
+
+    // Dialog State
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogMode, setDialogMode] = useState<'confirm' | 'success'>('confirm');
+    const [lastCreatedOrder, setLastCreatedOrder] = useState<Order | null>(null);
 
     // Calculate totals
     const subtotal = orderItems.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
     const total = subtotal;
 
-    // Calculate change
-    const cashValue = parseFloat(cashReceived) || 0;
-    const change = cashValue >= total ? cashValue - total : 0;
+    // Calculate totals professionally
+    const cashValue = paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : 0;
+    const change = paymentMethod === 'CASH' && cashValue >= total ? cashValue - total : 0;
 
-    const handleCreateOrder = () => {
-        if (orderItems.length === 0) return;
+    const handleOpenReview = () => {
+        if (orderItems.length === 0) {
+            toast.error('El carrito está vacío');
+            return;
+        }
 
-        console.log('Crear pedido:', {
-            customerName,
-            items: orderItems.map(item => ({ id: item.idProduct, quantity: item.quantity })),
+        if (!currentSession) {
+            toast.error('No hay una sesión de caja activa');
+            return;
+        }
+
+        if (!user) {
+            toast.error('No se encontró información del cajero');
+            return;
+        }
+
+        const amountPaid = paymentMethod === 'CASH'
+            ? (parseFloat(cashReceived) || 0)
+            : total;
+
+        if (paymentMethod === 'CASH' && amountPaid < total) {
+            toast.error('El monto recibido es insuficiente');
+            return;
+        }
+
+        setDialogMode('confirm');
+        setIsDialogOpen(true);
+    };
+
+    const handleConfirmOrder = () => {
+        const amountPaid = paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : total;
+
+        createOrder({
+            sessionId: currentSession!.idSession,
+            cashierId: user!.idUser,
+            orderType: selectedOrderType,
             paymentMethod,
-            cashReceived: paymentMethod === 'cash' ? cashReceived : null,
-            observations,
-            total,
+            amountPaid,
+            items: orderItems.map(item => ({
+                productId: item.idProduct,
+                quantity: item.quantity
+            })),
+            customer: customerName || undefined,
+            observations: observations || undefined,
+        }, {
+            onSuccess: (data) => {
+                setLastCreatedOrder(data);
+                setDialogMode('success');
+
+                // Clear fields for the next order
+                setCustomerName('');
+                setSelectedOrderType('DINE_IN');
+                setPaymentMethod('CASH');
+                setCashReceived('');
+                setObservations('');
+            }
         });
-
-        toast.success('Pedido generado exitosamente');
-
-        // Clear form and store
-        clearCart();
-        setCustomerName('');
-        setPaymentMethod('cash');
-        setCashReceived('');
-        setObservations('');
-
-        // TODO: Implement backend submission
     };
 
     const handleClearForm = () => {
         clearCart();
         setCustomerName('');
-        setPaymentMethod('cash');
+        setSelectedOrderType('DINE_IN');
+        setPaymentMethod('CASH');
         setCashReceived('');
         setObservations('');
     };
 
     return (
-        <Card className="flex flex-col h-auto lg:h-full overflow-hidden border-(--cashier-sidebar-border) shadow-lg bg-background/95 backdrop-blur-sm pt-0">
+        <Card className="flex flex-col h-auto lg:h-full overflow-hidden border-(--cashier-sidebar-border) shadow-lg bg-card backdrop-blur-none pt-0">
             {/* Compact Header */}
             <CardHeader className="border-b bg-muted/40 py-3 h-12 px-3 shrink-0">
                 <div className="flex items-center justify-between">
@@ -143,24 +192,50 @@ export const OrderSummary = () => {
 
                     <Separator className="bg-border/60" />
 
+                    {/* Order Type Selection */}
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Tipo de Pedido</Label>
+                        <div className="flex gap-1">
+                            <Button
+                                variant={selectedOrderType === 'DINE_IN' ? 'default' : 'outline'}
+                                size="sm"
+                                className={`flex-1 h-8 text-xs ${selectedOrderType === 'DINE_IN' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : ''}`}
+                                onClick={() => setSelectedOrderType('DINE_IN')}
+                            >
+                                <UtensilsCrossed className="h-3 w-3 mr-1" /> Para la Mesa
+                            </Button>
+                            <Button
+                                variant={selectedOrderType === 'TAKEOUT' ? 'default' : 'outline'}
+                                size="sm"
+                                className={`flex-1 h-8 text-xs ${selectedOrderType === 'TAKEOUT' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : ''}`}
+                                onClick={() => setSelectedOrderType('TAKEOUT')}
+                            >
+                                <Package className="h-3 w-3 mr-1" /> Para Llevar
+                            </Button>
+                        </div>
+                    </div>
+
                     {/* Payment Method & Input Compact Grid */}
                     <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-1.5">
                             <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Método</Label>
                             <div className="flex gap-1">
                                 <Button
-                                    variant={paymentMethod === 'cash' ? 'default' : 'outline'}
+                                    variant={paymentMethod === 'CASH' ? 'default' : 'outline'}
                                     size="sm"
-                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'cash' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
-                                    onClick={() => setPaymentMethod('cash')}
+                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'CASH' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
+                                    onClick={() => setPaymentMethod('CASH')}
                                 >
                                     <DollarSign className="h-3 w-3 mr-1" /> Efec.
                                 </Button>
                                 <Button
-                                    variant={paymentMethod === 'qr' ? 'default' : 'outline'}
+                                    variant={paymentMethod === 'QR' ? 'default' : 'outline'}
                                     size="sm"
-                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'qr' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
-                                    onClick={() => setPaymentMethod('qr')}
+                                    className={`flex-1 h-8 text-xs ${paymentMethod === 'QR' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : 'px-0'}`}
+                                    onClick={() => {
+                                        setPaymentMethod('QR');
+                                        setCashReceived('0');
+                                    }}
                                 >
                                     QR
                                 </Button>
@@ -177,7 +252,7 @@ export const OrderSummary = () => {
                                     placeholder="0.00"
                                     value={cashReceived}
                                     onChange={(e) => setCashReceived(e.target.value)}
-                                    disabled={paymentMethod !== 'cash'}
+                                    disabled={paymentMethod !== 'CASH'}
                                 />
                             </div>
                         </div>
@@ -211,8 +286,8 @@ export const OrderSummary = () => {
                             Limpiar
                         </Button>
                         <Button
-                            onClick={handleCreateOrder}
-                            disabled={orderItems.length === 0}
+                            onClick={handleOpenReview}
+                            disabled={orderItems.length === 0 || isPending}
                             className="h-10 text-sm font-semibold bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90 shadow-md shadow-(--cashier-sidebar-primary)/20"
                         >
                             Cobrar <span className="ml-1 opacity-90">{formatPrice(total.toString())}</span>
@@ -220,6 +295,25 @@ export const OrderSummary = () => {
                     </div>
                 </div>
             </div>
+
+            <OrderProcessDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                mode={dialogMode}
+                previewData={{
+                    items: orderItems,
+                    total,
+                    orderType: selectedOrderType,
+                    paymentMethod,
+                    amountPaid: paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : total,
+                    change,
+                    customer: customerName,
+                    observations
+                }}
+                order={lastCreatedOrder}
+                onConfirm={handleConfirmOrder}
+                isProcessing={isPending}
+            />
         </Card>
     );
 };
