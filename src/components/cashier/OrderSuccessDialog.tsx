@@ -1,4 +1,4 @@
-import { CheckCircle2, Printer, ArrowRight, User, Hash, Clock, Receipt, Save, X, MessageSquare } from 'lucide-react';
+import { CheckCircle2, Printer, ArrowRight, User, Hash, Clock, Receipt, Save, X, MessageSquare, UtensilsCrossed, Package } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -21,6 +21,7 @@ interface OrderProcessDialogProps {
     previewData: {
         items: OrderItem[];
         total: number;
+        orderType: string;
         paymentMethod: string;
         amountPaid: number;
         change: number;
@@ -50,6 +51,7 @@ export const OrderProcessDialog = ({
     const currentAmountPaid = isSuccess ? parseFloat(order.amountPaid) : (previewData?.amountPaid || 0);
     const currentChange = isSuccess ? parseFloat(order.changeAmount) : (previewData?.change || 0);
     const currentMethod = isSuccess ? order.paymentMethod : (previewData?.paymentMethod || 'CASH');
+    const currentOrderType = (isSuccess ? order.orderType : previewData?.orderType) || (previewData ? previewData.orderType : (isSuccess ? (order as any).orderType : 'DINE_IN')) || 'DINE_IN';
     const currentCustomer = isSuccess ? order.customer : previewData?.customer;
     const currentObservations = isSuccess ? order.observations : previewData?.observations;
     const orderNumber = isSuccess ? order.orderNumber : 'PRE-ORDEN';
@@ -87,10 +89,28 @@ export const OrderProcessDialog = ({
                             </span>
                             <span className="text-xs font-bold font-mono">{orderNumber}</span>
                         </div>
-                        <div className="flex flex-col text-right">
-                            <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground flex items-center justify-end gap-1">
-                                <Clock className="h-2.5 w-2.5" /> {displayDate}
-                            </span>
+                        <div className="flex items-center gap-2">
+                            <Badge variant="outline" className={`text-[10px] h-6 font-bold flex items-center gap-1.5 border-0 shadow-none px-2 ${currentOrderType === 'DINE_IN'
+                                ? 'bg-primary/10 text-primary'
+                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                }`}>
+                                {currentOrderType === 'DINE_IN' ? (
+                                    <>
+                                        <UtensilsCrossed className="h-3 w-3" />
+                                        PARA LA MESA
+                                    </>
+                                ) : (
+                                    <>
+                                        <Package className="h-3 w-3" />
+                                        PARA LLEVAR
+                                    </>
+                                )}
+                            </Badge>
+                            <div className="flex flex-col text-right border-l pl-2 border-border/40">
+                                <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground flex items-center justify-end gap-1">
+                                    <Clock className="h-2.5 w-2.5" /> {displayDate}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -163,10 +183,13 @@ export const OrderProcessDialog = ({
                         {/* Always Black/Normal: Received */}
                         <div className="flex justify-between items-center py-1">
                             <div className="flex items-center gap-2">
-                                <Badge className="bg-foreground/10 text-foreground border-0 shadow-none text-[10px] px-1.5 uppercase">
-                                    {currentMethod}
+                                <Badge className={`border-0 shadow-md text-xs px-2.5 py-1 uppercase font-black tracking-tight ${currentMethod === 'QR'
+                                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                                    }`}>
+                                    {currentMethod === 'QR' ? '📱 Pago QR' : '💵 Efectivo'}
                                 </Badge>
-                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">Monto Recibido</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">Recibido</span>
                             </div>
                             <span className="font-bold text-lg text-foreground">
                                 {formatPrice(currentAmountPaid.toString())}

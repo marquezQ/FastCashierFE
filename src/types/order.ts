@@ -4,6 +4,7 @@ import type { Product } from './products';
 
 export type PaymentMethod = 'CASH' | 'QR';
 export type OrderStatus = 'PENDING' | 'PREPARING' | 'COMPLETED' | 'CANCELLED';
+export type OrderType = 'DINE_IN' | 'TAKEOUT';
 
 export interface OrderItemDto {
     productId: number;
@@ -13,6 +14,7 @@ export interface OrderItemDto {
 export interface CreateOrderDto {
     sessionId: number;
     cashierId: number;
+    orderType: OrderType;
     paymentMethod: PaymentMethod;
     amountPaid: number;
     items: OrderItemDto[];
@@ -43,6 +45,7 @@ export interface Order {
     amountPaid: string;
     changeAmount: string;
     orderStatus: OrderStatus;
+    orderType: OrderType;
     preparationStartDate: string | null;
     completedDate: string | null;
     customer: string | null;

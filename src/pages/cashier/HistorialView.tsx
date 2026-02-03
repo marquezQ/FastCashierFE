@@ -1,58 +1,77 @@
-import { Clock, Search } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-
+import { useState } from 'react';
 import { useCashierStore } from '@/store/useCashierStore';
 import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
+import { useOrdersBySession } from '@/hooks/useOrdersBySession';
+import { useCancelOrder } from '@/hooks/useCancelOrder';
+import { OrderProcessDialog } from '@/components/cashier/OrderSuccessDialog';
+import { HistoryHeader } from '@/components/cashier/history/HistoryHeader';
+import { HistorySearch } from '@/components/cashier/history/HistorySearch';
+import { HistoryTable } from '@/components/cashier/history/HistoryTable';
+import type { Order } from '@/types/order';
 
 export const HistorialView = () => {
-    const { isSessionActive } = useCashierStore();
+    const { isSessionActive, currentSession } = useCashierStore();
+    const { data: orders, isLoading, refetch } = useOrdersBySession(currentSession?.idSession);
+    const { mutate: cancelOrder, isPending: isCancelling } = useCancelOrder();
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
 
     if (!isSessionActive) {
         return <OpenRegisterForm />;
     }
+
+    const filteredOrders = orders?.filter(order => {
+        const query = searchQuery.toLowerCase();
+        return (
+            order.orderNumber.toLowerCase().includes(query) ||
+            (order.customer && order.customer.toLowerCase().includes(query))
+        );
+    }) || [];
+
+    const handleViewDetail = (order: Order) => {
+        setSelectedOrder(order);
+        setIsDetailOpen(true);
+    };
+
+    const handleCancelOrder = (orderId: number, reason: string) => {
+        cancelOrder({ orderId, reason });
+    };
+
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight text-green-700 dark:text-green-400">
-                    Historial
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                    Consulta el historial de pedidos de tu turno
-                </p>
-            </div>
+        <div className="max-w-7xl mx-auto space-y-8 pb-10">
+            <HistoryHeader
+                orderCount={orders?.length || 0}
+                onRefresh={() => refetch()}
+            />
 
-            {/* Search Bar */}
-            <Card className="border-green-200 dark:border-green-800">
-                <CardContent className="p-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Buscar por número de pedido, cliente..."
-                            className="pl-9"
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+            <HistorySearch
+                value={searchQuery}
+                onChange={setSearchQuery}
+            />
 
-            {/* Historial Content */}
-            <Card className="border-green-200 dark:border-green-800">
-                <CardHeader className="border-b border-green-100 dark:border-green-900">
-                    <CardTitle className="text-green-700 dark:text-green-400">
-                        Pedidos del Turno Actual
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                    <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-                        <Clock className="h-12 w-12 mb-3 text-green-400" />
-                        <p className="font-medium">No hay pedidos en el turno actual</p>
-                        <p className="text-sm mt-1">
-                            Los pedidos que realices aparecerán aquí
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
+            <HistoryTable
+                orders={filteredOrders}
+                isLoading={isLoading}
+                searchQuery={searchQuery}
+                onViewDetail={handleViewDetail}
+                onCancel={handleCancelOrder}
+                isCancelling={isCancelling}
+            />
+
+            {/* Detail Modal Reusing OrderProcessDialog */}
+            {selectedOrder && (
+                <OrderProcessDialog
+                    open={isDetailOpen}
+                    onOpenChange={setIsDetailOpen}
+                    mode="success"
+                    previewData={null}
+                    order={selectedOrder}
+                    onConfirm={() => { }}
+                    isProcessing={false}
+                />
+            )}
         </div>
     );
 };

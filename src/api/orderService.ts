@@ -7,5 +7,13 @@ export const orderService = {
         return response.data;
     },
 
-    // Additional methods (get by session, find by id, etc.) can be added here
+    getOrdersBySession: async (sessionId: number): Promise<Order[]> => {
+        const response = await api.get<Order[]>(`/orders/session/${sessionId}`);
+        return response.data;
+    },
+
+    cancelOrder: async (orderId: number, reason?: string): Promise<Order> => {
+        const response = await api.post<Order>(`/orders/${orderId}/cancel`, { reason });
+        return response.data;
+    },
 };

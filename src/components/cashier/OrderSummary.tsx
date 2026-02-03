@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Minus, Trash2, ShoppingCart, DollarSign } from 'lucide-react';
+import { Plus, Minus, Trash2, ShoppingCart, DollarSign, UtensilsCrossed, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useCreateOrder } from '@/hooks/useCreateOrder';
 import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
-import type { PaymentMethod, Order } from '@/types/order';
+import type { PaymentMethod, Order, OrderType } from '@/types/order';
 import { OrderProcessDialog } from './OrderSuccessDialog';
 
 export const OrderSummary = () => {
@@ -20,6 +20,7 @@ export const OrderSummary = () => {
     const { mutate: createOrder, isPending } = useCreateOrder();
 
     const [customerName, setCustomerName] = useState('');
+    const [selectedOrderType, setSelectedOrderType] = useState<OrderType>('DINE_IN');
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
     const [cashReceived, setCashReceived] = useState('');
     const [observations, setObservations] = useState('');
@@ -72,6 +73,7 @@ export const OrderSummary = () => {
         createOrder({
             sessionId: currentSession!.idSession,
             cashierId: user!.idUser,
+            orderType: selectedOrderType,
             paymentMethod,
             amountPaid,
             items: orderItems.map(item => ({
@@ -87,6 +89,7 @@ export const OrderSummary = () => {
 
                 // Clear fields for the next order
                 setCustomerName('');
+                setSelectedOrderType('DINE_IN');
                 setPaymentMethod('CASH');
                 setCashReceived('');
                 setObservations('');
@@ -97,6 +100,7 @@ export const OrderSummary = () => {
     const handleClearForm = () => {
         clearCart();
         setCustomerName('');
+        setSelectedOrderType('DINE_IN');
         setPaymentMethod('CASH');
         setCashReceived('');
         setObservations('');
@@ -188,6 +192,29 @@ export const OrderSummary = () => {
 
                     <Separator className="bg-border/60" />
 
+                    {/* Order Type Selection */}
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Tipo de Pedido</Label>
+                        <div className="flex gap-1">
+                            <Button
+                                variant={selectedOrderType === 'DINE_IN' ? 'default' : 'outline'}
+                                size="sm"
+                                className={`flex-1 h-8 text-xs ${selectedOrderType === 'DINE_IN' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : ''}`}
+                                onClick={() => setSelectedOrderType('DINE_IN')}
+                            >
+                                <UtensilsCrossed className="h-3 w-3 mr-1" /> Para la Mesa
+                            </Button>
+                            <Button
+                                variant={selectedOrderType === 'TAKEOUT' ? 'default' : 'outline'}
+                                size="sm"
+                                className={`flex-1 h-8 text-xs ${selectedOrderType === 'TAKEOUT' ? 'bg-(--cashier-sidebar-primary) hover:bg-(--cashier-sidebar-primary)/90' : ''}`}
+                                onClick={() => setSelectedOrderType('TAKEOUT')}
+                            >
+                                <Package className="h-3 w-3 mr-1" /> Para Llevar
+                            </Button>
+                        </div>
+                    </div>
+
                     {/* Payment Method & Input Compact Grid */}
                     <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-1.5">
@@ -276,6 +303,7 @@ export const OrderSummary = () => {
                 previewData={{
                     items: orderItems,
                     total,
+                    orderType: selectedOrderType,
                     paymentMethod,
                     amountPaid: paymentMethod === 'CASH' ? (parseFloat(cashReceived) || 0) : total,
                     change,
