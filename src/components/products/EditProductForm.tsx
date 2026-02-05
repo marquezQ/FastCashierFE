@@ -37,8 +37,8 @@ export const EditProductForm = ({
   );
   const initialCategoryId = productCategory?.idCategory;
 
-  // Usar la imagen actual o placeholder
-  const currentImageUrl = product.imageUrl || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
+  // Usar la imagen actual o null
+  const currentImageUrl = product.imageUrl || null;
   const [imagePreview, setImagePreview] = useState<string | null>(currentImageUrl);
   const [newImageFile, setNewImageFile] = useState<File | undefined>(undefined);
 
@@ -72,7 +72,7 @@ export const EditProductForm = ({
       isActive: product.isActive,
     });
 
-    const imageUrl = product.imageUrl || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
+    const imageUrl = product.imageUrl || null;
     setImagePreview(imageUrl);
     setNewImageFile(undefined);
   }, [product, categories, form]);
@@ -108,6 +108,9 @@ export const EditProductForm = ({
     // Si hay nueva imagen, incluirla
     if (newImageFile) {
       cleanedData.image = newImageFile;
+    } else if (imagePreview === null && product.imageUrl) {
+      // Si se eliminó la imagen (X) y el producto tenía una, indicar al backend
+      cleanedData.imageUrl = '';
     }
 
     // Si no hay cambios, no hacer nada

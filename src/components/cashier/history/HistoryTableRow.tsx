@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Eye, User as UserIcon, X } from 'lucide-react';
+import { Eye, User as UserIcon, X, DollarSign, QrCode } from 'lucide-react';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { formatPrice } from '@/utils/product.utils';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -51,6 +52,29 @@ export const HistoryTableRow = ({ order, onViewDetail, onCancel, isCancelling }:
                     <span className="text-sm font-bold truncate max-w-50">
                         {order.customer || 'Público General'}
                     </span>
+                </div>
+            </TableCell>
+            <TableCell className="text-center">
+                <div className="flex flex-col items-center justify-center gap-1">
+                    <span className="text-sm font-black text-foreground tabular-nums">
+                        {formatPrice(order.total)}
+                    </span>
+                    <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-tight ${order.paymentMethod === 'CASH'
+                        ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50'
+                        : 'bg-violet-500/10 text-violet-600 border-violet-200/50'
+                        }`}>
+                        {order.paymentMethod === 'CASH' ? (
+                            <>
+                                <DollarSign className="h-2.5 w-2.5" />
+                                <span>Efectivo</span>
+                            </>
+                        ) : (
+                            <>
+                                <QrCode className="h-2.5 w-2.5" />
+                                <span>QR / Transfer</span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </TableCell>
             <TableCell className="text-center">

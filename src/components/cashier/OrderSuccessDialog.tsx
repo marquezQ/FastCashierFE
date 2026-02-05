@@ -62,7 +62,7 @@ export const OrderProcessDialog = ({
 
     return (
         <Dialog open={open} onOpenChange={(val) => !isProcessing && onOpenChange(val)}>
-            <DialogContent className="sm:max-w-md border-0 bg-background p-0 overflow-hidden rounded-3xl shadow-2xl">
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-3xl shadow-2xl">
                 {/* Header Section - Compacted */}
                 <div className={`px-6 py-4 flex items-center gap-4 border-b transition-colors duration-500 ${isSuccess ? 'bg-emerald-500/10 border-emerald-500/10' : 'bg-primary/5 border-primary/10'}`}>
                     <div className={`rounded-full p-2 shadow-lg transition-all duration-500 shrink-0 ${isSuccess ? 'bg-emerald-500 shadow-emerald-500/20' : 'bg-primary shadow-primary/20'}`}>

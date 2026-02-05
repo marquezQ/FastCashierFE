@@ -35,6 +35,7 @@ export const HistoryTable = ({
                     <TableRow className="hover:bg-transparent border-green-100 dark:border-green-900 h-16">
                         <TableHead className="w-35 font-bold text-xs uppercase tracking-widest pl-6">Pedido</TableHead>
                         <TableHead className="font-bold text-xs uppercase tracking-widest text-left px-4">Cliente</TableHead>
+                        <TableHead className="font-bold text-xs uppercase tracking-widest text-center">Total Pedido</TableHead>
                         <TableHead className="font-bold text-xs uppercase tracking-widest text-center">Estado</TableHead>
                         <TableHead className="font-bold text-xs uppercase tracking-widest text-center">Fecha y Hora</TableHead>
                         <TableHead className="font-bold text-xs uppercase tracking-widest text-center pr-6">Acciones</TableHead>
@@ -43,7 +44,7 @@ export const HistoryTable = ({
                 <TableBody>
                     {isLoading ? (
                         <TableRow>
-                            <TableCell colSpan={5} className="h-48 text-center border-none">
+                            <TableCell colSpan={6} className="h-48 text-center border-none">
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="h-10 w-10 border-4 border-green-500/30 border-t-green-500 rounded-full animate-spin" />
                                     <span className="text-sm font-medium text-muted-foreground">Cargando datos del turno...</span>
@@ -62,7 +63,7 @@ export const HistoryTable = ({
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={5} className="h-80 text-center border-none">
+                            <TableCell colSpan={6} className="h-80 text-center border-none">
                                 <div className="flex flex-col items-center justify-center text-muted-foreground p-12">
                                     <div className="bg-muted/50 p-6 rounded-full mb-6 border shadow-inner">
                                         <ClipboardList className="h-12 w-12 opacity-30 text-green-600" />
