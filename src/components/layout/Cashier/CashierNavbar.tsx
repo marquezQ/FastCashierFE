@@ -75,7 +75,7 @@ export const CashierNavbar = ({
     return (
         <header className="sticky top-0 z-40 h-16 border-b border-border/40 bg-background/80 backdrop-blur-md shadow-sm w-full">
             <div className="flex h-full items-center px-2 md:px-4 lg:px-6 max-w-full overflow-hidden">
-                <div className="flex items-center gap-1.5 md:gap-4 flex-shrink min-w-0">
+                <div className="flex items-center gap-1.5 md:gap-4 shrink min-w-0">
                     <CashierMobileSidebar
                         isOpen={isMobileSidebarOpen}
                         onOpenChange={onMobileSidebarChange}
@@ -83,11 +83,11 @@ export const CashierNavbar = ({
                     />
 
                     {/* Session Status - Ultra Compact on Mobile */}
-                    <div className="flex items-center gap-2 md:gap-6 min-w-0 flex-shrink">
+                    <div className="flex items-center gap-2 md:gap-6 min-w-0 shrink">
                         {/* Status Indicator */}
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <div className={`h-2 w-2 md:h-2.5 md:w-2.5 rounded-full flex-shrink-0 ${isSessionActive ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-slate-300 dark:bg-slate-600'}`} />
-                            <span className={`text-[11px] md:text-sm font-bold truncate max-w-[50px] sm:max-w-none ${isSessionActive ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'}`}>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                            <div className={`h-2 w-2 md:h-2.5 md:w-2.5 rounded-full shrink-0 ${isSessionActive ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-slate-300 dark:bg-slate-600'}`} />
+                            <span className={`text-[11px] md:text-sm font-bold truncate max-w-12.5 sm:max-w-none ${isSessionActive ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'}`}>
                                 {isSessionActive ? (
                                     <>
                                         Turno <span className="hidden sm:inline">Activo</span>
@@ -98,7 +98,7 @@ export const CashierNavbar = ({
 
                         {/* Time Indicator - Smaller on mobile */}
                         {isSessionActive && currentSession && (
-                            <div className="hidden min-[400px]:flex items-center gap-1 md:gap-2 text-[11px] md:text-sm text-green-700 dark:text-green-400 flex-shrink-0 backdrop-blur-sm bg-green-500/5 px-2 py-0.5 rounded-full border border-green-500/10">
+                            <div className="hidden min-[400px]:flex items-center gap-1 md:gap-2 text-[11px] md:text-sm text-green-700 dark:text-green-400 shrink-0 backdrop-blur-sm bg-green-500/5 px-2 py-0.5 rounded-full border border-green-500/10">
                                 <Clock className="h-3 w-3 md:h-4 md:w-4" />
                                 <span>
                                     {new Date(currentSession.openingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
@@ -109,7 +109,7 @@ export const CashierNavbar = ({
 
                     {/* Close Session Button - Adaptive */}
                     {isSessionActive && (
-                        <div className="flex items-center flex-shrink-0">
+                        <div className="flex items-center shrink-0">
                             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button
@@ -122,7 +122,7 @@ export const CashierNavbar = ({
                                         <span className="min-[400px]:hidden">Cerrar</span>
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="w-[95vw] sm:max-w-[425px] rounded-2xl border-2">
+                                <DialogContent className="w-[95vw] sm:max-w-106.25 rounded-2xl">
                                     <DialogHeader>
                                         <DialogTitle className="flex items-center gap-2 text-destructive text-lg md:text-xl font-bold">
                                             <AlertTriangle className="h-5 w-5 animate-pulse" />
@@ -198,7 +198,7 @@ export const CashierNavbar = ({
 
                 <div className="flex-1" />
 
-                <div className="flex items-center gap-1.5 md:gap-3 flex-shrink-0">
+                <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
                     <ThemeToggle />
                     <UserMenu
                         user={user}

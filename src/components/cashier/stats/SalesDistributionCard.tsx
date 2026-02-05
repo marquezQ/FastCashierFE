@@ -31,7 +31,7 @@ export const SalesDistributionCard = ({ stats }: SalesDistributionCardProps) => 
                             </div>
                             <div>
                                 <p className="text-sm font-bold">Efectivo</p>
-                                <p className="text-[10px] text-muted-foreground uppercase font-medium">{stats.cashOrderCount} Órdenes</p>
+                                <p className="text-[10px] text-muted-foreground uppercase font-medium">{stats.cashOrderCount} Órdenes (Incluye apertura)</p>
                             </div>
                         </div>
                         <div className="text-right">

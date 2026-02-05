@@ -40,15 +40,15 @@ export const ProductosView = () => {
         image: data.image,
         isActive: data.isActive,
       });
-      
+
       toast.success('Producto creado exitosamente');
       setIsCreateDialogOpen(false);
     } catch (error) {
       let errorMessage = 'Error al crear el producto';
       if (error instanceof AxiosError) {
         const data = error.response?.data as { message?: string | string[] };
-        errorMessage = Array.isArray(data?.message) 
-          ? data.message[0] 
+        errorMessage = Array.isArray(data?.message)
+          ? data.message[0]
           : data?.message || error.message || errorMessage;
       } else if (error instanceof Error) {
         errorMessage = error.message;
@@ -91,6 +91,9 @@ export const ProductosView = () => {
       if (data.imageUrl !== undefined) {
         updateData.imageUrl = data.imageUrl;
       }
+      if (data.image !== undefined) {
+        updateData.image = data.image;
+      }
 
       await updateProduct.mutateAsync({
         id: selectedProduct.idProduct,
@@ -104,8 +107,8 @@ export const ProductosView = () => {
       let errorMessage = 'Error al actualizar el producto';
       if (error instanceof AxiosError) {
         const data = error.response?.data as { message?: string | string[] };
-        errorMessage = Array.isArray(data?.message) 
-          ? data.message[0] 
+        errorMessage = Array.isArray(data?.message)
+          ? data.message[0]
           : data?.message || error.message || errorMessage;
       } else if (error instanceof Error) {
         errorMessage = error.message;

@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { Pencil, ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -16,19 +16,26 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   return (
     <Card className="group flex h-full flex-col overflow-hidden transition-all hover:shadow-lg border-0 shadow-sm gap-0 py-0">
-      <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
-        <img
-          src={getProductImageUrl(product)}
-          alt={`Imagen de ${product.name}`}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            if (target.src !== 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop') {
-              target.src = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
-            }
-          }}
-        />
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-muted flex items-center justify-center">
+        {product.imageUrl ? (
+          <img
+            src={getProductImageUrl(product)}
+            alt={`Imagen de ${product.name}`}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop') {
+                target.src = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
+              }
+            }}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-muted-foreground/40 gap-2">
+            <ImageOff className="size-12 stroke-[1.5]" />
+            <span className="text-xs font-bold uppercase tracking-widest">Sin imagen</span>
+          </div>
+        )}
         {!product.isActive && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
             <Badge variant="destructive" className="text-sm px-3 py-1">
@@ -45,11 +52,10 @@ export const ProductCard = ({
           </h3>
           <Badge
             variant="outline"
-            className={`shrink-0 text-xs ${
-              product.isActive
+            className={`shrink-0 text-xs ${product.isActive
                 ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
                 : 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-800'
-            }`}
+              }`}
           >
             {product.isActive ? 'Activo' : 'Inactivo'}
           </Badge>

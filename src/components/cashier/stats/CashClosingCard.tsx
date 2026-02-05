@@ -29,7 +29,9 @@ export const CashClosingCard = ({ stats }: CashClosingCardProps) => {
                             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider flex items-center gap-2">
                                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Efectivo Físico Esperado
                             </span>
-                            <p className="text-[10px] text-muted-foreground/60 max-w-[180px] leading-tight font-medium">Suma de base inicial más ventas en efectivo.</p>
+                            <p className="text-[10px] text-muted-foreground/60 max-w-50 leading-tight font-medium">
+                                Suma de base inicial ({formatPrice(stats.initialAmount.toString())}) más ventas en efectivo.
+                            </p>
                         </div>
                         <span className="text-xl font-bold text-foreground tabular-nums tracking-tight">
                             {formatPrice(stats.expectedCash.toString())}
@@ -41,7 +43,7 @@ export const CashClosingCard = ({ stats }: CashClosingCardProps) => {
                             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider flex items-center gap-2">
                                 <div className="h-1.5 w-1.5 rounded-full bg-violet-500" /> Conciliación Digital (QR)
                             </span>
-                            <p className="text-[10px] text-muted-foreground/60 max-w-[180px] leading-tight font-medium">Total de transacciones por medios digitales.</p>
+                            <p className="text-[10px] text-muted-foreground/60 max-w-45 leading-tight font-medium">Total de transacciones por medios digitales.</p>
                         </div>
                         <span className="text-xl font-bold text-foreground tabular-nums tracking-tight">
                             {formatPrice(stats.expectedQr.toString())}
