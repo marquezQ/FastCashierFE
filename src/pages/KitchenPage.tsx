@@ -1,60 +1,61 @@
+import { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { KitchenSidebar } from '@/components/layout/Kitchen/KitchenSidebar';
+import { KitchenNavbar } from '@/components/layout/Kitchen/KitchenNavbar';
+import { PedidosView } from './kitchen/PedidosView';
+import { HistorialView } from './kitchen/HistorialView';
+import { cn } from '@/lib/utils';
 
 export const KitchenPage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsMobileSidebarOpen(false);
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  if (!user) return null;
+
   return (
-    <div style={{ padding: '2rem' }}>
-      <div style={{ 
-        backgroundColor: 'white', 
-        padding: '2rem', 
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <h1 style={{ marginBottom: '1rem' }}>👨‍🍳 Panel Cocina</h1>
-        
-        <div style={{ 
-          backgroundColor: '#f8f9fa', 
-          padding: '1rem', 
-          borderRadius: '4px',
-          marginBottom: '1rem'
-        }}>
-          <p><strong>Usuario:</strong> {user?.fullName}</p>
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>Rol:</strong> Cocina</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <KitchenSidebar
+        onNavigate={handleNavigate}
+        onCollapsedChange={setIsSidebarCollapsed}
+      />
 
-        <button 
-          onClick={handleLogout}
-          style={{
-            padding: '0.5rem 1.5rem',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold'
+      <div className={cn(
+        'transition-all duration-300',
+        isSidebarCollapsed ? 'xl:pl-16' : 'xl:pl-64'
+      )}>
+        <KitchenNavbar
+          user={{
+            fullName: user.fullName,
+            email: user.email,
           }}
-        >
-          Cerrar Sesión
-        </button>
+          isMobileSidebarOpen={isMobileSidebarOpen}
+          onMobileSidebarChange={setIsMobileSidebarOpen}
+          onNavigate={handleNavigate}
+          onLogout={handleLogout}
+        />
 
-        <div style={{ marginTop: '2rem', color: '#666' }}>
-          <h3>Funciones disponibles:</h3>
-          <ul>
-            <li>✅ Ver órdenes pendientes</li>
-            <li>✅ Tomar órdenes para preparar</li>
-            <li>✅ Marcar órdenes como listas</li>
-            <li>✅ Ver historial del día</li>
-          </ul>
-        </div>
+        <main className="p-4 md:p-6 xl:p-8">
+          <Routes>
+            <Route index element={<Navigate to="/kitchen/pedidos" replace />} />
+            <Route path="/pedidos" element={<PedidosView />} />
+            <Route path="/historial" element={<HistorialView />} />
+            <Route path="*" element={<Navigate to="/kitchen" replace />} />
+          </Routes>
+        </main>
       </div>
     </div>
   );

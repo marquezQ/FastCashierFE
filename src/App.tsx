@@ -46,7 +46,7 @@ function App() {
         {/* RUTAS PROTEGIDAS: KITCHEN */}
         {/* ============================================ */}
         <Route element={<ProtectedRoute allowedRoles={['KITCHEN']} />}>
-          <Route path="/kitchen" element={<KitchenPage />} />
+          <Route path="/kitchen/*" element={<KitchenPage />} />
 
         </Route>
 

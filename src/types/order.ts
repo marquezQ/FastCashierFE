@@ -3,7 +3,7 @@ import type { User } from './auth';
 import type { Product } from './products';
 
 export type PaymentMethod = 'CASH' | 'QR';
-export type OrderStatus = 'PENDING' | 'PREPARING' | 'COMPLETED' | 'CANCELLED';
+export type OrderStatus = 'PENDING' | 'IN_PREPARATION' | 'READY' | 'DELIVERED' | 'CANCELLED';
 export type OrderType = 'DINE_IN' | 'TAKEOUT';
 
 export interface OrderItemDto {
@@ -49,6 +49,7 @@ export interface Order {
     preparationStartDate: string | null;
     completedDate: string | null;
     customer: string | null;
+    tableNumber?: string | null;
     observations: string | null;
     updatedAt: string;
     session?: CashierSession;
