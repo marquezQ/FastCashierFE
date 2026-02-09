@@ -1,34 +1,23 @@
 import { Clock, Users, Package, AlertCircle, CheckCircle2, PlayCircle, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-
-export interface KitchenOrderItem {
-    id: string;
-    name: string;
-    quantity: number;
-}
-
-export interface KitchenOrder {
-    id: string;
-    orderNumber: string;
-    type: 'Mesa' | 'Para llevar';
-    tableNumber?: string;
-    items: KitchenOrderItem[];
-    observations?: string;
-    createdAt: string;
-    status: 'new' | 'preparing' | 'ready';
-    minutesWait: number;
-}
+import type { Order, OrderStatus } from '@/types/order';
 
 interface KitchenOrderCardProps {
-    order: KitchenOrder;
-    onAction: (orderId: string, nextStatus: KitchenOrder['status'] | 'delivered') => void;
+    order: Order;
+    onAction: (orderId: number, nextStatus: OrderStatus | 'DELIVERED') => void;
 }
 
 export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => {
-    const isNew = order.status === 'new';
-    const isPreparing = order.status === 'preparing';
-    const isReady = order.status === 'ready';
+    const isNew = order.orderStatus === 'PENDING';
+    const isPreparing = order.orderStatus === 'IN_PREPARATION';
+    const isReady = order.orderStatus === 'READY';
+
+    // Calculate minutes wait from createdAt
+    const minutesWait = Math.floor((new Date().getTime() - new Date(order.orderDate).getTime()) / 60000);
+
+    const orderTypeLabel = order.orderType === 'DINE_IN' ? 'Mesa' : 'Para llevar';
+    const isDineIn = order.orderType === 'DINE_IN';
 
     return (
         <div className={cn(
@@ -43,13 +32,16 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                     <span className="text-xl font-black tracking-tighter text-foreground">
                         #{order.orderNumber}
                     </span>
-                    {order.minutesWait > 20 && !isReady && (
+                    <span className="text-sm font-bold text-muted-foreground truncate max-w-30">
+                        - {order.customer || 'Cliente General'}
+                    </span>
+                    {minutesWait > 20 && !isReady && (
                         <AlertCircle className="h-4 w-4 text-destructive animate-pulse" />
                     )}
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground bg-background/80 px-2 py-1 rounded-full border border-border/40 shadow-sm">
                     <Clock className="h-3 w-3" />
-                    <span>{order.minutesWait} min</span>
+                    <span>{minutesWait} min</span>
                 </div>
             </div>
 
@@ -58,8 +50,8 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                 {/* Type & Table */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/5 text-primary border border-primary/10">
-                        {order.type === 'Mesa' ? <Users className="h-3.5 w-3.5" /> : <Package className="h-3.5 w-3.5" />}
-                        <span className="text-xs font-black uppercase tracking-wider">{order.type}</span>
+                        {isDineIn ? <Users className="h-3.5 w-3.5" /> : <Package className="h-3.5 w-3.5" />}
+                        <span className="text-xs font-black uppercase tracking-wider">{orderTypeLabel}</span>
                     </div>
                     {order.tableNumber && (
                         <span className="text-sm font-bold text-muted-foreground">
@@ -71,13 +63,13 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                 {/* Items List - Only for Detailed states */}
                 {!isNew && (
                     <div className="space-y-2.5">
-                        {order.items.map((item) => (
-                            <div key={item.id} className="flex items-start gap-3">
+                        {order.details.map((detail) => (
+                            <div key={detail.idDetail} className="flex items-start gap-3">
                                 <div className="flex items-center justify-center min-w-7 h-7 rounded-lg bg-orange-500 text-white font-black text-sm shadow-sm ring-2 ring-orange-500/20">
-                                    {item.quantity}
+                                    {detail.quantity}
                                 </div>
                                 <span className="text-[15px] font-bold text-foreground leading-tight pt-0.5">
-                                    {item.name}
+                                    {detail.product.name}
                                 </span>
                             </div>
                         ))}
@@ -97,7 +89,7 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                 {/* Compact Mode Meta */}
                 {isNew && (
                     <p className="text-sm font-bold text-muted-foreground italic">
-                        {order.items.length} productos en espera...
+                        {order.details.length} productos en espera...
                     </p>
                 )}
             </div>
@@ -106,7 +98,7 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
             <div className="p-4 pt-0">
                 {isNew && (
                     <Button
-                        onClick={() => onAction(order.id, 'preparing')}
+                        onClick={() => onAction(order.idOrder, 'IN_PREPARATION')}
                         className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-500/20 h-11"
                     >
                         <PlayCircle className="h-5 w-5" />
@@ -116,7 +108,7 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
 
                 {isPreparing && (
                     <Button
-                        onClick={() => onAction(order.id, 'ready')}
+                        onClick={() => onAction(order.idOrder, 'READY')}
                         className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 h-11"
                     >
                         <CheckCircle2 className="h-5 w-5" />
@@ -126,7 +118,7 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
 
                 {isReady && (
                     <Button
-                        onClick={() => onAction(order.id, 'delivered')}
+                        onClick={() => onAction(order.idOrder, 'DELIVERED')}
                         variant="secondary"
                         className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest border-2 h-11"
                     >

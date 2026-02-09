@@ -27,15 +27,16 @@ interface HistoryTableRowProps {
 
 const statusConfig = {
     PENDING: { label: 'Pendiente', color: 'bg-amber-500/10 text-amber-600 border-amber-200/50' },
-    PREPARING: { label: 'Preparación', color: 'bg-blue-500/10 text-blue-600 border-blue-200/50' },
-    COMPLETED: { label: 'Completado', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50' },
+    IN_PREPARATION: { label: 'Preparación', color: 'bg-blue-500/10 text-blue-600 border-blue-200/50' },
+    READY: { label: 'Listo', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50' },
+    DELIVERED: { label: 'Entregado', color: 'bg-green-500/10 text-green-600 border-green-200/50' },
     CANCELLED: { label: 'Cancelado', color: 'bg-red-500/10 text-red-600 border-red-200/50' },
 };
 
 export const HistoryTableRow = ({ order, onViewDetail, onCancel, isCancelling }: HistoryTableRowProps) => {
     const [reason, setReason] = useState('');
     const status = statusConfig[order.orderStatus as keyof typeof statusConfig] || statusConfig.PENDING;
-    const canCancel = order.orderStatus === 'PENDING' || order.orderStatus === 'PREPARING';
+    const canCancel = order.orderStatus === 'PENDING' || order.orderStatus === 'IN_PREPARATION';
 
     return (
         <TableRow className="group hover:bg-green-500/5 border-green-100/50 dark:border-green-900/50 transition-colors h-20">
