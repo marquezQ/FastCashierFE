@@ -5,15 +5,18 @@ import {
     Vault,
     ClipboardCheck,
     Calculator,
-    Info
+    Info,
+    ShoppingBag
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatPrice } from '@/utils/product.utils';
 import type { CashierSession } from '@/types/cashierSession';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { SessionHeader } from './turno-detalle/SessionHeader';
 import { SessionAuditSection, AuditRow, AuditTotal } from './turno-detalle/SessionAuditSection';
 import { SessionObservations } from './turno-detalle/SessionObservations';
+import { SessionOrdersDialog } from './turno-detalle/SessionOrdersDialog';
 
 interface TurnoDetalleCardProps {
     session: CashierSession;
@@ -21,6 +24,7 @@ interface TurnoDetalleCardProps {
 
 export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isOrdersDialogOpen, setIsOrdersDialogOpen] = useState(false);
     const isClosed = session.status === 'CLOSED';
 
     const openingTime = new Date(session.openingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -63,22 +67,48 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
                     isClosed={isClosed}
                 />
 
-                {/* Botón Expansión */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsExpanded(!isExpanded);
-                    }}
-                    className={cn(
-                        "h-14 w-14 rounded-4xl flex items-center justify-center transition-all duration-300 ring-4 ring-primary/5 shrink-0",
-                        isExpanded
-                            ? "bg-primary text-primary-foreground shadow-xl shadow-primary/30 rotate-180"
-                            : "bg-muted/50 text-foreground hover:bg-primary/20 hover:text-primary hover:scale-105 active:scale-95"
-                    )}
-                >
-                    <ChevronDown className="h-7 w-7" />
-                </button>
+                <div className="flex items-center gap-3">
+                    {/* Botón Ver Pedidos con Contador */}
+                    <div className="relative group/orders">
+                        <Button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsOrdersDialogOpen(true);
+                            }}
+                            variant="outline"
+                            className="h-14 px-6 rounded-3xl bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 border-blue-500/20 shadow-sm gap-3 font-black uppercase tracking-tight shrink-0 flex items-center"
+                        >
+                            <ShoppingBag className="h-6 w-6 transition-transform group-hover/orders:scale-110" />
+                            <span className="hidden sm:inline">Ver Pedidos</span>
+                        </Button>
+                    </div>
+
+                    {/* Botón Expansión */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsExpanded(!isExpanded);
+                        }}
+                        className={cn(
+                            "h-14 w-14 rounded-4xl flex items-center justify-center transition-all duration-300 ring-4 ring-primary/5 shrink-0",
+                            isExpanded
+                                ? "bg-primary text-primary-foreground shadow-xl shadow-primary/30 rotate-180"
+                                : "bg-muted/50 text-foreground hover:bg-primary/20 hover:text-primary hover:scale-105 active:scale-95"
+                        )}
+                    >
+                        <ChevronDown className="h-7 w-7" />
+                    </button>
+                </div>
             </div>
+
+            {/* Dialog de Pedidos */}
+            <SessionOrdersDialog
+                open={isOrdersDialogOpen}
+                onOpenChange={setIsOrdersDialogOpen}
+                sessionId={session.idSession}
+                sessionNumber={session.idSession}
+                cashierName={session.user?.fullName || 'Cajero'}
+            />
 
             {/* --- DETALLE ANALÍTICO (Expanded View) --- */}
             {isExpanded && (

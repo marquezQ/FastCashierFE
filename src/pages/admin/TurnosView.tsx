@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Printer,
   FileText,
   CalendarRange,
   RefreshCw,
   Search
 } from 'lucide-react';
+import { api } from '@/api/axiosConfig';
 import { useCashierSessionsHistory } from '@/hooks/useCashierSessionsHistory';
 import { TurnoList } from '@/components/admin/turno-detalle/TurnoList';
 import {
@@ -47,7 +47,24 @@ export const TurnosView = () => {
     setActiveParams({ startDate, endDate });
   };
 
-  const handleExport = (type: 'pdf' | 'print') => toast.info(`Exportación a ${type.toUpperCase()} en desarrollo`);
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await api.get('/cashier-sessions/report/pdf', {
+        params: activeParams,
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+
+      // Limpiar el objeto URL después de un momento
+      setTimeout(() => window.URL.revokeObjectURL(url), 100);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Ocurrió un error al generar el reporte PDF');
+    }
+  };
 
   return (
     <div className="space-y-8 pb-10 max-w-7xl mx-auto">
@@ -59,11 +76,13 @@ export const TurnosView = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="h-11 rounded-xl font-bold gap-2 border-2 shadow-sm" onClick={() => handleExport('print')}>
-            <Printer className="h-4 w-4" /> Imprimir
-          </Button>
-          <Button variant="outline" className="h-11 rounded-xl font-bold gap-2 border-2 shadow-sm" onClick={() => handleExport('pdf')}>
-            <FileText className="h-4 w-4" /> PDF
+          <Button
+            variant="outline"
+            className="h-11 px-6 rounded-xl font-bold gap-2 border-2 border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+            onClick={handleDownloadPdf}
+            disabled={isLoading}
+          >
+            <FileText className="h-4 w-4" /> Generar Reporte PDF
           </Button>
         </div>
       </div>

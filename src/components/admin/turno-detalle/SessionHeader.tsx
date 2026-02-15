@@ -28,12 +28,13 @@ export const SessionHeader = ({
                 <span className="font-black text-foreground text-lg tracking-tight truncate leading-tight">
                     {session.user?.fullName || 'Cajero'}
                 </span>
-                <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        Sesión #{session.idSession}
+                <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-muted/30 px-2 py-0.5 rounded-md">
+                        # {session.idSession}
                     </span>
-                    <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                    <span className="text-[10px] font-bold text-muted-foreground/60">{session.orderCount} pedidos</span>
+                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/10">
+                        {session.orderCount} pedidos
+                    </span>
                 </div>
             </div>
 
