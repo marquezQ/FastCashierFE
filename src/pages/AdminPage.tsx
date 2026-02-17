@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useAdminNavigation } from '@/hooks/useAdminNavigation';
 import { Sidebar } from '@/components/layout/Sidebar/Sidebar';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
+import { cn } from '@/lib/utils';
 import { DashboardView } from './admin/DashboardView';
 import { UsuariosView } from './admin/UsuariosView';
 import { ProductosView } from './admin/ProductosView';
@@ -17,14 +18,22 @@ export const AdminPage = () => {
   const { user } = useAuthStore();
   const { handleNavigate, handleLogout } = useAdminNavigation();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar onNavigate={handleNavigate} />
+      <Sidebar
+        onNavigate={handleNavigate}
+        isCollapsed={isSidebarCollapsed}
+        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
 
-      <div className="lg:pl-64">
+      <div className={cn(
+        "transition-all duration-300",
+        isSidebarCollapsed ? "lg:pl-16" : "lg:pl-64"
+      )}>
         <Navbar
           user={user}
           isMobileSidebarOpen={isMobileSidebarOpen}

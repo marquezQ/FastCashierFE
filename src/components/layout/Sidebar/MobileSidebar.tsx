@@ -22,8 +22,11 @@ export const MobileSidebar = ({ isOpen, onOpenChange, onNavigate }: MobileSideba
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-64 bg-sidebar border-sidebar-border">
-        <SidebarContent onNavigate={handleNavigate} />
+      <SheetContent side="left" hideClose className="p-0 w-64 bg-sidebar border-sidebar-border">
+        <SidebarContent
+          onNavigate={handleNavigate}
+          onToggle={() => onOpenChange(false)}
+        />
       </SheetContent>
     </Sheet>
   );
