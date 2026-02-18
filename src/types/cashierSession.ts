@@ -1,3 +1,5 @@
+import type { UserWithRole } from './auth';
+
 export type SessionStatus = 'OPEN' | 'CLOSED';
 
 export interface CashierSession {
@@ -15,6 +17,7 @@ export interface CashierSession {
     difference: string | null;
     observations: string | null;
     status: SessionStatus;
+    user?: UserWithRole;
 }
 
 export interface CreateSessionDto {

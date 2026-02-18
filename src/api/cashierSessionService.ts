@@ -24,5 +24,14 @@ export const cashierSessionService = {
     getSessionStatistics: async (id: number): Promise<SessionStatistics> => {
         const response = await api.get<SessionStatistics>(`/cashier-sessions/${id}/statistics`);
         return response.data;
+    },
+
+    getSessionsHistory: async (params: {
+        period?: '7d' | 'this-month';
+        startDate?: string;
+        endDate?: string;
+    }): Promise<CashierSession[]> => {
+        const response = await api.get<CashierSession[]>('/cashier-sessions', { params });
+        return response.data;
     }
 };
