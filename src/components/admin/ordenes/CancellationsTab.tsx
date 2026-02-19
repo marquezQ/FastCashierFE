@@ -6,49 +6,44 @@ import {
     AlertCircle,
     Receipt,
     Eye,
-    UtensilsCrossed
+    UtensilsCrossed,
+    Loader2
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatPrice } from '@/utils/product.utils';
-
 import { Button } from '@/components/ui/button';
+import { useAdminCancellations } from '@/hooks/useAdminMetrics';
+import type { MetricsParams } from '@/types/adminMetrics';
 
-// Hardcoded data with session ID for Cancellations UI demonstration
-const CANCELLED_ORDERS = [
-    {
-        id: 'ORD-260213-0005',
-        sessionId: 'SESS-882',
-        customer: 'Andrés García',
-        total: '125.50',
-        date: '2024-02-14T15:20:00Z',
-        cashier: 'Usuario Cajero',
-        reason: 'El cliente se arrepintió después de 15 minutos de espera. Alegó que tenía prisa para tomar un bus.',
-        items: 3
-    },
-    {
-        id: 'ORD-260213-0012',
-        sessionId: 'SESS-884',
-        customer: 'Público General',
-        total: '45.00',
-        date: '2024-02-14T17:45:00Z',
-        cashier: 'Pedro Márquez',
-        reason: 'Error en la selección del producto. El cajero marcó Broaster en lugar de Hamburguesa por error.',
-        items: 1
-    },
-    {
-        id: 'ORD-260213-0028',
-        sessionId: 'SESS-885',
-        customer: 'María Josefa',
-        total: '210.00',
-        date: '2024-02-15T12:10:00Z',
-        cashier: 'Usuario Cajero',
-        reason: 'Fallo en el sistema de pago QR. El cliente no pudo concretar la transacción y no tenía efectivo.',
-        items: 5
+interface CancellationsTabProps {
+    params: MetricsParams;
+}
+
+export const CancellationsTab = ({ params }: CancellationsTabProps) => {
+    const { data: cancelledOrders = [], isLoading, error } = useAdminCancellations(params);
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                <p className="text-sm font-black uppercase tracking-widest text-muted-foreground">Cargando auditoría...</p>
+            </div>
+        );
     }
-];
 
-export const CancellationsTab = () => {
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-4 bg-red-500/5 rounded-[2.5rem] border-2 border-dashed border-red-500/20 mx-4 md:mx-0">
+                <AlertCircle className="h-10 w-10 text-red-500" />
+                <div className="text-center">
+                    <p className="text-sm font-black uppercase tracking-widest text-red-600">Error al cargar auditoría</p>
+                    <p className="text-xs font-bold text-muted-foreground mt-1">Por favor, intenta refrescar la página</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 px-4 md:px-0">
@@ -60,7 +55,7 @@ export const CancellationsTab = () => {
                 </div>
                 <div className="flex items-center gap-3">
                     <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 px-3 py-1.5 rounded-xl font-black uppercase tracking-widest text-[9px]">
-                        {CANCELLED_ORDERS.length} Anulaciones
+                        {cancelledOrders.length} Anulaciones
                     </Badge>
                     <Button variant="outline" className="h-9 px-4 rounded-xl border-primary/20 text-primary font-black uppercase tracking-widest text-[9px] hover:bg-primary hover:text-white transition-all gap-2 shadow-sm">
                         <UtensilsCrossed className="h-3.5 w-3.5" />
@@ -70,9 +65,17 @@ export const CancellationsTab = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">
-                {CANCELLED_ORDERS.map((order) => (
-                    <CancellationCard key={order.id} order={order} />
-                ))}
+                {cancelledOrders.length > 0 ? cancelledOrders.map((order) => (
+                    <CancellationCard key={order.idOrder} order={order} />
+                )) : (
+                    <Card className="col-span-full py-20 flex flex-col items-center justify-center bg-muted/20 border-border border-2 border-dashed rounded-[2.5rem] gap-4">
+                        <Receipt className="h-12 w-12 text-muted-foreground/30" />
+                        <div className="text-center">
+                            <p className="text-sm font-black uppercase tracking-widest text-muted-foreground">No hay anulaciones registradas</p>
+                            <p className="text-xs font-bold text-muted-foreground/60 mt-1">En el periodo seleccionado</p>
+                        </div>
+                    </Card>
+                )}
 
                 {/* Audit Resource Card */}
                 <Card className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-border/60 bg-card/40 shadow-sm rounded-[2rem] gap-4 text-center group hover:border-red-500/40 transition-all duration-300">
@@ -109,9 +112,9 @@ const CancellationCard = ({ order }: { order: any }) => (
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <p className="text-lg font-black tracking-tighter text-foreground leading-none">Orden #{order.id.split('-').pop()}</p>
+                            <p className="text-lg font-black tracking-tighter text-foreground leading-none">Orden #{order.orderNumber.split('-').pop()}</p>
                             <Badge variant="secondary" className="h-7 px-2.5 text-[12px] font-black uppercase bg-muted text-muted-foreground border-none">
-                                Sesión {order.sessionId.split('-').pop()}
+                                Sesión {order.sessionId}
                             </Badge>
                         </div>
                         <p className="text-2xl font-black tracking-tighter mt-1.5 text-red-600/90">{formatPrice(order.total)}</p>
@@ -129,7 +132,7 @@ const CancellationCard = ({ order }: { order: any }) => (
                     Motivo de baja
                 </p>
                 <p className="text-sm font-bold text-foreground leading-relaxed">
-                    {order.reason}
+                    {order.observations || 'Sin motivo especificado'}
                 </p>
             </div>
 
@@ -141,7 +144,7 @@ const CancellationCard = ({ order }: { order: any }) => (
                     </div>
                     <div className="min-w-0">
                         <p className="text-[8px] font-black uppercase tracking-tight text-muted-foreground">Cajero</p>
-                        <p className="text-xs font-bold truncate">{order.cashier}</p>
+                        <p className="text-xs font-bold truncate">{order.cashier?.fullName || 'Desconocido'}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -151,7 +154,7 @@ const CancellationCard = ({ order }: { order: any }) => (
                     <div className="min-w-0">
                         <p className="text-[8px] font-black uppercase tracking-tight text-muted-foreground">Fecha/Hora</p>
                         <p className="text-xs font-bold truncate">
-                            {new Date(order.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(order.orderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
                 </div>

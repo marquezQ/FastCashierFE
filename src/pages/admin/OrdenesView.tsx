@@ -1,17 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart3, Scissors, CalendarRange, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { StatsTab } from '@/components/admin/ordenes/StatsTab';
 import { CancellationsTab } from '@/components/admin/ordenes/CancellationsTab';
-
-type Period = 'today' | '7d' | 'this-month' | 'range';
+import type { Period, MetricsParams } from '@/types/adminMetrics';
+import { toast } from 'sonner';
 
 export const OrdenesView = () => {
   const [period, setPeriod] = useState<Period>('today');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [activeParams, setActiveParams] = useState<MetricsParams>({ period: 'today' });
+
+  // Automatically apply period changes when not using custom range
+  useEffect(() => {
+    if (period !== 'range') {
+      setActiveParams({ period });
+    }
+  }, [period]);
+
+  const handleApplyRange = () => {
+    if (!startDate || !endDate) {
+      return toast.error('Selecciona un rango de fechas válido');
+    }
+    setActiveParams({ startDate, endDate });
+  };
 
   return (
     <div className="space-y-8 pb-10 max-w-7xl mx-auto animate-in fade-in duration-700">
@@ -58,7 +73,10 @@ export const OrdenesView = () => {
               <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Fecha Fin</label>
               <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-11 rounded-xl bg-background/50 border-border/50 font-bold" />
             </div>
-            <Button className="h-11 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20 shrink-0 w-full md:w-auto px-8">
+            <Button
+              onClick={handleApplyRange}
+              className="h-11 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20 shrink-0 w-full md:w-auto px-8"
+            >
               <Search className="h-4 w-4" /> Aplicar Filtro
             </Button>
           </div>
@@ -88,10 +106,10 @@ export const OrdenesView = () => {
         </div>
 
         <TabsContent value="stats" className="border-none p-0 outline-none">
-          <StatsTab />
+          <StatsTab params={activeParams} />
         </TabsContent>
         <TabsContent value="cancellations" className="border-none p-0 outline-none">
-          <CancellationsTab />
+          <CancellationsTab params={activeParams} />
         </TabsContent>
       </Tabs>
     </div>
