@@ -100,9 +100,11 @@ export const StatsTab = ({ params }: StatsTabProps) => {
                             Tiempo de Preparación
                         </h3>
                         <div className="mt-auto">
-                            <span className="text-5xl font-black tracking-tighter text-foreground leading-none">
+                            <span className="text-4xl md:text-5xl font-black tracking-tighter text-foreground leading-none">
                                 {Math.floor(kitchen.averageKitchenTime)}
-                                <span className="text-2xl ml-1 text-muted-foreground">:{(kitchen.averageKitchenTime % 1 * 60).toFixed(0).padStart(2, '0')}</span>
+                                <span className="text-4xl md:text-5xl ml-1 text-muted-foreground transition-all">
+                                    :{(kitchen.averageKitchenTime % 1 * 60).toFixed(0).padStart(2, '0')}
+                                </span>
                             </span>
                             <p className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-loose mt-1">
                                 minutos orden promedio
@@ -125,7 +127,7 @@ export const StatsTab = ({ params }: StatsTabProps) => {
                                         <p className="text-3xl font-black tracking-tighter mt-0.5">{channel.percentage}%</p>
                                     </div>
                                 </div>
-                                <div className="flex flex-col items-end gap-2 flex-1 max-w-30">
+                                <div className="flex flex-col items-end gap-2 flex-1 min-w-15 max-w-30">
                                     <Progress value={channel.percentage} className={cn("h-2 w-full", channel.color)} />
                                     <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest italic">Distribución</span>
                                 </div>
@@ -151,7 +153,7 @@ export const StatsTab = ({ params }: StatsTabProps) => {
                         {topProducts.length > 0 ? topProducts.map((product, idx) => (
                             <div
                                 key={`${product.name}-${idx}`}
-                                className="grid grid-cols-[40px_1fr_80px] md:grid-cols-[60px_1fr_120px] items-center gap-4 py-4 px-4 md:px-6 bg-background/40 border border-border/40 rounded-2xl group hover:bg-primary/5 hover:border-primary/20 transition-all duration-300"
+                                className="grid grid-cols-[24px_1fr_max-content] md:grid-cols-[60px_1fr_120px] items-center gap-2 md:gap-4 py-3 md:py-4 px-3 md:px-6 bg-background/40 border border-border/40 rounded-2xl group hover:bg-primary/5 hover:border-primary/20 transition-all duration-300"
                             >
                                 {/* Position */}
                                 <span className="text-xl font-black text-muted-foreground/40 group-hover:text-primary transition-colors italic tracking-tighter">
@@ -159,9 +161,20 @@ export const StatsTab = ({ params }: StatsTabProps) => {
                                 </span>
 
                                 {/* Name */}
-                                <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors truncate">
-                                    {product.name}
-                                </span>
+                                <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                                    <div className="h-9 w-9 md:h-12 md:w-12 rounded-xl bg-muted overflow-hidden border border-border/50 shrink-0">
+                                        <img
+                                            src={product.imageUrl || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop'}
+                                            alt={product.name}
+                                            className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="font-bold text-xs md:text-base text-foreground truncate group-hover:text-primary transition-colors">
+                                            {product.name}
+                                        </p>
+                                    </div>
+                                </div>
 
                                 {/* Sales Units */}
                                 <div className="text-right">

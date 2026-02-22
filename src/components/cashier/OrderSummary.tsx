@@ -12,7 +12,7 @@ import { useCreateOrder } from '@/hooks/useCreateOrder';
 import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
 import type { PaymentMethod, Order, OrderType } from '@/types/order';
-import { OrderProcessDialog } from './OrderSuccessDialog';
+import { OrderProcessDialog } from '../shared/OrderProcessDialog';
 
 export const OrderSummary = () => {
     const { orderItems, updateQuantity, removeItem, clearCart, currentSession } = useCashierStore();

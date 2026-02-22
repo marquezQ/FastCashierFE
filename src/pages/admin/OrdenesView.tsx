@@ -89,17 +89,17 @@ export const OrdenesView = () => {
             <TabsList className="h-14 bg-muted/40 p-1.5 rounded-4xl border border-border/40 w-fit gap-2">
               <TabsTrigger
                 value="stats"
-                className="h-11 px-8 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary font-black text-xs uppercase tracking-widest flex items-center gap-2.5 transition-all duration-300 whitespace-nowrap"
+                className="h-11 px-4 lg:px-8 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary font-black text-[10px] md:text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 whitespace-nowrap"
               >
                 <BarChart3 className="h-4 w-4" />
-                Analítica y Rendimiento
+                Analítica
               </TabsTrigger>
               <TabsTrigger
                 value="cancellations"
-                className="h-11 px-8 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-red-600 font-black text-xs uppercase tracking-widest flex items-center gap-2.5 transition-all duration-300 whitespace-nowrap"
+                className="h-11 px-4 lg:px-8 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-red-600 font-black text-[10px] md:text-xs uppercase tracking-widest flex items-center gap-2 transition-all duration-300 whitespace-nowrap"
               >
                 <Scissors className="h-4 w-4" />
-                Control de Anulaciones
+                Cancelaciones
               </TabsTrigger>
             </TabsList>
           </div>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     XCircle,
     User,
@@ -15,6 +16,8 @@ import { formatPrice } from '@/utils/product.utils';
 import { Button } from '@/components/ui/button';
 import { useAdminCancellations } from '@/hooks/useAdminMetrics';
 import type { MetricsParams } from '@/types/adminMetrics';
+import { OrderProcessDialog } from '@/components/shared/OrderProcessDialog';
+import type { Order } from '@/types/order';
 
 interface CancellationsTabProps {
     params: MetricsParams;
@@ -22,6 +25,8 @@ interface CancellationsTabProps {
 
 export const CancellationsTab = ({ params }: CancellationsTabProps) => {
     const { data: cancelledOrders = [], isLoading, error } = useAdminCancellations(params);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (isLoading) {
         return (
@@ -43,6 +48,11 @@ export const CancellationsTab = ({ params }: CancellationsTabProps) => {
             </div>
         );
     }
+
+    const handleViewDetail = (order: Order) => {
+        setSelectedOrder(order);
+        setIsModalOpen(true);
+    };
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
@@ -66,7 +76,11 @@ export const CancellationsTab = ({ params }: CancellationsTabProps) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">
                 {cancelledOrders.length > 0 ? cancelledOrders.map((order) => (
-                    <CancellationCard key={order.idOrder} order={order} />
+                    <CancellationCard
+                        key={order.idOrder}
+                        order={order}
+                        onViewDetail={() => handleViewDetail(order)}
+                    />
                 )) : (
                     <Card className="col-span-full py-20 flex flex-col items-center justify-center bg-muted/20 border-border border-2 border-dashed rounded-[2.5rem] gap-4">
                         <Receipt className="h-12 w-12 text-muted-foreground/30" />
@@ -93,11 +107,24 @@ export const CancellationsTab = ({ params }: CancellationsTabProps) => {
                     </Button>
                 </Card>
             </div>
+
+            {/* Order Detail Modal */}
+            {selectedOrder && (
+                <OrderProcessDialog
+                    open={isModalOpen}
+                    onOpenChange={setIsModalOpen}
+                    mode="success"
+                    previewData={null}
+                    order={selectedOrder}
+                    onConfirm={() => { }}
+                    isProcessing={false}
+                />
+            )}
         </div>
     );
 };
 
-const CancellationCard = ({ order }: { order: any }) => (
+const CancellationCard = ({ order, onViewDetail }: { order: Order; onViewDetail: () => void }) => (
     <Card className="group relative overflow-hidden border-2 border-border bg-card shadow-sm rounded-3xl p-5 hover:border-red-500/30 transition-all duration-300">
         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
             <Receipt className="h-20 w-20 text-red-600 -rotate-12" />
@@ -161,7 +188,11 @@ const CancellationCard = ({ order }: { order: any }) => (
             </div>
 
             {/* Action Button */}
-            <Button variant="outline" className="w-full mt-1 h-10 rounded-xl border-dashed border-red-500/30 text-red-600 font-black uppercase tracking-widest text-[10px] hover:bg-red-500 hover:text-white hover:border-red-500 transition-all gap-2">
+            <Button
+                variant="outline"
+                className="w-full mt-1 h-10 rounded-xl border-dashed border-red-500/30 text-red-600 font-black uppercase tracking-widest text-[10px] hover:bg-red-500 hover:text-white hover:border-red-500 transition-all gap-2"
+                onClick={onViewDetail}
+            >
                 <Eye className="h-3.5 w-3.5" />
                 Ver Detalles de Orden
             </Button>

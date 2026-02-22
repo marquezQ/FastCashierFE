@@ -98,21 +98,7 @@ export const ProductsGrid = ({
             </div>
           ) : (
             <>
-              {/* Móvil: Scroll horizontal */}
-              <div className="overflow-x-auto overflow-y-hidden -mx-4 sm:hidden px-4 pb-2">
-                <div className="flex gap-4 min-w-max">
-                  {category.products.map((product) => (
-                    <div key={product.idProduct} className="w-70 shrink-0">
-                      <ProductCard
-                        product={product}
-                        onEdit={onEditProduct}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Desktop: Grid normal */}
-              <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {category.products.map((product) => (
                   <ProductCard
                     key={product.idProduct}

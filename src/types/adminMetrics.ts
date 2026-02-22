@@ -17,6 +17,7 @@ export interface DashboardChannels {
 
 export interface TopProduct {
     name: string;
+    imageUrl?: string | null;
     totalQuantity: number;
 }
 

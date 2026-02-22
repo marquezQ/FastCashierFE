@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useOrdersBySession } from '@/hooks/useOrdersBySession';
-import { OrderProcessDialog } from '@/components/cashier/OrderSuccessDialog';
+import { OrderProcessDialog } from '@/components/shared/OrderProcessDialog';
 import { SessionOrdersTable } from './SessionOrdersTable';
 import type { Order } from '@/types/order';
 
