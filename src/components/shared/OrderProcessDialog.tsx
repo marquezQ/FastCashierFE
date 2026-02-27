@@ -11,6 +11,8 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import type { Order, OrderItem } from '@/types/order';
 import { formatPrice } from '@/utils/product.utils';
+import { printComponent } from '@/utils/print.utils';
+import { ThermalTicket } from './ThermalTicket';
 
 interface OrderProcessDialogProps {
     open: boolean;
@@ -249,7 +251,7 @@ export const OrderProcessDialog = ({
                             <Button
                                 variant="outline"
                                 className="flex-1 h-12 rounded-xl font-bold border-2 hover:bg-background hover:text-primary transition-all active:scale-95 gap-2"
-                                onClick={() => { /* Imprimir ticket */ }}
+                                onClick={() => order && printComponent(ThermalTicket, { order })}
                             >
                                 <Printer className="h-5 w-5" /> Imprimir
                             </Button>
