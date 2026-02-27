@@ -3,6 +3,7 @@ import { KitchenOrderColumn } from '@/components/kitchen/KitchenOrderColumn';
 import { KitchenOrderCard } from '@/components/kitchen/KitchenOrderCard';
 import { useKitchenOrders } from '@/hooks/useKitchenOrders';
 import { useUpdateOrderStatus } from '@/hooks/useUpdateOrderStatus';
+import { speakOrderReady } from '@/utils/voice.utils';
 import type { OrderStatus } from '@/types/order';
 
 export const PedidosView = () => {
@@ -38,7 +39,16 @@ export const PedidosView = () => {
     const readyOrders = orders.filter(o => o.orderStatus === 'READY');
 
     const handleAction = (orderId: number, nextStatus: OrderStatus) => {
-        updateStatusMutation.mutate({ orderId, status: nextStatus });
+        updateStatusMutation.mutate({ orderId, status: nextStatus }, {
+            onSuccess: () => {
+                if (nextStatus === 'READY') {
+                    const order = orders.find(o => o.idOrder === orderId);
+                    if (order) {
+                        speakOrderReady(order.orderNumber ?? '----', order.customer ?? undefined);
+                    }
+                }
+            }
+        });
     };
 
     return (
