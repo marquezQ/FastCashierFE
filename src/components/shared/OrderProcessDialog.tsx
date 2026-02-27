@@ -62,7 +62,7 @@ export const OrderProcessDialog = ({
     const currentOrderType = (isSuccess ? order?.orderType : previewData?.orderType) || 'DINE_IN';
     const currentCustomer = isSuccess ? order?.customer : previewData?.customer;
     const currentObservations = isSuccess ? order?.observations : previewData?.observations;
-    const orderNumber = isSuccess ? order?.orderNumber : 'PRE-ORDEN';
+    const orderNumber = isSuccess ? (order?.orderNumber ?? '----') : 'PRE-ORDEN';
 
     const displayDate = isSuccess
         ? new Date(order.orderDate).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })

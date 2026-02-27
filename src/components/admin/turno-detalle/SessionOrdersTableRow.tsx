@@ -26,7 +26,7 @@ export const SessionOrdersTableRow = ({ order, onViewDetail }: SessionOrdersTabl
         <TableRow className="group hover:bg-primary/5 border-primary/5 transition-colors h-20">
             <TableCell className="px-6">
                 <span className="font-black text-lg text-foreground">
-                    #{order.orderNumber.split('-').pop()}
+                    #{order.orderNumber?.split('-').pop() ?? '----'}
                 </span>
             </TableCell>
             <TableCell className="px-4">

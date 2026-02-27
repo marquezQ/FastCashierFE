@@ -139,7 +139,7 @@ const CancellationCard = ({ order, onViewDetail }: { order: Order; onViewDetail:
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <p className="text-lg font-black tracking-tighter text-foreground leading-none">Orden #{order.orderNumber.split('-').pop()}</p>
+                            <p className="text-lg font-black tracking-tighter text-foreground leading-none">Orden #{order.orderNumber?.split('-').pop() ?? '----'}</p>
                             <Badge variant="secondary" className="h-7 px-2.5 text-[12px] font-black uppercase bg-muted text-muted-foreground border-none">
                                 Sesión {order.sessionId}
                             </Badge>

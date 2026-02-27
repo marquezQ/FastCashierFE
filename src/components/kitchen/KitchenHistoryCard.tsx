@@ -28,7 +28,7 @@ export const KitchenHistoryCard = ({ order }: KitchenHistoryCardProps) => {
             <div className="flex items-center justify-between p-4 border-b border-border/30 bg-muted/5">
                 <div className="flex items-center gap-2">
                     <span className="text-xl font-black tracking-tighter text-foreground">
-                        #{order.orderNumber.split('-').pop()}
+                        #{order.orderNumber?.split('-').pop() ?? '----'}
                     </span>
                     <span className="text-sm font-bold text-muted-foreground truncate max-w-30">
                         - {order.customer || 'Cliente General'}

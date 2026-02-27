@@ -36,7 +36,7 @@ export const SessionOrdersDialog = ({
     const filteredOrders = orders?.filter(order => {
         const query = searchQuery.toLowerCase();
         return (
-            order.orderNumber.toLowerCase().includes(query) ||
+            (order.orderNumber?.toLowerCase().includes(query) ?? false) ||
             (order.customer && order.customer.toLowerCase().includes(query))
         );
     }) || [];
