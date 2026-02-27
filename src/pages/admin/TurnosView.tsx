@@ -71,8 +71,8 @@ export const TurnosView = () => {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight">Turnos de Caja</h1>
-          <p className="text-muted-foreground font-medium mt-1">Historial administrativo y reportes de cierres</p>
+          <h1 className="admin-h1">Turnos de Caja</h1>
+          <p className="admin-subtitle">Historial administrativo y reportes de cierres</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -117,7 +117,7 @@ export const TurnosView = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 items-end gap-4 bg-muted/20 p-4 rounded-2xl border border-dashed border-border/60 animate-in fade-in slide-in-from-top-2">
               {[{ l: 'Inicio', v: startDate, s: setStartDate }, { l: 'Fin', v: endDate, s: setEndDate }].map((f, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Fecha {f.l}</label>
+                  <label className="admin-label-sm ml-1">Fecha {f.l}</label>
                   <Input type="date" value={f.v} onChange={(e) => f.s(e.target.value)} className="h-11 rounded-xl bg-background border-border/50 font-bold" />
                 </div>
               ))}

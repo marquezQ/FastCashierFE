@@ -10,10 +10,10 @@ export const HistoryHeader = ({ orderCount, onRefresh }: HistoryHeaderProps) => 
     return (
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
             <div>
-                <h1 className="text-4xl font-extrabold tracking-tight text-green-700 dark:text-green-400">
+                <h1 className="cashier-h1">
                     Historial de Pedidos
                 </h1>
-                <p className="text-muted-foreground mt-2 text-lg">
+                <p className="cashier-subtitle">
                     Reporte detallado de ventas del turno actual
                 </p>
             </div>

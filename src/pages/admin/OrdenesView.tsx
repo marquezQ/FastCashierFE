@@ -33,8 +33,8 @@ export const OrdenesView = () => {
       {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4 md:px-0">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight">Monitor de Órdenes</h1>
-          <p className="text-muted-foreground font-medium mt-1">Análisis de rendimiento, estadísticas de ventas y control de calidad</p>
+          <h1 className="admin-h1">Monitor de Órdenes</h1>
+          <p className="admin-subtitle">Análisis de rendimiento, estadísticas de ventas y control de calidad</p>
         </div>
 
         {/* Integrated Period Filter */}
@@ -66,11 +66,11 @@ export const OrdenesView = () => {
         <div className="mx-4 md:mx-0 animate-in slide-in-from-top-4 duration-300">
           <div className="flex flex-col md:flex-row items-end gap-4 bg-card/30 backdrop-blur-sm p-4 rounded-2xl border border-dashed border-border/60">
             <div className="flex-1 w-full space-y-1.5">
-              <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Fecha Inicio</label>
+              <label className="admin-label-sm ml-1">Fecha Inicio</label>
               <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-11 rounded-xl bg-background/50 border-border/50 font-bold" />
             </div>
             <div className="flex-1 w-full space-y-1.5">
-              <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Fecha Fin</label>
+              <label className="admin-label-sm ml-1">Fecha Fin</label>
               <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-11 rounded-xl bg-background/50 border-border/50 font-bold" />
             </div>
             <Button

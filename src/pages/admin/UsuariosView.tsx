@@ -56,8 +56,8 @@ export const UsuariosView = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestión de Usuarios</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="admin-h1">Gestión de Usuarios</h1>
+          <p className="admin-subtitle">
             Administra los usuarios del sistema
           </p>
         </div>
@@ -83,7 +83,7 @@ export const UsuariosView = () => {
             </div>
           </div>
           <div className="text-sm text-muted-foreground">
-            {filteredUsers.length} {filteredUsers.length === 1 ? 'usuario' : 'usuarios'} 
+            {filteredUsers.length} {filteredUsers.length === 1 ? 'usuario' : 'usuarios'}
             {!showInactiveUsers && users.length > filteredUsers.length && (
               <span className="ml-1">
                 ({users.length - filteredUsers.length} ocultos)

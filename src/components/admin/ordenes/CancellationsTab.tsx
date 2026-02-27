@@ -58,8 +58,8 @@ export const CancellationsTab = ({ params }: CancellationsTabProps) => {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 px-4 md:px-0">
                 <div>
-                    <h3 className="text-xl font-black tracking-tight text-foreground">Control de Anulaciones</h3>
-                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mt-1">
+                    <h3 className="admin-h2">Control de Anulaciones</h3>
+                    <p className="admin-subtitle uppercase tracking-widest mt-1">
                         Auditoría de pedidos cancelados
                     </p>
                 </div>
