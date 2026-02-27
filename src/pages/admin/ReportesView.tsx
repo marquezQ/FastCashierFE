@@ -2,8 +2,8 @@ export const ReportesView = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Reportes</h1>
-        <p className="text-muted-foreground">
+        <h1 className="admin-h1">Reportes</h1>
+        <p className="admin-subtitle">
           Análisis y reportes del negocio
         </p>
       </div>

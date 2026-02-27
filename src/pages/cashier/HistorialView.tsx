@@ -3,7 +3,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
 import { useOrdersBySession } from '@/hooks/useOrdersBySession';
 import { useCancelOrder } from '@/hooks/useCancelOrder';
-import { OrderProcessDialog } from '@/components/cashier/OrderSuccessDialog';
+import { OrderProcessDialog } from '@/components/shared/OrderProcessDialog';
 import { HistoryHeader } from '@/components/cashier/history/HistoryHeader';
 import { HistorySearch } from '@/components/cashier/history/HistorySearch';
 import { HistoryTable } from '@/components/cashier/history/HistoryTable';
@@ -25,7 +25,7 @@ export const HistorialView = () => {
     const filteredOrders = orders?.filter(order => {
         const query = searchQuery.toLowerCase();
         return (
-            order.orderNumber.toLowerCase().includes(query) ||
+            (order.orderNumber?.toLowerCase().includes(query) ?? false) ||
             (order.customer && order.customer.toLowerCase().includes(query))
         );
     }) || [];

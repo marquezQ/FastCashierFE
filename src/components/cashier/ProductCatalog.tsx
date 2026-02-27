@@ -26,7 +26,7 @@ export const ProductCatalog = () => {
             <div className="flex items-center justify-center h-full">
                 <div className="flex flex-col items-center gap-4">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-(--cashier-sidebar-primary)"></div>
-                    <p className="text-muted-foreground">Cargando productos...</p>
+                    <p className="cashier-subtitle">Cargando productos...</p>
                 </div>
             </div>
         );

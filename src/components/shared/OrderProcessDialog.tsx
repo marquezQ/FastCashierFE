@@ -9,9 +9,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import type { Order } from '@/types/order';
+import type { Order, OrderItem } from '@/types/order';
 import { formatPrice } from '@/utils/product.utils';
-import type { OrderItem } from '@/store/useCashierStore';
 
 interface OrderProcessDialogProps {
     open: boolean;
@@ -46,15 +45,24 @@ export const OrderProcessDialog = ({
 
     // Determine which data to show
     const isSuccess = mode === 'success' && order;
-    const currentItems = isSuccess ? order.details.map(d => ({ ...d.product, quantity: d.quantity, price: d.unitPrice })) : (previewData?.items || []);
-    const currentTotal = isSuccess ? parseFloat(order.total) : (previewData?.total || 0);
-    const currentAmountPaid = isSuccess ? parseFloat(order.amountPaid) : (previewData?.amountPaid || 0);
-    const currentChange = isSuccess ? parseFloat(order.changeAmount) : (previewData?.change || 0);
-    const currentMethod = isSuccess ? order.paymentMethod : (previewData?.paymentMethod || 'CASH');
-    const currentOrderType = (isSuccess ? order.orderType : previewData?.orderType) || (previewData ? previewData.orderType : (isSuccess ? (order as any).orderType : 'DINE_IN')) || 'DINE_IN';
-    const currentCustomer = isSuccess ? order.customer : previewData?.customer;
-    const currentObservations = isSuccess ? order.observations : previewData?.observations;
-    const orderNumber = isSuccess ? order.orderNumber : 'PRE-ORDEN';
+    const currentItems = isSuccess
+        ? (order?.details || []).map(d => ({
+            ...(d.product || {}),
+            name: d.product?.name || 'Producto',
+            quantity: d.quantity || 0,
+            price: d.unitPrice || '0',
+            subtotal: d.subtotal
+        }))
+        : (previewData?.items || []);
+
+    const currentTotal = isSuccess ? parseFloat(order?.total || '0') : (previewData?.total || 0);
+    const currentAmountPaid = isSuccess ? parseFloat(order?.amountPaid || '0') : (previewData?.amountPaid || 0);
+    const currentChange = isSuccess ? parseFloat(order?.changeAmount || '0') : (previewData?.change || 0);
+    const currentMethod = isSuccess ? order?.paymentMethod : (previewData?.paymentMethod || 'CASH');
+    const currentOrderType = (isSuccess ? order?.orderType : previewData?.orderType) || 'DINE_IN';
+    const currentCustomer = isSuccess ? order?.customer : previewData?.customer;
+    const currentObservations = isSuccess ? order?.observations : previewData?.observations;
+    const orderNumber = isSuccess ? (order?.orderNumber ?? '----') : 'PRE-ORDEN';
 
     const displayDate = isSuccess
         ? new Date(order.orderDate).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })

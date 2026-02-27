@@ -35,8 +35,8 @@ export const TurnoRangePrompt = () => (
         <div className="p-8 rounded-full bg-primary/5 mb-6 border border-primary/10">
             <CalendarRange className="h-16 w-16 text-primary/30" />
         </div>
-        <h2 className="text-2xl font-black text-foreground/70 uppercase tracking-tighter">Búsqueda por Rango</h2>
-        <p className="text-muted-foreground text-sm font-medium mt-2 max-w-sm text-center">
+        <h2 className="admin-h2 uppercase tracking-tighter">Búsqueda por Rango</h2>
+        <p className="admin-subtitle max-w-sm text-center">
             Selecciona la fecha de inicio y fin arriba para consultar el historial de turnos en ese periodo.
         </p>
     </div>
@@ -47,8 +47,8 @@ export const TurnoEmptyState = () => (
         <div className="p-8 rounded-full bg-muted/50 mb-6 border shadow-inner">
             <ClipboardList className="h-16 w-16 text-muted-foreground/20" />
         </div>
-        <h2 className="text-2xl font-black text-foreground/70 uppercase tracking-tighter">Sin registros encontrados</h2>
-        <p className="text-muted-foreground text-sm font-medium mt-2 max-w-sm text-center">
+        <h2 className="admin-h2 uppercase tracking-tighter">Sin registros encontrados</h2>
+        <p className="admin-subtitle max-w-sm text-center">
             Ajusta el rango de fechas o los filtros de búsqueda para visualizar los turnos de caja registrados.
         </p>
     </div>

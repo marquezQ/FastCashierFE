@@ -1,7 +1,7 @@
-import { 
-  ShoppingCart, 
-  DollarSign, 
-  Users, 
+import {
+  ShoppingCart,
+  DollarSign,
+  Users,
   Package,
   CheckCircle,
   UserCheck
@@ -75,7 +75,7 @@ export const StatsGrid = () => {
     <div className="space-y-8">
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-xl font-semibold">Estadísticas del Día</h2>
+          <h2 className="admin-h2">Estadísticas del Día</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {DAILY_STATS.map((stat) => (
@@ -86,7 +86,7 @@ export const StatsGrid = () => {
 
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-xl font-semibold">Resumen del Negocio</h2>
+          <h2 className="admin-h2">Resumen del Negocio</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {BUSINESS_STATS.map((stat) => (

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useOrdersBySession } from '@/hooks/useOrdersBySession';
-import { OrderProcessDialog } from '@/components/cashier/OrderSuccessDialog';
+import { OrderProcessDialog } from '@/components/shared/OrderProcessDialog';
 import { SessionOrdersTable } from './SessionOrdersTable';
 import type { Order } from '@/types/order';
 
@@ -36,7 +36,7 @@ export const SessionOrdersDialog = ({
     const filteredOrders = orders?.filter(order => {
         const query = searchQuery.toLowerCase();
         return (
-            order.orderNumber.toLowerCase().includes(query) ||
+            (order.orderNumber?.toLowerCase().includes(query) ?? false) ||
             (order.customer && order.customer.toLowerCase().includes(query))
         );
     }) || [];
@@ -57,11 +57,11 @@ export const SessionOrdersDialog = ({
                                     <ShoppingBag className="h-8 w-8" />
                                 </div>
                                 <div className="space-y-1">
-                                    <DialogTitle className="text-3xl font-black tracking-tighter text-foreground">
+                                    <DialogTitle className="admin-h2">
                                         Pedidos de la Sesión
                                     </DialogTitle>
                                     <DialogDescription asChild>
-                                        <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                                        <div className="admin-label-sm flex items-center gap-2">
                                             <span>Sesión #{sessionNumber}</span>
                                             <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                                             <span>Cajero: {cashierName}</span>

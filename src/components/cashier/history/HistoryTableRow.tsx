@@ -42,7 +42,7 @@ export const HistoryTableRow = ({ order, onViewDetail, onCancel, isCancelling }:
         <TableRow className="group hover:bg-green-500/5 border-green-100/50 dark:border-green-900/50 transition-colors h-20">
             <TableCell className="pl-6">
                 <span className="font-black text-lg text-foreground">
-                    #{order.orderNumber.split('-').pop()}
+                    #{order.orderNumber?.split('-').pop() ?? '----'}
                 </span>
             </TableCell>
             <TableCell>
@@ -118,7 +118,7 @@ export const HistoryTableRow = ({ order, onViewDetail, onCancel, isCancelling }:
                                 <AlertDialogHeader>
                                     <AlertDialogTitle className="text-2xl font-black text-red-600 flex items-center gap-2">
                                         <X className="h-6 w-6" />
-                                        Anular Pedido #{order.orderNumber.split('-').pop()}
+                                        Anular Pedido #{order.orderNumber?.split('-').pop() ?? '----'}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription asChild>
                                         <div className="space-y-4 pt-2">

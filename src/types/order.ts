@@ -2,6 +2,10 @@ import type { CashierSession } from './cashierSession';
 import type { User } from './auth';
 import type { Product } from './products';
 
+export interface OrderItem extends Product {
+    quantity: number;
+}
+
 export type PaymentMethod = 'CASH' | 'QR';
 export type OrderStatus = 'PENDING' | 'IN_PREPARATION' | 'READY' | 'DELIVERED' | 'CANCELLED';
 export type OrderType = 'DINE_IN' | 'TAKEOUT';

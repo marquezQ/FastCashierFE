@@ -21,7 +21,7 @@ export const SessionAuditSection = ({
         <div className="flex flex-col h-full space-y-4">
             <div className="flex items-center gap-2 px-1 shrink-0">
                 <Icon className={cn("h-4 w-4", iconClassName)} />
-                <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest truncate">
+                <span className="admin-label-sm truncate">
                     {title}
                 </span>
             </div>
@@ -47,7 +47,7 @@ interface AuditRowProps {
 export const AuditRow = ({ label, value, labelClassName, valueClassName, showSeparator }: AuditRowProps) => (
     <>
         <div className="flex justify-between items-center gap-4 py-0.5">
-            <span className={cn("text-[11px] font-bold text-muted-foreground uppercase tracking-tight", labelClassName)}>{label}</span>
+            <span className={cn("admin-label-sm tracking-tight", labelClassName)}>{label}</span>
             <span className={cn("text-base font-black text-foreground/90", valueClassName)}>{value}</span>
         </div>
         {showSeparator && <Separator className="bg-border/60 my-2.5" />}
@@ -64,7 +64,7 @@ interface AuditTotalProps {
 
 export const AuditTotal = ({ label, value, className, labelClassName, valueClassName }: AuditTotalProps) => (
     <div className={cn("flex justify-between items-end pt-3", className)}>
-        <span className={cn("text-[11px] font-black uppercase tracking-widest text-muted-foreground/70", labelClassName)}>{label}</span>
+        <span className={cn("admin-label-sm text-muted-foreground/70", labelClassName)}>{label}</span>
         <span className={cn("text-3xl font-black leading-none tracking-tighter", valueClassName)}>{value}</span>
     </div>
 );

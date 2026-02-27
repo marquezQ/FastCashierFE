@@ -2,10 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product } from '../types/products';
 import type { CashierSession } from '../types/cashierSession';
-
-export interface OrderItem extends Product {
-    quantity: number;
-}
+import type { OrderItem } from '../types/order';
 
 interface CashierState {
     // Session State (Synchronized with Backend)

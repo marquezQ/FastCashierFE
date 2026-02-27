@@ -12,7 +12,7 @@ import { useCreateOrder } from '@/hooks/useCreateOrder';
 import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
 import type { PaymentMethod, Order, OrderType } from '@/types/order';
-import { OrderProcessDialog } from './OrderSuccessDialog';
+import { OrderProcessDialog } from '../shared/OrderProcessDialog';
 
 export const OrderSummary = () => {
     const { orderItems, updateQuantity, removeItem, clearCart, currentSession } = useCashierStore();
@@ -111,8 +111,8 @@ export const OrderSummary = () => {
             {/* Compact Header */}
             <CardHeader className="border-b bg-muted/40 py-3 h-12 px-3 shrink-0">
                 <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-(--cashier-sidebar-primary)">Pedido Actual</span>
-                    <Badge variant="secondary" className="h-5 text-[10px] px-1.5 font-normal bg-background/50 border shadow-none">
+                    <span className="cashier-label-sm text-[12px]! text-(--cashier-sidebar-primary)!">Pedido Actual</span>
+                    <Badge variant="secondary" className="cashier-label-sm text-[9px]! px-1.5 font-normal bg-background/50 border shadow-none">
                         {orderItems.reduce((acc, item) => acc + item.quantity, 0)} items
                     </Badge>
                 </div>
@@ -194,7 +194,7 @@ export const OrderSummary = () => {
 
                     {/* Order Type Selection */}
                     <div className="space-y-1.5">
-                        <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Tipo de Pedido</Label>
+                        <Label className="cashier-label-sm">Tipo de Pedido</Label>
                         <div className="flex gap-1">
                             <Button
                                 variant={selectedOrderType === 'DINE_IN' ? 'default' : 'outline'}
@@ -218,7 +218,7 @@ export const OrderSummary = () => {
                     {/* Payment Method & Input Compact Grid */}
                     <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-1.5">
-                            <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Método</Label>
+                            <Label className="cashier-label-sm">Método</Label>
                             <div className="flex gap-1">
                                 <Button
                                     variant={paymentMethod === 'CASH' ? 'default' : 'outline'}
@@ -243,7 +243,7 @@ export const OrderSummary = () => {
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Recibido</Label>
+                            <Label className="cashier-label-sm">Recibido</Label>
                             <div className="relative">
                                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
                                 <Input

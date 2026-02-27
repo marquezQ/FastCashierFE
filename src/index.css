@@ -302,6 +302,40 @@
     box-shadow: 0 1px 3px oklch(0 0 0 / 0.05), 0 1px 2px oklch(0 0 0 / 0.03);
   }
 
+  /* ESTÁNDARES DE TIPOGRAFÍA - ADMIN */
+  .admin-h1 {
+    @apply text-3xl md:text-4xl font-black text-foreground tracking-tight;
+  }
+
+  .admin-subtitle {
+    @apply text-muted-foreground font-medium mt-1 text-sm md:text-base;
+  }
+
+  .admin-h2 {
+    @apply text-xl font-bold tracking-tight text-foreground;
+  }
+
+  .admin-label-sm {
+    @apply text-[10px] font-black uppercase text-muted-foreground tracking-widest;
+  }
+
+  /* ESTÁNDARES DE TIPOGRAFÍA - CASHIER */
+  .cashier-h1 {
+    @apply text-3xl md:text-4xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight;
+  }
+
+  .cashier-subtitle {
+    @apply text-muted-foreground font-medium mt-1 text-sm md:text-base;
+  }
+
+  .cashier-h2 {
+    @apply text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-500;
+  }
+
+  .cashier-label-sm {
+    @apply text-[10px] font-black uppercase text-emerald-600/70 dark:text-emerald-400/70 tracking-widest;
+  }
+
   /* Gradientes reutilizables */
   .gradient-primary {
     background: linear-gradient(135deg, var(--primary) 0%, oklch(from var(--primary) calc(l * 0.85) c h) 100%);

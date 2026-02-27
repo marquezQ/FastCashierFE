@@ -21,14 +21,14 @@ export const StatsHeader = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
             <div className="space-y-1">
                 <div className="flex items-center gap-3">
-                    <h1 className="text-4xl font-extrabold tracking-tight text-emerald-700 dark:text-emerald-400">
+                    <h1 className="cashier-h1">
                         Estadísticas
                     </h1>
                     <Badge variant="outline" className="h-5 bg-emerald-500/10 text-emerald-600 border-emerald-500/20 font-bold px-2.5 rounded-full animate-pulse text-[10px]">
                         TURNO ACTIVO
                     </Badge>
                 </div>
-                <p className="text-muted-foreground font-medium flex items-center gap-2 capitalize text-lg">
+                <p className="cashier-subtitle flex items-center gap-2 capitalize">
                     <Calendar className="h-5 w-5 text-emerald-500/60" />
                     {formattedDate}
                 </p>
@@ -42,11 +42,11 @@ export const StatsHeader = ({
                     title="Sincronizar datos"
                 >
                     <RefreshCw className={`h-4.5 w-4.5 text-emerald-600 transition-all duration-700 ${isFetching ? 'animate-spin' : 'group-hover:rotate-180'}`} />
-                    <span className="text-[9px] font-bold uppercase text-emerald-600/60 mt-0.5 tracking-tight">Sync</span>
+                    <span className="cashier-label-sm text-[8px]! mt-0.5">Sync</span>
                 </button>
                 <Separator orientation="vertical" className="h-8 bg-border/40" />
                 <div className="flex flex-col">
-                    <span className="text-[9px] uppercase font-bold text-muted-foreground/60 tracking-wider mb-0.5">Cajero</span>
+                    <span className="cashier-label-sm text-[8px]! mb-0.5">Cajero</span>
                     <span className="text-xs font-bold flex items-center gap-2">
                         <div className="h-6 w-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
                             <Users className="h-3 w-3 text-emerald-600" />
@@ -56,7 +56,7 @@ export const StatsHeader = ({
                 </div>
                 <Separator orientation="vertical" className="h-8 bg-border/40" />
                 <div className="flex flex-col">
-                    <span className="text-[9px] uppercase font-bold text-muted-foreground/60 tracking-wider mb-0.5">Apertura</span>
+                    <span className="cashier-label-sm text-[8px]! mb-0.5">Apertura</span>
                     <span className="text-xs font-bold flex items-center gap-2">
                         <div className="h-6 w-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
                             <Clock className="h-3 w-3 text-emerald-600" />

@@ -29,10 +29,10 @@ export const SessionHeader = ({
                     {session.user?.fullName || 'Cajero'}
                 </span>
                 <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-muted/30 px-2 py-0.5 rounded-md">
+                    <span className="admin-label-sm bg-muted/30 px-2 py-0.5 rounded-md">
                         # {session.idSession}
                     </span>
-                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/10">
+                    <span className="admin-label-sm text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/10">
                         {session.orderCount} pedidos
                     </span>
                 </div>
@@ -47,7 +47,7 @@ export const SessionHeader = ({
                     </div>
                     <div className="flex flex-col">
                         <span className="text-xl font-black text-foreground leading-none">{formatPrice(netSales.toString())}</span>
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mt-1">Ventas del Turno</span>
+                        <span className="admin-label-sm tracking-tight mt-1">Ventas del Turno</span>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@ export const SessionHeader = ({
                     </div>
                     <div className="flex flex-col">
                         <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 leading-none">{formatPrice(totalExpected.toString())}</span>
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mt-1">Total en Caja</span>
+                        <span className="admin-label-sm tracking-tight mt-1">Total en Caja</span>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@ export const SessionHeader = ({
                 <Badge
                     variant="outline"
                     className={cn(
-                        "text-[10px] font-black uppercase px-3 h-6 border-0 shadow-none rounded-full",
+                        "admin-label-sm px-3 h-6 border-0 shadow-none rounded-full",
                         isClosed ? "bg-slate-200/50 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400" : "bg-emerald-500/10 text-emerald-600 shadow-sm shadow-emerald-500/5"
                     )}
                 >
