@@ -73,7 +73,7 @@ export const speakOrderReady = (orderNumber: string, customerName?: string) => {
     }
 
     utterance.lang = 'es-ES';
-    utterance.rate = 0.8;
+    utterance.rate = 0.9;
     utterance.pitch = 2.0; // El máximo permitido por navegadores es 2.0 para evitar errores
 
     window.speechSynthesis.speak(utterance);

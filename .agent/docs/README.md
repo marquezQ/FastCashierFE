@@ -1,20 +1,58 @@
-# Index of AI Documentation
+# 📚 AI Context Directory — FastCashierFE
 
-Welcome to the AI context directory. This folder contains structured information about the project to help agents understand the architecture, style patterns, and technical decisions without extensive codebase scanning.
+This folder contains structured technical documentation designed to give any AI agent immediate, accurate context about the FastCashierFE project — without requiring a full codebase scan.
 
-## 📂 Documentation Structure
+---
+
+## 📂 Documentation Map
 
 | File | Description |
 | :--- | :--- |
-| 🏗️ [Architecture](file:///home/pedro/Desktop/Projects/FastCashierFE/.agent/docs/architecture.md) | Technical stack, project structure, and core entities. |
-| 🎨 [Styles & Design](file:///home/pedro/Desktop/Projects/FastCashierFE/.agent/docs/styles-design.md) | Design system, Tailwind 4, Shadcn/UI patterns, and layout rules. |
-| 📝 [Forms & Validation](file:///home/pedro/Desktop/Projects/FastCashierFE/.agent/docs/forms-validation.md) | Implementation of React Hook Form, Zod schemas, and validation logic. |
-| ⚙️ [State & Data Fetching](file:///home/pedro/Desktop/Projects/FastCashierFE/.agent/docs/state-fetching.md) | Global state with Zustand and async data management with TanStack Query. |
-| 🤖 [AI Agent Guide](file:///home/pedro/Desktop/Projects/FastCashierFE/.agent/docs/ai-agent-guide.md) | Standards and behaviors expected for AI agents in this project. |
+| 🏗️ [architecture.md](./architecture.md) | Full tech stack, folder structure, all business entities (Order, Session, Product, User), complete API endpoint map, and routing tree. |
+| ⚙️ [state-fetching.md](./state-fetching.md) | Three Zustand stores (auth, cashier, theme), all 17 custom hooks with query keys, mutation side effects, and query invalidation patterns. |
+| 🎨 [styles-design.md](./styles-design.md) | Tailwind v4 OKLCH design tokens, three role color identities (Admin/Cashier/Kitchen), typography classes, rounding conventions, and CSS utilities. |
+| 📝 [forms-validation.md](./forms-validation.md) | React Hook Form + Zod patterns, full schema inventory, File field handling, loading state best practices, and list of forms that still need schemas. |
+| 🤖 [ai-agent-guide.md](./ai-agent-guide.md) | AI-specific coding rules, domain quick-start guides, key utility reference, and common mistakes to avoid. |
 
-## 🚀 How to use this documentation
-As an AI Agent, you should consult these files whenever you are tasked with:
-- Creating new features following existing patterns.
-- Refactoring UI components.
-- Adding new data endpoints or state logic.
-- Ensuring consistency with the project's senior-level design standards.
+---
+
+## 🏢 Project Overview
+
+**FastCashierFE** is the frontend for a fast-food restaurant POS system. It serves three distinct user roles, each with their own UI shell and color identity:
+
+| Role | Route | Identity | Key Functionality |
+| :--- | :--- | :--- | :--- |
+| ADMIN | `/admin/*` | 🔵 Blue | Dashboard KPIs, user CRUD, product CRUD, session history, cancellation audit, reports |
+| CASHIER | `/cashier/*` | 🟢 Emerald/Teal | Order creation, cart management, session open/close, stats, history |
+| KITCHEN | `/kitchen/*` | 🟠 Amber/Orange | Real-time order queue, status progression, voice announcements, history |
+
+---
+
+## 🚀 Quick Agent Workflow
+
+When assigned a task on this project:
+
+1. **Read this README** to understand the domain.
+2. **Read the relevant doc(s)** for your task area (styling task → `styles-design.md`, new API call → `state-fetching.md`, etc.).
+3. **Identify the role/domain** you're working in and apply the correct color identity.
+4. **Check `src/components/ui/`** before building low-level elements.
+5. **Verify query keys** won't break existing invalidation chains.
+
+---
+
+## 📦 Key Technologies at a Glance
+
+```
+React 19 (Compiler) · TypeScript 5.9 · Vite 7
+Tailwind CSS v4 (OKLCH tokens) · Radix UI / Shadcn
+TanStack Query v5 · Zustand v5 · Axios
+React Hook Form v7 · Zod v4 · Sonner (toasts)
+React Router DOM v7 · Lucide React
+```
+
+---
+
+## 🗂 Last Updated
+- **Date**: March 2026
+- **Analyzed by**: AI Agent (deep full-codebase scan)
+- **Covers**: React app source (`src/`), all 3 role shells, 17 hooks, 3 Zustand stores, 4 API services, 6 type files, 2 schemas, 8 utils, full design system
