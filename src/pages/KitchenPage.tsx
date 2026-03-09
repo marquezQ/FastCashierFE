@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useNavigate } from 'react-router-dom';
+import { useKitchenSocket } from '@/hooks/useKitchenSocket';
 import { KitchenSidebar } from '@/components/layout/Kitchen/KitchenSidebar';
 import { KitchenNavbar } from '@/components/layout/Kitchen/KitchenNavbar';
 import { PedidosView } from './kitchen/PedidosView';
@@ -13,6 +14,9 @@ export const KitchenPage = () => {
   const { user, logout } = useAuthStore();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+
+  // Real-time updates
+  useKitchenSocket();
 
   const handleNavigate = (path: string) => {
     navigate(path);
