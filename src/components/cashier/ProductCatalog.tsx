@@ -82,7 +82,7 @@ export const ProductCatalog = () => {
                                     <p>No hay productos en esta categoría</p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+                                <div className="grid grid-cols-1 @[400px]/catalog:grid-cols-2 @[700px]/catalog:grid-cols-3 @[1000px]/catalog:grid-cols-4 @[1300px]/catalog:grid-cols-5 gap-3">
                                     {category.products
                                         .filter(p => !searchTerm || p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.code.toLowerCase().includes(searchTerm.toLowerCase()))
                                         .map((product) => (

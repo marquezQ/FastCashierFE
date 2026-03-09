@@ -1,6 +1,7 @@
-import { Clock, Users, Package, AlertCircle, CheckCircle2, PlayCircle, Send } from 'lucide-react';
+import { Clock, Users, Package, AlertCircle, CheckCircle2, PlayCircle, Send, Volume2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { speakOrderReady } from '@/utils/voice.utils';
 import type { Order, OrderStatus } from '@/types/order';
 
 interface KitchenOrderCardProps {
@@ -117,14 +118,25 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                 )}
 
                 {isReady && (
-                    <Button
-                        onClick={() => onAction(order.idOrder, 'DELIVERED')}
-                        variant="secondary"
-                        className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest border-2 h-11"
-                    >
-                        <Send className="h-5 w-5" />
-                        Entregado
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            onClick={() => speakOrderReady(order.orderNumber ?? '----', order.customer ?? undefined)}
+                            variant="outline"
+                            size="icon"
+                            className="h-11 w-12 border-emerald-600/20 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-500/30 dark:hover:bg-emerald-500/10"
+                            title="Repetir llamado"
+                        >
+                            <Volume2 className="h-5 w-5" />
+                        </Button>
+                        <Button
+                            onClick={() => onAction(order.idOrder, 'DELIVERED')}
+                            variant="secondary"
+                            className="flex-1 flex items-center justify-center gap-2 font-black uppercase tracking-widest border-2 h-11"
+                        >
+                            <Send className="h-5 w-5" />
+                            Entregado
+                        </Button>
+                    </div>
                 )}
             </div>
         </div>

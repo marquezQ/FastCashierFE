@@ -13,15 +13,15 @@ export const PedidosView = () => {
 
 
     return (
-        <div className="h-full lg:h-[calc(100vh-6rem)] relative">
-            <div className="flex flex-col lg:grid lg:h-full gap-4 lg:grid-cols-[1fr_440px]">
+        <div className="h-full md:h-[calc(100vh-6rem)] relative">
+            <div className="flex flex-col md:grid md:h-full gap-4 md:grid-cols-[1fr_400px]">
                 {/* Left Column: Product Catalog */}
-                <div className="h-150 lg:h-full overflow-hidden flex flex-col">
+                <div className="@container/catalog h-150 md:h-full overflow-hidden flex flex-col">
                     <ProductCatalog />
                 </div>
 
                 {/* Right Column: Order Summary */}
-                <div className="h-auto lg:h-full">
+                <div className="h-auto md:h-full">
                     <OrderSummary />
                 </div>
             </div>

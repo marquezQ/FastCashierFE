@@ -1,47 +1,172 @@
-# 🎨 Styles & Design System (Extended)
+# 🎨 Styles & Design System — FastCashierFE
 
-This project uses a specialized design system based on Tailwind CSS v4 and OKLCH color spaces.
+Full reference for the OKLCH-based design system, role color identities, layout standards, typography classes, and CSS component utilities.
 
-## 🌈 Role-Based Identities
+---
 
-To distinguish between administrative and operational tasks, the UI uses distinct color anchors:
+## 🌐 CSS Setup
 
-### 👤 Administrator Identity (Blue/Primary)
-- **Primary Color**: `oklch(0.55 0.18 255)` (Blue vibrante)
-- **Keywords**: `primary`, `blue-500`
-- **Use Case**: Management, reports, user CRUD, global settings.
-- **Sidebar Variable**: `--sidebar` (Dark blue/teal context).
+- **Engine**: Tailwind CSS v4 via `@import "tailwindcss"` (no `tailwind.config.js` file — config lives in CSS).
+- **Animations**: `tw-animate-css` imported for utility animations.
+- **Dark Mode**: Custom variant `@custom-variant dark (&:is(.dark *))`, toggled by `.dark` class on `<html>`.
+- **Theming**: All design tokens are CSS custom properties using OKLCH color space for consistent transitions and accessibility.
 
-### 💵 Cashier Identity (Green/Emerald)
-- **Primary Color**: `oklch(0.55 0.14 180)` (Verde azulado/Emerald)
-- **Keywords**: `emerald-600`, `emerald-500`
-- **Use Case**: Points of sale, session stats, register opening/closing.
-- **Sidebar Variable**: `--cashier-sidebar` (Dark green/teal context).
+---
 
-## 💎 Design Tokens (OKLCH)
+## 🌈 Role-Based Color Identities
 
-We use OKLCH for better color transitions and accessibility. Key tokens in `index.css`:
+This is a core design rule. Every UI area has a distinct color identity to prevent users from mixing up contexts.
 
-| Variable | Light Mode | Dark Mode | Purpose |
-| :--- | :--- | :--- | :--- |
-| `--background` | Casi blanco (264) | Base profunda (264) | Page background. |
-| `--card` | Blanco puro | Superficie nivel 2 | Component containers. |
-| `--primary` | Blue 255 | Bright Blue 255 | Primary actions (Admin default). |
-| `--border` | Gray/Blue subtle | 12% opacity white | Separation lines. |
+### 🔵 Admin Identity — Blue
+| Variable | Value | Purpose |
+| :--- | :--- | :--- |
+| `--primary` (light) | `oklch(0.55 0.18 255)` | Buttons, active states, primary actions |
+| `--primary` (dark) | `oklch(0.65 0.20 255)` | Brighter blue for dark backgrounds |
+| `--sidebar` (light) | `oklch(0.20 0.04 250)` | Dark blue sidebar |
+| `--sidebar-primary` | `oklch(0.62 0.22 250)` | Active nav item highlight |
+| Tailwind classes | `blue-500`, `primary` | Ad-hoc color references |
 
-## ✨ Senior UI Framework
+### 🟢 Cashier Identity — Emerald/Teal
+| Variable | Value | Purpose |
+| :--- | :--- | :--- |
+| `--cashier-sidebar` (light) | `oklch(0.28 0.08 180)` | Dark teal/green sidebar |
+| `--cashier-sidebar-primary` | `oklch(0.55 0.14 180)` | Active nav item |
+| Tailwind classes | `emerald-500`, `emerald-600`, `emerald-700` | Revenue metrics, session info, CTA buttons |
 
-### 🪟 Glassmorphism & Depth
-- **Blur**: Use `backdrop-blur-md` or `backdrop-blur-xl` for overlays and headers.
-- **Elevation**: Use `shadow-card` or `shadow-xl` for main components.
-- **Borders**: Most cards should have `border-border/40` or `border-border/50` for a soft definition.
+### 🟠 Kitchen Identity — Amber/Orange
+| Variable | Value | Purpose |
+| :--- | :--- | :--- |
+| `--kitchen-sidebar` (light) | `oklch(0.25 0.08 45)` | Warm dark sidebar |
+| `--kitchen-sidebar-primary` | `oklch(0.65 0.22 45)` | Active nav item |
+| Tailwind classes | `orange-500`, `amber-500`, `orange-600` | Order cards, action buttons, alerts |
 
-### 📐 Spacing & Radius
-- **Grid Gap**: Standard `gap-6` or `gap-8` for sections.
-- **Rounding**: `rounded-2xl` for standard cards, `rounded-3xl` for main metric containers, `rounded-[2rem]` for side-by-side analysis blocks.
+> **Rule**: When building components, ask "which role/domain does this UI belong to?" and apply the corresponding color family strictly.
 
-### 🔡 Typography Patterns
-- **Headers**: `font-black` with `tracking-tight` or `tracking-tighter`.
-- **Labels**: `text-[10px]` or `text-xs`, `uppercase`, `font-black`, `tracking-widest`.
-- **Tabular Data**: Always use `tabular-nums` for prices to ensure readability.
-- **Gradients**: Use `bg-gradient-to-br from-emerald-500/[0.03] to-transparent` for subtle depth in cards.
+---
+
+## 🎨 Full Token Reference (`index.css`)
+
+### Light Mode (`:root`)
+| Variable | OKLCH Value | Purpose |
+| :--- | :--- | :--- |
+| `--background` | `oklch(0.99 0.002 264)` | Page background (almost white, blue-tinted) |
+| `--foreground` | `oklch(0.15 0.04 264)` | Primary text (dark blue-black) |
+| `--card` | `oklch(1 0 0)` | Pure white card surfaces |
+| `--primary` | `oklch(0.55 0.18 255)` | Vibrant blue — primary CTA |
+| `--secondary` | `oklch(0.96 0.01 264)` | Light blue-grey — secondary backgrounds |
+| `--muted` | `oklch(0.96 0.01 264)` | Muted backgrounds, icon areas |
+| `--muted-foreground` | `oklch(0.50 0.03 264)` | Secondary text |
+| `--destructive` | `oklch(0.60 0.24 25)` | Error/delete states (red) |
+| `--border` | `oklch(0.90 0.01 264)` | Subtle dividers |
+| `--radius` | `0.75rem` | Base radius for all rounded corners |
+
+### Dark Mode (`.dark`)
+| Variable | OKLCH Value | Purpose |
+| :--- | :--- | :--- |
+| `--background` | `oklch(0.11 0.01 264)` | Deep dark base (level 0) |
+| `--card` | `oklch(0.22 0.02 264)` | Elevated surface (level 2) |
+| `--muted` | `oklch(0.18 0.02 264)` | Intermediate surface (level 1) |
+| `--popover` | `oklch(0.18 0.03 264)` | Dialogs and dropdowns |
+| `--border` | `oklch(1 0 0 / 12%)` | 12% white opacity border — key dark mode pattern |
+| `--primary` | `oklch(0.65 0.20 255)` | Brighter blue for dark backgrounds |
+
+> The **elevation strategy** in dark mode is: `background (0.11)` < `muted (0.18)` < `popover (0.18)` < `card (0.22)` < `secondary (0.25)`.
+
+### Radius Scale
+| Token | Calculation | Approximate value |
+| :--- | :--- | :--- |
+| `--radius-sm` | `var(--radius) - 4px` | `8px` |
+| `--radius-md` | `var(--radius) - 2px` | `10px` |
+| `--radius-lg` | `var(--radius)` | `12px` |
+| `--radius-xl` | `var(--radius) + 4px` | `16px` |
+| `--radius-2xl` | `var(--radius) + 8px` | `20px` |
+| `--radius-3xl` | `var(--radius) + 12px` | `24px` |
+
+---
+
+## ✨ Senior UI Rules
+
+### 🪟 Depth & Glassmorphism
+- **Cards**: `border border-border/40` or `border-border/50` for soft definition.
+- **Sticky/floating elements**: `backdrop-blur-md` or `backdrop-blur-xl`.
+- **Elevation**: `shadow-card` (custom), `shadow-sm`, `shadow-md` for increasing depth.
+- **Gradient depth**: `bg-gradient-to-br from-emerald-500/[0.03] to-transparent` for subtle warmth in cards.
+
+### 📐 Spacing & Layout Standards
+| Context | Class | Notes |
+| :--- | :--- | :--- |
+| Section grids | `gap-6` or `gap-8` | Default for multi-column layouts |
+| Card padding | `p-4` or `p-6` | Use `p-4` for compact, `p-6` for spacious |
+| Inner content | `space-y-4` or `space-y-6` | Vertical stacks |
+| **Responsive Grids** | **Container Queries** | **Preferred over screen-based breakpoints for complex layouts** |
+
+#### 📦 Container Queries (Modern Pattern)
+We use Tailwind 4 `@container` for components that need to be responsive to their parent's width, specifically in the Cashier and Admin dashboards.
+
+**Pattern**:
+1. Wrap the area in a named container: `<div className="@container/id ...">`
+2. Apply styles based on container width: `@[400px]/id:grid-cols-2`
+
+### 🔡 Typography Classes (from `index.css @layer components`)
+
+#### Admin Domain
+```css
+.admin-h1      → text-3xl md:text-4xl font-black tracking-tight
+.admin-subtitle → text-muted-foreground font-medium mt-1 text-sm md:text-base
+.admin-h2      → text-xl font-bold tracking-tight
+.admin-label-sm → text-[10px] font-black uppercase tracking-widest text-muted-foreground
+```
+
+#### Cashier Domain
+```css
+.cashier-h1      → text-3xl md:text-4xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight
+.cashier-subtitle → text-muted-foreground font-medium mt-1 text-sm md:text-base
+.cashier-h2      → text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-500
+.cashier-label-sm → text-[10px] font-black uppercase tracking-widest text-emerald-600/70
+```
+
+#### General Typography Rules
+- **Headers**: Always `font-black` + `tracking-tight` or `tracking-tighter`.
+- **Metric numbers**: Always `tabular-nums` for prices/quantities.
+- **Labels over data**: `text-[10px] uppercase font-black tracking-widest` — acts as a "caption" above values.
+- **Gradients**: `text-gradient-primary` (`.bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent`).
+
+### 🧩 Rounding Conventions
+| Element | Class |
+| :--- | :--- |
+| Standard cards | `rounded-2xl` |
+| Main metric containers | `rounded-3xl` |
+| Analysis/side-by-side blocks | `rounded-[2rem]` |
+| Buttons (default) | `rounded-lg` (via Shadcn variant) |
+| Tags/badges | `rounded-full` |
+
+---
+
+## 🎭 Animation & Interactivity
+
+- **Global utility**: `.transition-smooth` = `transition-all duration-200 ease-in-out`.
+- **Layout transitions**: Sidebar collapse uses `transition-all duration-300` on the content wrapper.
+- **Alert pulse**: `animate-pulse` on `AlertCircle` when an order exceeds 20 minutes wait time.
+- **Reduced motion**: `@media (prefers-reduced-motion: reduce)` resets all animations to `0.01ms` for accessibility.
+
+---
+
+## 📜 Custom CSS Utilities
+
+```css
+.no-scrollbar         /* Hides scrollbar but keeps scroll functionality */
+.shadow-card          /* box-shadow: 0 1px 3px oklch(0 0 0 / 5%), 0 1px 2px oklch(0 0 0 / 3%) */
+.transition-smooth    /* transition-all duration-200 ease-in-out */
+.gradient-primary     /* 135deg gradient using --primary */
+.text-gradient-primary /* Clipped text gradient from primary to primary/60 */
+```
+
+---
+
+## 📦 Component Library (Shadcn/UI via Radix)
+
+All low-level components live in `src/components/ui/` (22 components). These are headless Radix primitives with Tailwind styling baked in via `class-variance-authority` (CVA).
+
+**Available UI primitives**: `button`, `input`, `label`, `select`, `dialog`, `alert-dialog`, `dropdown-menu`, `tabs`, `avatar`, `badge`, `card`, `separator`, `switch`, `tooltip`, `progress`, `form`, `skeleton`, `toaster`, `scroll-area`, `table`, and more.
+
+> Always check `src/components/ui/` first before building any low-level element. Never duplicate what Shadcn already provides.

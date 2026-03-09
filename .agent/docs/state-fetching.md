@@ -1,66 +1,155 @@
-# ⚙️ State & Data Fetching (Extended)
+# ⚙️ State & Data Fetching — FastCashierFE
 
-This document details how the application handles persistence, communication, and synchronization with the backend.
-
-## 💾 Global State (Zustand)
-
-We use Zustand with the `persist` middleware for data that must survive page refreshes.
-
-### `authStore.ts`
-- **Key**: `auth-storage`
-- **Responsibility**: JWT Token management, user profile, and authentication status.
-- **Methods**: `login(user, token)`, `logout()`, `updateUser(data)`.
-
-### `useCashierStore.ts`
-- **Key**: `cashier-storage`
-- **Responsibility**: Management of the active cashier session.
-- **Properties**: `currentSession`, `isSessionActive`.
-- **Methods**: `openSession(sessionData)`, `closeSession()`.
-
-### `themeStore.ts`
-- **Key**: `theme-storage`
-- **Responsibility**: Light/Dark mode state.
+Complete reference for global state (Zustand), server state (TanStack Query), and the HTTP communication layer (Axios).
 
 ---
 
-## 🔄 Server State (TanStack Query)
+## 💾 Global State — Zustand Stores
+
+All stores use `persist` middleware with `localStorage`. The theme is also applied eagerly in `main.tsx` before React renders to avoid FOUC.
+
+### `authStore.ts` — `useAuthStore`
+- **LocalStorage Key**: `auth-storage`
+- **State**: `user: User | null`, `token: string | null`, `role: RoleName | null`, `isAuthenticated: boolean`.
+- **Actions**:
+  - `login(credentials)` — calls `POST /auth/login`, stores token also in raw `localStorage['token']` for Axios interceptors, sets full state.
+  - `logout()` — removes `localStorage['token']`, resets all state to null/false.
+- **Note**: `role` is derived at login time from `getRoleById(user.roleId)`. The raw `user.roleId` is always available for lookups.
+
+### `useCashierStore.ts` — `useCashierStore`
+- **LocalStorage Key**: `cashier-storage`
+- **State**: `currentSession: CashierSession | null`, `isSessionActive: boolean`, `orderItems: OrderItem[]`.
+- **Actions**:
+  - `setSession(session | null)` — **canonical action**. Sets both `currentSession` and automatically derives `isSessionActive` (`= !!session && session.status === 'OPEN'`). Always prefer this over `openSession`.
+  - `openSession(session)` — legacy alias, sets `isSessionActive: true` unconditionally.
+  - `closeSession()` — nullifies session, sets `isSessionActive: false`, **also clears the cart**.
+  - `addItem(product)` — adds product to cart or increments quantity if already present.
+  - `removeItem(productId)` — removes item completely.
+  - `updateQuantity(productId, delta)` — applies delta, enforces minimum quantity of 1.
+  - `clearCart()` — empties `orderItems`.
+- **Partialize**: Persists only `currentSession`, `isSessionActive`, and `orderItems`.
+
+### `themeStore.ts` — `useThemeStore`
+- **LocalStorage Key**: `theme-storage`
+- **State**: `theme: 'light' | 'dark'`.
+- **Actions**:
+  - `toggleTheme()` — flips theme and adds/removes `.dark` class on `document.documentElement`.
+  - `setTheme(theme)` — sets explicit theme and updates class.
+- **Eager Init**: `main.tsx` reads `theme-storage` from localStorage before rendering React to immediately set the correct class, preventing flash.
+
+---
+
+## 🔄 Server State — TanStack Query
 
 ### Global Config (`src/config/queryClient.ts`)
-- `staleTime`: 300,000ms (5 minutes).
-- `refetchOnWindowFocus`: `false`.
-- `retry`: 1.
+```typescript
+{
+  staleTime: 300_000,        // 5 minutes — avoids unnecessary refetches
+  refetchOnWindowFocus: false,
+  retry: 1,
+}
+```
+
+### Complete Hook Inventory (`src/hooks/`)
+
+#### Query Hooks (Read)
+| Hook | Query Key | Source Endpoint | Purpose |
+| :--- | :--- | :--- | :--- |
+| `useProducts` | `['products']` | `GET /products` | Product catalog, grouped by category |
+| `useActiveProducts` | `['products', 'active']` | `GET /products?active=true` | Only active products for cashier catalog |
+| `useUsers` | `['users']` | `GET /users` | All users with roles (admin) |
+| `useSessionStatistics` | `['cashier-session-statistics', sessionId]` | `GET /cashier-sessions/:id/statistics` | Live stats for the current session |
+| `useOrdersBySession` | `['orders', 'session', sessionId]` | `GET /orders/session/:id` | Orders history for a session |
+| `useCashierSessionsHistory` | `['cashier-sessions']` | `GET /cashier-sessions` | All sessions (admin turnos/history) |
+| `useKitchenOrders` | `['kitchen-orders']` | `GET /orders/kitchen-display` | Live orders for kitchen display |
+| `useKitchenHistory` | `['kitchen-history']` | `GET /orders/history` | Completed orders for kitchen |
+| `useAdminMetrics` | `['admin-metrics', params]` | `GET /orders/metrics/dashboard` | Dashboard KPIs with period filter |
+| `useAdminNavigation` | — | — | Navigation helper (no API call) |
+| `useTest` | `['test']` | — | Dev/testing hook |
+
+#### Mutation Hooks (Write)
+| Hook | Exported Mutations | Invalidates | Side Effects |
+| :--- | :--- | :--- | :--- |
+| `useCashierSession` | `openSession`, `closeSession` | `['cashier-sessions']`, `['cashier-session-statistics']` | Syncs `useCashierStore` via `setSession()` / `closeSession()`, shows toast |
+| `useCreateOrder` | `mutate / mutateAsync` | `['orders']`, `['cashier-session-statistics']` | `clearCart()` on success, toast with order number |
+| `useCancelOrder` | `mutate / mutateAsync` | `['orders', 'session']`, `['cashier-session-statistics']` | Toast on success/error |
+| `useUpdateOrderStatus` | `mutate / mutateAsync` | `['kitchen-orders']`, `['kitchen-history']` | Reads `authStore.user.idUser` for `cookId`, toast |
+| `useCreateProduct` | `mutate / mutateAsync` | `['products']` | Sends `multipart/form-data` |
+| `useUpdateProduct` | `mutate / mutateAsync` | `['products']` | Sends `FormData` if image, JSON otherwise |
+| `useCreateUser` | `mutate / mutateAsync` | `['users']` | Calls `POST /auth/register` |
+| `useUpdateUser` | `mutate / mutateAsync` | `['users']` | Calls `PATCH /users/:id` |
+| `useDeleteUser` | `mutate / mutateAsync` | `['users']` | Calls `DELETE /users/:id` |
+| `useToggleUserStatus` | `mutate / mutateAsync` | `['users']` | Calls `PATCH /users/:id/status` |
 
 ### Data Synchronization Pattern
-1. **Fetch**: Wrapped in a custom hook (e.g., `useSessionStatistics.ts`).
-2. **Mutate**: Use `useMutation` for POST/PUT/DELETE in hooks like `useCreateOrder.ts` or `useCancelOrder.ts`.
-3. **Invalidate**: Upon successful mutation, invalidate the related query key to trigger an automatic background refetch:
-   ```typescript
-   onSuccess: () => {
-     // Trigger update for global statistics
-     queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
-     // Trigger update for order history
-     queryClient.invalidateQueries({ queryKey: ['orders'] });
-   }
-   ```
-4. **Manual Sync**: Views like `EstadisticasView` provide a fallback "Sincronizar" button using the `refetch` function for user control.
+```typescript
+// Standard mutation with invalidation
+useMutation({
+  mutationFn: serviceFunction,
+  onSuccess: () => {
+    // 1. Update local Zustand state if needed
+    store.setSession(data);
+    // 2. Invalidate related server state to trigger refetch
+    queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
+    // 3. Notify user
+    toast.success('Operación exitosa');
+  },
+  onError: (error: any) => {
+    toast.error(error.response?.data?.message || 'Error genérico');
+  },
+});
+```
+
+### Manual Refetch Pattern
+Views like `EstadisticasView` expose a `Sincronizar` button:
+```typescript
+const { data, refetch, isFetching } = useSessionStatistics(sessionId);
+// → refetch() is triggered by a button in the UI for user-controlled sync
+```
 
 ---
 
-## 📡 Backend Communication (Axios)
+## 📡 Backend Communication — Axios
 
-### Configuration (`src/api/axiosConfig.ts`)
-The `api` instance is pre-configured with:
-- `baseURL`: From environment (`VITE_API_URL`).
-- `headers`: `Content-Type: application/json`.
+### Instance (`src/api/axiosConfig.ts`)
+```typescript
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  headers: { 'Content-Type': 'application/json' },
+});
+```
 
-### Interceptors
-- **Request Interceptor**: intercepts every request to inject the JWT from `authStore`.
-- **Response Interceptor**:
-  - `Success`: Returns `response.data`.
-  - `Error (401)`: Triggered when the token expires or is invalid. Executes `authStore.logout()` and redirects the user to `/login`.
+### Request Interceptor — JWT Injection
+Reads raw token from `localStorage.getItem('token')` and injects it as `Authorization: Bearer <token>`. This runs on every request automatically.
 
-### Service Patterns
-Services are organized by module in `src/api/`.
-- **Cashier Session**: `cashierSessionService.ts` handles opening, closing, and statuses.
-- **Orders**: `orderService.ts` handles creation and history.
-- **Users**: Admin CRUD operations.
+### Response Interceptor — 401 Auto-Logout
+```typescript
+// Triggers ONLY when:
+// 1. Status is 401
+// 2. The failing request is NOT /auth/login
+// 3. The user previously had a token (was authenticated)
+// → removes token from localStorage, hard redirects to /login
+```
+This prevents false logouts on login page authentication failures.
+
+### FormData Exception
+`useCreateProduct` and `useUpdateProduct` override `Content-Type` to `multipart/form-data` when an image `File` is present. The Axios base config default is overridden per-request only.
+
+---
+
+## 🔑 Query Key Conventions
+
+Consistent query keys are critical for invalidation. Follow this naming:
+
+| Data Domain | Query Key Pattern |
+| :--- | :--- |
+| Products | `['products']`, `['products', 'active']` |
+| Users | `['users']` |
+| Orders (by session) | `['orders', 'session', sessionId]` |
+| Kitchen orders | `['kitchen-orders']` |
+| Kitchen history | `['kitchen-history']` |
+| Cashier sessions | `['cashier-sessions']` |
+| Session stats | `['cashier-session-statistics', sessionId]` |
+| Admin metrics | `['admin-metrics', params]` |
+
+> **Rule**: When adding a new query, register its key here and in all related mutations' `invalidateQueries` calls.
