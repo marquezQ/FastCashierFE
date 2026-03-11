@@ -36,7 +36,7 @@ const statusConfig = {
 export const HistoryTableRow = ({ order, onViewDetail, onCancel, isCancelling }: HistoryTableRowProps) => {
     const [reason, setReason] = useState('');
     const status = statusConfig[order.orderStatus as keyof typeof statusConfig] || statusConfig.PENDING;
-    const canCancel = order.orderStatus === 'PENDING' || order.orderStatus === 'IN_PREPARATION';
+    const canCancel = order.orderStatus !== 'DELIVERED' && order.orderStatus !== 'CANCELLED';
 
     return (
         <TableRow className="group hover:bg-green-500/5 border-green-100/50 dark:border-green-900/50 transition-colors h-20">

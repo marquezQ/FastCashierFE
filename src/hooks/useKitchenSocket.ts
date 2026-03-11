@@ -17,9 +17,17 @@ export const useKitchenSocket = () => {
         });
     }, [queryClient]);
 
-    const handleOrderStatusUpdated = useCallback(() => {
+    const handleOrderStatusUpdated = useCallback((order: Order) => {
         // Invalidate the kitchen orders query when a status changes
         queryClient.invalidateQueries({ queryKey: ['kitchen-orders'] });
+
+        // If the order was cancelled, show a high-priority alert
+        if (order.orderStatus === 'CANCELLED') {
+            toast.error(`¡PEDIDO CANCELADO! #${order.orderNumber}`, {
+                description: `Cliente: ${order.customer || 'Mostrador'}. Detener preparación inmediatamente.`,
+                duration: 8000,
+            });
+        }
     }, [queryClient]);
 
     useEffect(() => {
