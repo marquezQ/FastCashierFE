@@ -5,6 +5,5 @@ export const useKitchenOrders = () => {
     return useQuery({
         queryKey: ['kitchen-orders'],
         queryFn: orderService.getKitchenOrders,
-        refetchInterval: 10000, // Refetch every 10 seconds for real-time updates cambiar cuando haya websockets
     });
 };
