@@ -16,5 +16,5 @@ jobs:
             cd /var/www/fastcashier/frontend
             git pull origin develop
             npm install
-            npm run build
+            NODE_OPTIONS="--max-old-space-size=512" npm run build
             rm -rf node_modules
