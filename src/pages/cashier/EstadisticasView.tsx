@@ -1,5 +1,4 @@
 import { useCashierStore } from '@/store/useCashierStore';
-import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
 import { useSessionStatistics } from '@/hooks/useSessionStatistics';
 
 // Refactored Components
@@ -11,12 +10,8 @@ import { StatsSkeleton } from '@/components/cashier/stats/StatsSkeleton';
 import { StatsError } from '@/components/cashier/stats/StatsError';
 
 export const EstadisticasView = () => {
-    const { isSessionActive, currentSession } = useCashierStore();
+    const { currentSession } = useCashierStore();
     const { data: stats, isLoading, isError, refetch, isFetching } = useSessionStatistics(currentSession?.idSession);
-
-    if (!isSessionActive) {
-        return <OpenRegisterForm />;
-    }
 
     if (isLoading) {
         return <StatsSkeleton />;

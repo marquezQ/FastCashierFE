@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useCashierStore } from '@/store/useCashierStore';
-import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
 import { useOrdersBySession } from '@/hooks/useOrdersBySession';
 import { useCancelOrder } from '@/hooks/useCancelOrder';
 import { OrderProcessDialog } from '@/components/shared/OrderProcessDialog';
@@ -10,17 +9,13 @@ import { HistoryTable } from '@/components/cashier/history/HistoryTable';
 import type { Order } from '@/types/order';
 
 export const HistorialView = () => {
-    const { isSessionActive, currentSession } = useCashierStore();
+    const { currentSession } = useCashierStore();
     const { data: orders, isLoading, refetch } = useOrdersBySession(currentSession?.idSession);
     const { mutate: cancelOrder, isPending: isCancelling } = useCancelOrder();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-
-    if (!isSessionActive) {
-        return <OpenRegisterForm />;
-    }
 
     const filteredOrders = orders?.filter(order => {
         const query = searchQuery.toLowerCase();

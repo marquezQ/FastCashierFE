@@ -7,6 +7,7 @@ import { CashierNavbar } from '@/components/layout/Cashier/CashierNavbar';
 import { PedidosView } from './cashier/PedidosView';
 import { HistorialView } from './cashier/HistorialView';
 import { EstadisticasView } from './cashier/EstadisticasView';
+import { RequireCashierSession } from '@/components/cashier/RequireCashierSession';
 import { cn } from '@/lib/utils';
 
 export const CashierPage = () => {
@@ -50,13 +51,15 @@ export const CashierPage = () => {
         />
 
         <main className="p-4">
-          <Routes>
-            <Route index element={<Navigate to="/cashier/pedidos" replace />} />
-            <Route path="/pedidos" element={<PedidosView />} />
-            <Route path="/historial" element={<HistorialView />} />
-            <Route path="/estadisticas" element={<EstadisticasView />} />
-            <Route path="*" element={<Navigate to="/cashier" replace />} />
-          </Routes>
+          <RequireCashierSession>
+            <Routes>
+              <Route index element={<Navigate to="/cashier/pedidos" replace />} />
+              <Route path="/pedidos" element={<PedidosView />} />
+              <Route path="/historial" element={<HistorialView />} />
+              <Route path="/estadisticas" element={<EstadisticasView />} />
+              <Route path="*" element={<Navigate to="/cashier" replace />} />
+            </Routes>
+          </RequireCashierSession>
         </main>
       </div>
     </div>

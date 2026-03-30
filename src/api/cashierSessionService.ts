@@ -12,13 +12,9 @@ export const cashierSessionService = {
         return response.data;
     },
 
-    getCurrentSession: async (): Promise<CashierSession | null> => {
-        // Assuming there might be an endpoint to get the active session for the user
-        // If not, this can be handled by just checking the store or a general fetch
-        const response = await api.get<CashierSession[]>('/cashier-sessions', {
-            params: { status: 'OPEN' }
-        });
-        return response.data.length > 0 ? response.data[0] : null;
+    getCurrentSession: async (userId: number): Promise<CashierSession | null> => {
+        const response = await api.get<CashierSession | null>(`/cashier-sessions/current/${userId}`);
+        return response.data || null;
     },
 
     getSessionStatistics: async (id: number): Promise<SessionStatistics> => {

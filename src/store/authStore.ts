@@ -62,6 +62,7 @@ export const useAuthStore = create<AuthStore>()(
       // Logout
       logout: () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('cashier-storage'); // Clear persisted cashier session
         
         set({
           user: null,

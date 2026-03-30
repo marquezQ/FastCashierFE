@@ -16,6 +16,8 @@ export const useCashierSession = () => {
         onSuccess: (session) => {
             setSession(session);
             toast.success('Sesión de caja abierta correctamente');
+            // Invalidar la query que usa RequireCashierSession para re-renderizar la vista
+            queryClient.invalidateQueries({ queryKey: ['current-cashier-session'] });
             queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
             queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
         },
@@ -34,6 +36,8 @@ export const useCashierSession = () => {
         onSuccess: () => {
             closeSession();
             toast.success('Sesión de caja cerrada correctamente');
+            // Invalidar la query que usa RequireCashierSession para re-renderizar la vista
+            queryClient.invalidateQueries({ queryKey: ['current-cashier-session'] });
             queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
             queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
         },
