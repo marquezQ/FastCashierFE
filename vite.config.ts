@@ -22,7 +22,7 @@ export default defineConfig({
         description: 'Sistema de Punto de Venta Rápido',
         theme_color: '#3b82f6',          // Primary blue — used for browser UI chrome
         background_color: '#151820',     // Dark bg — prevents white flash on Android splash
-        display: 'standalone',           // Hides browser nav bars (fullscreen feel)
+        display: 'fullscreen',            // Eliminates Chrome's PWA header bar (name + domain + ⋮)
         orientation: 'portrait',
         start_url: '/',
         scope: '/',
