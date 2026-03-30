@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CashierMobileSidebar } from './CashierMobileSidebar';
 import { useCashierStore } from '@/store/useCashierStore';
 import { useCashierSession } from '@/hooks/useCashierSession';
@@ -38,8 +38,28 @@ export const CashierNavbar = ({
     onNavigate,
     onLogout,
 }: CashierNavbarProps) => {
-    const { isSessionActive, currentSession } = useCashierStore();
+    const { isSessionActive } = useCashierStore();
     const { closeSession, isClosing } = useCashierSession();
+
+    // Timer effect for live clock (Ultra-optimized, memory-leak-free)
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    useEffect(() => {
+        // Sync with the next minute boundary, then tick every minute
+        const scheduleNextTick = () => {
+            const now = new Date();
+            setCurrentTime(now);
+            // ms until 00 seconds of next minute
+            const delay = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+            timerRef.current = setTimeout(scheduleNextTick, delay);
+        };
+
+        scheduleNextTick();
+        // Cleanup: always clears the latest timer, preventing memory leaks
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, []);
 
     // Form state for closing
     const [closingCash, setClosingCash] = useState('');
@@ -96,12 +116,12 @@ export const CashierNavbar = ({
                             </span>
                         </div>
 
-                        {/* Time Indicator - Smaller on mobile */}
-                        {isSessionActive && currentSession && (
+                        {/* Time Indicator - Smaller on mobile line */}
+                        {isSessionActive && (
                             <div className="hidden min-[400px]:flex items-center gap-1 md:gap-2 text-[11px] md:text-sm text-green-700 dark:text-green-400 shrink-0 backdrop-blur-sm bg-green-500/5 px-2 py-0.5 rounded-full border border-green-500/10">
                                 <Clock className="h-3 w-3 md:h-4 md:w-4" />
-                                <span>
-                                    {new Date(currentSession.openingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                <span suppressHydrationWarning>
+                                    {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                 </span>
                             </div>
                         )}

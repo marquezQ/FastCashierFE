@@ -1,17 +1,7 @@
-import { useCashierStore } from '@/store/useCashierStore';
-import { OpenRegisterForm } from '@/components/cashier/OpenRegisterForm';
 import { ProductCatalog } from '@/components/cashier/ProductCatalog';
 import { OrderSummary } from '@/components/cashier/OrderSummary';
 
 export const PedidosView = () => {
-    const { isSessionActive } = useCashierStore();
-
-    if (!isSessionActive) {
-        return <OpenRegisterForm />;
-    }
-
-
-
     return (
         <div className="h-full md:h-[calc(100vh-6rem)] relative">
             <div className="flex flex-col md:grid md:h-full gap-4 md:grid-cols-[1fr_400px]">
