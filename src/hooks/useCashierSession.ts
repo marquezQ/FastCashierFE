@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 export const useCashierSession = () => {
     const queryClient = useQueryClient();
     const setSession = useCashierStore((state) => state.setSession);
-    const closeSession = useCashierStore((state) => state.closeSession);
     const currentSession = useCashierStore((state) => state.currentSession);
 
     // Mutation to open a session
@@ -34,12 +33,9 @@ export const useCashierSession = () => {
             return cashierSessionService.closeSession(currentSession.idSession, data);
         },
         onSuccess: () => {
-            closeSession();
-            toast.success('Sesión de caja cerrada correctamente');
-            // Invalidar la query que usa RequireCashierSession para re-renderizar la vista
-            queryClient.invalidateQueries({ queryKey: ['current-cashier-session'] });
-            queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
-            queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
+            // No invalidamos las queries ni llamamos closeSession aun para evitar
+            // que RequireCashierSession desmonte todo el componente Navbar inmediatamente.
+            // Se invalida todo manualmente tras darle click a 'Finalizar'.
         },
         onError: (error: any) => {
             console.error('Error closing session:', error);

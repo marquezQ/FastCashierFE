@@ -14,8 +14,10 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
     const isPreparing = order.orderStatus === 'IN_PREPARATION';
     const isReady = order.orderStatus === 'READY';
 
-    // Calculate minutes wait from createdAt
-    const minutesWait = Math.floor((new Date().getTime() - new Date(order.orderDate).getTime()) / 60000);
+    // Calculate minutes wait from createdAt or completedDate if available
+    const minutesWait = order.completedDate
+        ? Math.floor((new Date(order.completedDate).getTime() - new Date(order.orderDate).getTime()) / 60000)
+        : Math.floor((new Date().getTime() - new Date(order.orderDate).getTime()) / 60000);
 
     const orderTypeLabel = order.orderType === 'DINE_IN' ? 'Mesa' : 'Para llevar';
     const isDineIn = order.orderType === 'DINE_IN';

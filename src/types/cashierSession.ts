@@ -34,6 +34,23 @@ export interface CloseSessionDto {
     observations?: string;
 }
 
+export interface CloseSessionResponse {
+    message: string;
+    summary: {
+        sessionId: number;
+        startTime: string;
+        endTime: string;
+        initialCash: number;
+        cashSales: number;
+        totalExpectedCash: number;
+        declaredCash: number;
+        totalExpectedQr: number;
+        declaredQr: number;
+        difference: number;
+        totalOrders: number;
+    };
+}
+
 export interface SessionStatistics {
     sessionId: number;
     expectedCash: number;
