@@ -1,5 +1,5 @@
 import { api } from './axiosConfig';
-import type { CashierSession, CreateSessionDto, CloseSessionDto, SessionStatistics } from '../types/cashierSession';
+import type { CashierSession, CreateSessionDto, CloseSessionDto, SessionStatistics, CloseSessionResponse } from '../types/cashierSession';
 
 export const cashierSessionService = {
     openSession: async (data: CreateSessionDto): Promise<CashierSession> => {
@@ -7,8 +7,8 @@ export const cashierSessionService = {
         return response.data;
     },
 
-    closeSession: async (id: number, data: CloseSessionDto): Promise<CashierSession> => {
-        const response = await api.post<CashierSession>(`/cashier-sessions/${id}/close`, data);
+    closeSession: async (id: number, data: CloseSessionDto): Promise<CloseSessionResponse> => {
+        const response = await api.post<CloseSessionResponse>(`/cashier-sessions/${id}/close`, data);
         return response.data;
     },
 
