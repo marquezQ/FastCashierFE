@@ -46,7 +46,6 @@ export const CloseSessionDialog = ({ isOpen, onOpenChange }: CloseSessionDialogP
             const response = await closeSession({
                 closingCashAmount: Number(closingCash),
                 closingQrAmount: Number(closingQr),
-                closingDate: new Date().toISOString(),
                 observations: observations.trim() || undefined
             });
             
