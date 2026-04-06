@@ -37,7 +37,6 @@ export const OpenRegisterForm = () => {
         try {
             await openSession({
                 userId: user.idUser,
-                openingDate: new Date().toISOString(),
                 initialAmount: Number(initialCash),
                 observations: observations.trim() || undefined
             });

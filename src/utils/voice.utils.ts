@@ -53,7 +53,7 @@ const getBestSpanishVoice = (): SpeechSynthesisVoice | null => {
     return spanishVoices[0];
 };
 
-export const speakOrderReady = (orderNumber: string, customerName?: string) => {
+export const speakOrderReady = (orderNumber: string, _customerName?: string) => {
     if (!('speechSynthesis' in window)) return;
 
     // QUITAMOS cancel() para que los mensajes se encolen y no se corten
@@ -62,7 +62,7 @@ export const speakOrderReady = (orderNumber: string, customerName?: string) => {
     const rawId = orderNumber.split('-').pop() || orderNumber;
     const cleanId = parseInt(rawId, 10).toString() || rawId;
 
-    const text = `Pedido número    ${cleanId} ${customerName ? 'para ' + customerName : ''} porfavor.`;
+    const text = `Pedido número ${cleanId} porfavor.`;
     const utterance = new SpeechSynthesisUtterance(text);
     const voice = getBestSpanishVoice();
 

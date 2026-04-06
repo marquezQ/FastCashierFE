@@ -22,14 +22,12 @@ export interface CashierSession {
 
 export interface CreateSessionDto {
     userId: number;
-    openingDate: string; // ISO String
     initialAmount: number;
     observations?: string;
 }
 
 export interface CloseSessionDto {
     closingCashAmount: number;
-    closingDate: string; // ISO String
     closingQrAmount: number;
     observations?: string;
 }
