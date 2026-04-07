@@ -23,7 +23,7 @@ export default defineConfig({
         theme_color: '#3b82f6',          // Primary blue — used for browser UI chrome
         background_color: '#151820',     // Dark bg — prevents white flash on Android splash
         display: 'fullscreen',            // Eliminates Chrome's PWA header bar (name + domain + ⋮)
-        orientation: 'portrait',
+        orientation: 'any',
         start_url: '/',
         scope: '/',
         icons: [
