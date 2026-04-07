@@ -157,8 +157,8 @@ export const CloseSessionDialog = ({ isOpen, onOpenChange }: CloseSessionDialogP
                             </div>
                             <div className="flex justify-between items-center text-base pt-1">
                                 <span className="font-black uppercase text-muted-foreground text-xs tracking-wider">Diferencia Total</span>
-                                <span className={`font-black ${closedSummary.difference < 0 ? 'text-red-500' : closedSummary.difference > 0 ? 'text-green-500' : 'text-blue-500'}`}>
-                                    {closedSummary.difference > 0 ? '+' : ''}{formatPrice(closedSummary.difference.toString())}
+                                <span className={`font-black ${((Number(closedSummary.declaredCash) - Number(closedSummary.totalExpectedCash)) + (Number(closedSummary.declaredQr) - Number(closedSummary.totalExpectedQr))) < 0 ? 'text-red-500' : ((Number(closedSummary.declaredCash) - Number(closedSummary.totalExpectedCash)) + (Number(closedSummary.declaredQr) - Number(closedSummary.totalExpectedQr))) > 0 ? 'text-green-500' : 'text-blue-500'}`}>
+                                    {((Number(closedSummary.declaredCash) - Number(closedSummary.totalExpectedCash)) + (Number(closedSummary.declaredQr) - Number(closedSummary.totalExpectedQr))) > 0 ? '+' : ''}{formatPrice((((Number(closedSummary.declaredCash) - Number(closedSummary.totalExpectedCash)) + (Number(closedSummary.declaredQr) - Number(closedSummary.totalExpectedQr)))).toString())}
                                 </span>
                             </div>
                         </div>

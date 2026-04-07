@@ -103,7 +103,7 @@ export const ThermalSessionTicket = ({ summary }: ThermalSessionTicketProps) => 
                     fontWeight: 'bold', 
                     marginTop: '2px' 
                 }}>
-                    {summary.difference > 0 ? '+' : ''}{formatPrice(summary.difference?.toString() || '0')}
+                    {((Number(summary.declaredCash || 0) - Number(summary.totalExpectedCash || 0)) + (Number(summary.declaredQr || 0) - Number(summary.totalExpectedQr || 0))) > 0 ? '+' : ''}{formatPrice(((Number(summary.declaredCash || 0) - Number(summary.totalExpectedCash || 0)) + (Number(summary.declaredQr || 0) - Number(summary.totalExpectedQr || 0))).toString())}
                 </div>
             </div>
 
