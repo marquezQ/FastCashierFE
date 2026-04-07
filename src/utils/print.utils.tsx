@@ -1,71 +1,40 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 /**
- * Prints a React component by temporarily mounting it to the DOM
- * and using CSS media queries to hide the rest of the application
- * during the print process. This ensures compatibility with Android PWA.
- * @param Component The React component to print
- * @param props Props for the component
+ * Prints a React component by rendering it to a standalone HTML document
+ * and opening it in a new browser window/tab.
+ *
+ * Platform behavior:
+ * - Desktop: auto-triggers print dialog → auto-closes window after print/cancel
+ * - Android Browser/PWA: opens ticket in Chrome tab for native share/print
+ *
+ * NOTE: This is a temporary frontend-only solution. The production-grade
+ * approach is to generate the ticket PDF server-side (GET /orders/:id/ticket/pdf)
+ * and open the blob URL directly. See CloseSessionDialog.handleDownloadPdf
+ * for the reference pattern.
  */
+
+const PRINT_STYLES = `@page{margin:0;size:auto}html,body{margin:0;padding:0;background:#fff;font-family:'Courier New',Courier,monospace;-webkit-print-color-adjust:exact}*{box-sizing:border-box}`;
+
+const PRINT_SCRIPT = `window.onafterprint=function(){window.close()};setTimeout(function(){try{window.print()}catch(e){}},400)`;
+
+function buildPrintDocument(bodyHtml: string): string {
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Ticket</title><style>${PRINT_STYLES}</style></head><body>${bodyHtml}<script>${PRINT_SCRIPT}</script></body></html>`;
+}
+
 export const printComponent = <T,>(
   Component: React.ComponentType<T>,
   props: T
-) => {
-  // Create a container for the React app
-  const container = document.createElement('div');
-  container.id = 'print-root';
-  
-  // Add print-specific styles to hide the main app and format the ticket
-  const style = document.createElement('style');
-  style.id = 'print-ticket-style';
-  style.textContent = `
-    @media print {
-      body > :not(#print-root) {
-        display: none !important;
-      }
-      #print-root {
-        display: block !important;
-        width: 80mm;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-        background: white;
-        font-family: 'Courier New', Courier, monospace;
-        -webkit-print-color-adjust: exact;
-      }
-      @page {
-        margin: 0;
-        size: auto;
-      }
-      * {
-        box-sizing: border-box;
-      }
-    }
-    @media screen {
-      #print-root {
-        display: none !important;
-      }
-    }
-  `;
+): void => {
+  const markup = renderToStaticMarkup(<Component {...(props as any)} />);
+  const html = buildPrintDocument(markup);
 
-  document.head.appendChild(style);
-  document.body.appendChild(container);
+  // Use Blob URL — avoids deprecated document.write() and works cross-platform
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
 
-  // Render the component
-  const root = createRoot(container);
-  root.render(<Component {...(props as any)} />);
-
-  // Wait for rendering and images to load
-  setTimeout(() => {
-    window.print();
-
-    // Cleanup after printing (with a delay to ensure print dialog opened)
-    setTimeout(() => {
-      root.unmount();
-      document.body.removeChild(container);
-      document.head.removeChild(style);
-    }, 1000);
-  }, 500);
+  // Free the Blob from memory after 30s (enough time for print dialog)
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
 };
