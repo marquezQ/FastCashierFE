@@ -5,20 +5,18 @@ import { renderToStaticMarkup } from 'react-dom/server';
  * Prints a React component by rendering it to a standalone HTML document
  * and writing it to a new browser window.
  *
- * Why this approach?
- * - window.print() on main window: silently fails on Android
- * - Blob URL: Android's print engine can't re-fetch volatile Blob references
- * - Data URI: Chrome blocks data:text/html via window.open()
- * - New window + DOM write: content lives in the DOM, works everywhere ✓
+ * Platform-aware behavior:
+ * - Desktop: opens window → auto-triggers print → auto-closes after print/cancel
+ * - Android: opens ticket in Chrome tab with a visible "Imprimir" button.
+ *   Android's print engine crashes if window.print() is called programmatically
+ *   from a non-real-URL window, so we let the user trigger print manually via
+ *   a button inside the page (preserving the user gesture).
  *
- * Platform behavior:
- * - Desktop: auto-triggers print dialog → auto-closes window after print/cancel
- * - Android Browser/PWA: opens ticket in Chrome tab for native share/print
- *
- * NOTE: This is a temporary frontend-only solution. The production-grade
- * approach is to generate the ticket PDF server-side (GET /orders/:id/ticket/pdf)
- * and open the blob directly.
+ * NOTE: Temporary frontend-only solution. Production-grade approach is
+ * server-side PDF generation (GET /orders/:id/ticket/pdf).
  */
+
+const IS_ANDROID = /android/i.test(navigator.userAgent);
 
 const PRINT_STYLES = `
   @page { margin: 0; size: auto; }
@@ -28,9 +26,37 @@ const PRINT_STYLES = `
     -webkit-print-color-adjust: exact;
   }
   * { box-sizing: border-box; }
+  .print-actions {
+    text-align: center;
+    padding: 16px 8px;
+    border-top: 1px dashed #ccc;
+    margin-top: 10px;
+  }
+  .print-actions button {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 32px;
+    border: 2px solid #000;
+    background: #000;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 280px;
+  }
+  @media print {
+    .print-actions { display: none !important; }
+  }
 `;
 
-function buildPrintDocument(bodyHtml: string): string {
+const ANDROID_PRINT_BUTTON = `
+  <div class="print-actions">
+    <button onclick="window.print()">🖨️ IMPRIMIR TICKET</button>
+  </div>
+`;
+
+function buildPrintDocument(bodyHtml: string, forAndroid: boolean): string {
+  const actions = forAndroid ? ANDROID_PRINT_BUTTON : '';
   return [
     '<!DOCTYPE html>',
     '<html lang="es">',
@@ -40,7 +66,7 @@ function buildPrintDocument(bodyHtml: string): string {
     '  <title>Ticket</title>',
     `  <style>${PRINT_STYLES}</style>`,
     '</head>',
-    `<body>${bodyHtml}</body>`,
+    `<body>${bodyHtml}${actions}</body>`,
     '</html>',
   ].join('');
 }
@@ -50,13 +76,11 @@ export const printComponent = <T,>(
   props: T
 ): void => {
   const markup = renderToStaticMarkup(<Component {...(props as any)} />);
-  const html = buildPrintDocument(markup);
+  const html = buildPrintDocument(markup, IS_ANDROID);
 
   const win = window.open('about:blank', '_blank');
   if (!win) return;
 
-  // document.write on a blank window is the correct cross-platform API.
-  // The TS deprecation refers to inline use during page load, not this pattern.
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   win.document.open();
   // eslint-disable-next-line @typescript-eslint/no-deprecated
@@ -64,10 +88,14 @@ export const printComponent = <T,>(
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   win.document.close();
 
-  // Desktop: auto-trigger print after content renders, auto-close after dialog
-  // Android: window.print() silently fails, user prints via native menu — that's fine
-  win.onafterprint = () => win.close();
-  setTimeout(() => {
-    try { win.print(); } catch { /* Android: silently fails, expected */ }
-  }, 400);
+  if (!IS_ANDROID) {
+    // Desktop: auto-trigger print and auto-close window after dialog is dismissed
+    win.onafterprint = () => win.close();
+    setTimeout(() => {
+      try { win.print(); } catch { /* noop */ }
+    }, 400);
+  }
+  // Android: no auto-print, no auto-close.
+  // The user taps the "IMPRIMIR TICKET" button inside the page,
+  // which preserves the user gesture and lets Android's print engine work.
 };
