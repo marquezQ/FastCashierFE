@@ -1,7 +1,7 @@
 import { Clock, Users, Package, AlertCircle, CheckCircle2, PlayCircle, Send, Volume2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { speakOrderReady } from '@/utils/voice.utils';
+import { useTtsAudio } from '@/hooks/useTtsAudio';
 import type { Order, OrderStatus } from '@/types/order';
 
 interface KitchenOrderCardProps {
@@ -13,6 +13,7 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
     const isNew = order.orderStatus === 'PENDING';
     const isPreparing = order.orderStatus === 'IN_PREPARATION';
     const isReady = order.orderStatus === 'READY';
+    const { playOrderAudio } = useTtsAudio();
 
     // Calculate minutes wait from createdAt or completedDate if available
     const minutesWait = order.completedDate
@@ -122,7 +123,7 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                 {isReady && (
                     <div className="flex gap-2">
                         <Button
-                            onClick={() => speakOrderReady(order.orderNumber ?? '----', order.customer ?? undefined)}
+                            onClick={() => playOrderAudio(order.orderNumber ?? '----')}
                             variant="outline"
                             size="icon"
                             className="h-11 w-12 border-emerald-600/20 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-500/30 dark:hover:bg-emerald-500/10"

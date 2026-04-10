@@ -1,7 +1,9 @@
-import { Clock, CookingPot } from 'lucide-react';
+import { Clock, CookingPot, VolumeX } from 'lucide-react';
 import { UserMenu } from '../Navbar/UserMenu';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { KitchenMobileSidebar } from './KitchenMobileSidebar';
+import { useTtsAudio } from '@/hooks/useTtsAudio';
+import { Button } from '@/components/ui/button';
 
 interface KitchenNavbarProps {
     user: {
@@ -22,6 +24,8 @@ export const KitchenNavbar = ({
     onNavigate,
     onLogout,
 }: KitchenNavbarProps) => {
+    const { isAudioUnlocked, unlockAudio } = useTtsAudio();
+
     return (
         <header className="sticky top-0 z-40 h-16 border-b border-border/40 bg-background/80 backdrop-blur-md shadow-sm w-full">
             <div className="flex h-full items-center px-2 md:px-4 xl:px-6 max-w-full overflow-hidden">
@@ -52,6 +56,18 @@ export const KitchenNavbar = ({
                 <div className="flex-1" />
 
                 <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
+                    {!isAudioUnlocked && (
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={unlockAudio}
+                            className="h-8 md:h-9 bg-red-500 hover:bg-red-600 outline-none animate-pulse flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 text-xs md:text-sm shadow-sm"
+                            title="Activar audio de notificaciones"
+                        >
+                            <VolumeX className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                            <span className="hidden sm:inline font-bold">Activar Audios</span>
+                        </Button>
+                    )}
                     <ThemeToggle />
                     <UserMenu
                         user={user}

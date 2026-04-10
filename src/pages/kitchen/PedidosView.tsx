@@ -3,12 +3,13 @@ import { KitchenOrderColumn } from '@/components/kitchen/KitchenOrderColumn';
 import { KitchenOrderCard } from '@/components/kitchen/KitchenOrderCard';
 import { useKitchenOrders } from '@/hooks/useKitchenOrders';
 import { useUpdateOrderStatus } from '@/hooks/useUpdateOrderStatus';
-import { speakOrderReady } from '@/utils/voice.utils';
+import { useTtsAudio } from '@/hooks/useTtsAudio';
 import type { OrderStatus } from '@/types/order';
 
 export const PedidosView = () => {
     const { data: orders = [], isLoading, error, refetch } = useKitchenOrders();
     const updateStatusMutation = useUpdateOrderStatus();
+    const { playOrderAudio } = useTtsAudio();
 
     if (isLoading) {
         return (
@@ -43,8 +44,8 @@ export const PedidosView = () => {
             onSuccess: () => {
                 if (nextStatus === 'READY') {
                     const order = orders.find(o => o.idOrder === orderId);
-                    if (order) {
-                        speakOrderReady(order.orderNumber ?? '----', order.customer ?? undefined);
+                    if (order && order.orderNumber) {
+                        playOrderAudio(order.orderNumber);
                     }
                 }
             }
