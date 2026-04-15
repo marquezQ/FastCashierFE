@@ -172,6 +172,19 @@ RHF defaults to string values for inputs. For numeric Zod schemas, use the `valu
 
 ---
 
+## 📊 Forms That Use Controlled State (No Zod Schema)
+
+Some forms use controlled `useState` instead of React Hook Form + Zod, typically for simpler flows:
+
+| Form | File | Validation Method |
+| :--- | :--- | :--- |
+| `CloseSessionDialog` | `cashier/CloseSessionDialog.tsx` | Manual validation (`!closingCash || isNaN(...)`) |
+| `OpenRegisterForm` | `cashier/OpenRegisterForm.tsx` | Inline Zod in component |
+| `CancelOrder` dialog | Within order components | Basic validation |
+| `OrderSummary` (create order) | `cashier/OrderSummary.tsx` | Inline logic |
+
+---
+
 ## 🚧 What Doesn't Have a Schema Yet (Add Before Implementing)
 
 The following forms exist in the UI but their validation logic lives inline or needs a dedicated schema file:
@@ -179,6 +192,7 @@ The following forms exist in the UI but their validation logic lives inline or n
 | Form | Current Status | Recommended Action |
 | :--- | :--- | :--- |
 | `OpenRegisterForm` | Inline Zod in component | Extract to `sessions.schema.ts` |
+| `CloseSessionDialog` | Manual `useState` + `isNaN` checks | Extract to `sessions.schema.ts` with `closingCashAmount`, `closingQrAmount`, `observations` fields |
 | `CancelOrder` dialog | Basic validation | Add reason length constraints |
 | `OrderSummary` (create order) | Inline logic | Extract `createOrderSchema` to `schemas/` |
 

@@ -72,6 +72,9 @@ This is a core design rule. Every UI area has a distinct color identity to preve
 
 > The **elevation strategy** in dark mode is: `background (0.11)` < `muted (0.18)` < `popover (0.18)` < `card (0.22)` < `secondary (0.25)`.
 
+### Chart Colors
+Light and dark mode each have 5 chart colors (`--chart-1` through `--chart-5`) optimized for Recharts usage. These are mapped through `@theme inline` as `--color-chart-*`.
+
 ### Radius Scale
 | Token | Calculation | Approximate value |
 | :--- | :--- | :--- |
@@ -81,6 +84,7 @@ This is a core design rule. Every UI area has a distinct color identity to preve
 | `--radius-xl` | `var(--radius) + 4px` | `16px` |
 | `--radius-2xl` | `var(--radius) + 8px` | `20px` |
 | `--radius-3xl` | `var(--radius) + 12px` | `24px` |
+| `--radius-4xl` | `var(--radius) + 16px` | `28px` |
 
 ---
 
@@ -91,6 +95,7 @@ This is a core design rule. Every UI area has a distinct color identity to preve
 - **Sticky/floating elements**: `backdrop-blur-md` or `backdrop-blur-xl`.
 - **Elevation**: `shadow-card` (custom), `shadow-sm`, `shadow-md` for increasing depth.
 - **Gradient depth**: `bg-gradient-to-br from-emerald-500/[0.03] to-transparent` for subtle warmth in cards.
+- **Glassmorphic cards**: `bg-card/60 backdrop-blur-md ring-1 ring-border/50` (used in Reports SalesLineChart).
 
 ### 📐 Spacing & Layout Standards
 | Context | Class | Notes |
@@ -122,7 +127,7 @@ We use Tailwind 4 `@container` for components that need to be responsive to thei
 .cashier-h1      → text-3xl md:text-4xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight
 .cashier-subtitle → text-muted-foreground font-medium mt-1 text-sm md:text-base
 .cashier-h2      → text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-500
-.cashier-label-sm → text-[10px] font-black uppercase tracking-widest text-emerald-600/70
+.cashier-label-sm → text-[10px] font-black uppercase text-emerald-600/70 dark:text-emerald-400/70 tracking-widest
 ```
 
 #### General Typography Rules
@@ -137,7 +142,9 @@ We use Tailwind 4 `@container` for components that need to be responsive to thei
 | Standard cards | `rounded-2xl` |
 | Main metric containers | `rounded-3xl` |
 | Analysis/side-by-side blocks | `rounded-[2rem]` |
+| Dialog content | `rounded-2xl` or `rounded-3xl` |
 | Buttons (default) | `rounded-lg` (via Shadcn variant) |
+| Buttons (premium) | `rounded-xl` |
 | Tags/badges | `rounded-full` |
 
 ---
@@ -147,6 +154,9 @@ We use Tailwind 4 `@container` for components that need to be responsive to thei
 - **Global utility**: `.transition-smooth` = `transition-all duration-200 ease-in-out`.
 - **Layout transitions**: Sidebar collapse uses `transition-all duration-300` on the content wrapper.
 - **Alert pulse**: `animate-pulse` on `AlertCircle` when an order exceeds 20 minutes wait time.
+- **Page entrance**: `animate-in fade-in duration-500` used on view wrappers for smooth page transitions.
+- **Active scale**: `active:scale-95` on interactive buttons for tactile feedback.
+- **Spinner pattern**: `<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />` for inline loading states.
 - **Reduced motion**: `@media (prefers-reduced-motion: reduce)` resets all animations to `0.01ms` for accessibility.
 
 ---
@@ -161,12 +171,25 @@ We use Tailwind 4 `@container` for components that need to be responsive to thei
 .text-gradient-primary /* Clipped text gradient from primary to primary/60 */
 ```
 
+### Custom Scrollbar Styling
+```css
+::-webkit-scrollbar      → w-2 h-2
+::-webkit-scrollbar-track → bg-secondary
+::-webkit-scrollbar-thumb → bg-muted-foreground/30 rounded-md hover:bg-muted-foreground/50
+```
+
 ---
 
 ## 📦 Component Library (Shadcn/UI via Radix)
 
-All low-level components live in `src/components/ui/` (22 components). These are headless Radix primitives with Tailwind styling baked in via `class-variance-authority` (CVA).
+All low-level components live in `src/components/ui/` (23 components). These are headless Radix primitives with Tailwind styling baked in via `class-variance-authority` (CVA).
 
-**Available UI primitives**: `button`, `input`, `label`, `select`, `dialog`, `alert-dialog`, `dropdown-menu`, `tabs`, `avatar`, `badge`, `card`, `separator`, `switch`, `tooltip`, `progress`, `form`, `skeleton`, `toaster`, `scroll-area`, `table`, and more.
+**Available UI primitives**: `alert`, `alert-dialog`, `avatar`, `badge`, `button`, `card`, `chart`, `dialog`, `dropdown-menu`, `form`, `input`, `label`, `password-input`, `progress`, `select`, `separator`, `sheet`, `skeleton`, `switch`, `table`, `tabs`, `textarea`, `tooltip`.
 
 > Always check `src/components/ui/` first before building any low-level element. Never duplicate what Shadcn already provides.
+
+### Notable UI Additions (since March 2026)
+- **`chart.tsx`** — Recharts wrapper components (`ChartContainer`, `ChartTooltipContent`) with design system integration. Used by `SalesLineChart`.
+- **`password-input.tsx`** — Password input with show/hide toggle.
+- **`sheet.tsx`** — Radix Sheet (mobile-friendly slide-out panel).
+- **`textarea.tsx`** — Styled textarea component.
