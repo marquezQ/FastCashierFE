@@ -35,6 +35,8 @@ Operational guide for any AI agent working on this codebase. Read this before ev
 | **Card borders** | `border-border/40` or `border-border/50` — never full `border-border` |
 | **Dark borders** | `border border-white/[0.06]` for explicit dark mode card borders |
 | **Rounding** | `rounded-2xl` cards, `rounded-3xl` metric containers, `rounded-full` tags |
+| **Dialogs** | `rounded-2xl` or `rounded-3xl` with `shadow-2xl` |
+| **Active buttons** | Add `active:scale-95` for tactile feedback on primary actions |
 
 ### 3. Data Integrity — Non-Negotiable
 
@@ -42,32 +44,41 @@ Operational guide for any AI agent working on this codebase. Read this before ev
 - **Every new form** MUST use a Zod schema defined in `src/schemas/`.
 - **Every mutation** MUST invalidate related query keys on success.
 - **Every mutation** MUST show a `toast.success()` on success and `toast.error()` on failure.
+- **Session close mutation** uses deferred invalidation — do NOT auto-invalidate queries on success (see `state-fetching.md` for the pattern).
 
 ### 4. TypeScript Discipline
 - Never use `any` in component props. Prefer `unknown` + type narrowing.
 - Always `import type` for type-only imports.
 - Keep component props interfaces defined locally (inline) for simple cases, in the same file for complex ones.
 
+### 5. Timestamp Discipline
+- **Never send timestamps from the frontend** for session open/close operations. The server generates `openingDate` and `closingDate` using its own system clock.
+- `CreateSessionDto` only sends `userId`, `initialAmount`, `observations?`.
+- `CloseSessionDto` only sends `closingCashAmount`, `closingQrAmount`, `observations?`.
+
 ---
 
 ## 🗺️ Quick Domain Map
 
 ### Starting a Cashier Feature
-1. Check `useCashierStore` — does `isSessionActive` need to be checked?
-2. Check if the cashier has an open session before rendering the main view.
+1. Check `RequireCashierSession` — it guards all cashier views and is the source of truth for session state.
+2. Use `useCashierStore` for cart operations; session state is synced from the backend by `RequireCashierSession`.
 3. Use `emerald` colors for all primary actions and highlights.
 4. Components live in `src/components/cashier/`.
+5. For session close flow, study `CloseSessionDialog.tsx` — it uses the deferred invalidation pattern.
 
 ### Starting an Admin Feature
 1. Use `blue` / `primary` colors for actions and highlights.
 2. Check if a new metric needs a new query key in `useAdminMetrics.ts`.
 3. Components live in `src/components/admin/` or `src/components/Dashboard/`.
+4. For charts/reports, use Recharts with `ChartContainer` and `ChartTooltipContent` from `src/components/ui/chart.tsx`.
 
 ### Starting a Kitchen Feature
 1. Kitchen uses `xl:` breakpoint (1280px) for desktop layout — not `lg:`.
 2. Use `orange-500` / `amber-500` for actions.
-3. Voice announcement integration: `speakOrderReady(orderNumber, customerName?)` from `src/utils/voice.utils.ts`.
-4. Components live in `src/components/kitchen/`.
+3. Audio announcement: Use `useTtsAudio` hook → `playOrderAudio(orderNumber)` — NOT browser SpeechSynthesis.
+4. Real-time updates: `useKitchenSocket` hook handles WebSocket events and auto-invalidates queries.
+5. Components live in `src/components/kitchen/`.
 
 ---
 
@@ -75,15 +86,19 @@ Operational guide for any AI agent working on this codebase. Read this before ev
 
 | Util | File | What It Does |
 | :--- | :--- | :--- |
-| `speakOrderReady(orderNumber, customer?)` | `voice.utils.ts` | Web Speech API — announces order with LATAM Spanish voice |
-| `printComponent(Component, props)` | `print.utils.tsx` | Renders a React component in a hidden iframe and calls `window.print()` for 80mm thermal ticket printing |
+| `playOrderAudio(orderNumber)` | `useTtsAudio` hook | Fetches MP3 from backend TTS endpoint, enqueues for sequential playback |
+| `unlockAudio()` | `useTtsAudio` hook | Plays silent WAV to bypass browser autoplay restrictions (must be user-initiated) |
+| `audioQueue` | `utils/audioQueue.ts` | `AudioQueueManager` — sequential audio playback, autoplay unlock, blob URL cleanup |
+| `printComponent(Component, props)` | `print.utils.tsx` | Renders React component to static HTML in new window. Desktop: auto-print. Android: manual print button. |
 | `groupSessionsByDate(sessions)` | `session.utils.ts` | Groups `CashierSession[]` by date string for timeline display |
 | `formatDateHeader(dateStr)` | `session.utils.ts` | Returns "HOY — ...", "AYER — ...", or full date in Spanish |
 | `formatDate(dateString)` | `date.utils.ts` | `DD/MM/YYYY` |
-| `formatDateLong(date)` | `date.utils.ts` | `"Monday, January 01, 2025"` (es-ES) |
+| `formatDateLong(date)` | `date.utils.ts` | `"lunes, 1 de enero de 2025"` (es-ES) |
 | `formatTime(date)` | `date.utils.ts` | `HH:MM` (es-ES) |
+| `formatPrice(value)` | `product.utils.ts` | Formats decimal string as currency |
 | `getRoleBadgeConfig(roleName)` | `role.utils.ts` | Returns `{className, icon}` for role badge styling |
 | `getRoleNameInSpanish(roleName)` | `role.utils.ts` | `'ADMIN'` → `'Administrador'` |
+| `parseOrderNumber(orderNumber)` | `ttsService.ts` | `'ORD-0045'` → `45` (extracts numeric part for TTS API) |
 | `cn(...classes)` | `lib/utils.ts` | `clsx` + `tailwind-merge` — use for all conditional class concatenation |
 
 ---
@@ -93,12 +108,17 @@ Operational guide for any AI agent working on this codebase. Read this before ev
 | Mistake | Correct Approach |
 | :--- | :--- |
 | Using `openSession()` from store | Use `setSession(session)` — it derives `isSessionActive` automatically |
+| Checking session state from Zustand only | `RequireCashierSession` queries the backend as source of truth |
+| Invalidating queries in session close `onSuccess` | Use deferred invalidation in `handleFinalize` to prevent premature UI unmounting |
+| Sending timestamps in session DTOs | Server generates all timestamps — never send `openingDate` or `closingDate` |
+| Using `speakOrderReady()` / SpeechSynthesis | **Removed.** Use `useTtsAudio` hook → `playOrderAudio(orderNumber)` for backend TTS |
 | Calling raw API inside a component | Extract to a TanStack hook in `src/hooks/` |
 | Using `className="..."` concatenation | Always use `cn(...)` from `@/lib/utils` |
 | Using `lg:` breakpoint in Kitchen | Kitchen uses `xl:` at 1280px |
 | Creating forms without Zod schema | Always create the schema in `src/schemas/` first |
 | Accessing `user.role` for role name | Use `user.roleId` with `getRoleById()` or `getRoleNameInSpanish()` |
 | Hardcoding API endpoints | Use the existing service functions in `src/api/` |
+| Using Axios for TTS audio fetch | `ttsService.ts` uses native `fetch()` for blob handling |
 
 ---
 

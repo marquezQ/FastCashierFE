@@ -20,6 +20,9 @@ Deep reference for all technical foundations, project structure, data flow, and 
 | **Forms** | React Hook Form + Zod | ^7.71.1 / ^4.3.5 |
 | **Notifications** | Sonner (Toast) | ^2.0.7 |
 | **Icons** | Lucide React | ^0.562.0 |
+| **Charts** | Recharts | ^3.8.0 |
+| **WebSocket** | Socket.IO Client | ^4.8.1 |
+| **PWA** | vite-plugin-pwa | ^1.2.0 |
 
 **API Base URL:** `http://localhost:3000/api` — configurable via `VITE_API_URL` in `.env`.
 
@@ -29,38 +32,51 @@ Deep reference for all technical foundations, project structure, data flow, and 
 
 ```
 src/
-├── api/                    # HTTP service layer (Axios)
+├── api/                    # HTTP service layer (Axios) + TTS
 │   ├── axiosConfig.ts      # Base instance, auth & 401 interceptors
-│   ├── cashierSessionService.ts
-│   ├── orderService.ts
-│   └── adminMetricsService.ts
+│   ├── cashierSessionService.ts  # Session open/close/current/stats/history
+│   ├── orderService.ts     # Order CRUD, kitchen display, status updates
+│   ├── adminMetricsService.ts    # Dashboard KPIs and cancellation audit
+│   └── ttsService.ts       # Backend TTS: parseOrderNumber() + fetchOrderAudio()
 ├── components/             # All UI components
-│   ├── ui/                 # 22 low-level Radix/Shadcn primitives (Button, Dialog, etc.)
+│   ├── ui/                 # 23 low-level Radix/Shadcn primitives (Button, Dialog, Chart, etc.)
 │   ├── layout/             # App shell: Sidebar, Navbar, Cashier & Kitchen layouts
-│   ├── cashier/            # Cashier domain: ProductCatalog, OpenRegisterForm, OrderSummary, history/, stats/
-│   ├── kitchen/            # Kitchen domain: KitchenOrderCard, KitchenHistoryCard, KitchenOrderColumn
-│   ├── admin/              # Admin: TurnoDetalleCard, turno-detalle/, ordenes/
+│   ├── cashier/            # Cashier domain:
+│   │   ├── ProductCatalog, OpenRegisterForm, OrderSummary
+│   │   ├── CloseSessionDialog   # Enhanced session close with QR, thermal print, PDF
+│   │   ├── RequireCashierSession # Backend-first session guard (replaces Zustand-only check)
+│   │   ├── history/        # HistoryHeader, HistorySearch, HistoryTable, HistoryTableRow
+│   │   └── stats/          # StatsGrid, StatsHeader, CashClosingCard, SalesDistributionCard, StatsSkeleton, StatsError
+│   ├── kitchen/            # KitchenOrderCard, KitchenHistoryCard, KitchenOrderColumn
+│   ├── admin/              # TurnoDetalleCard, turno-detalle/, ordenes/
+│   │   └── Reports/        # SalesLineChart (Recharts line chart with date range + granularity)
+│   ├── Dashboard/          # DashboardHeader, StatCard, StatsGrid (Admin dashboard metrics)
 │   ├── products/           # Product CRUD dialogs and grid components
 │   ├── users/              # User CRUD dialogs and user table
-│   ├── Dashboard/          # Admin dashboard metrics components
 │   ├── auth/               # LoginForm and related auth components
-│   └── shared/             # Cross-domain reusable components
+│   └── shared/             # Cross-domain reusable components:
+│       ├── OrderProcessDialog.tsx    # Unified confirm/success order dialog
+│       ├── ThermalTicket.tsx         # 80mm order thermal ticket (React → static HTML)
+│       └── ThermalSessionTicket.tsx  # 80mm session closure ticket
 ├── config/
 │   └── queryClient.ts      # TanStack Query global config (staleTime: 5min, retry: 1)
 ├── constants/
 │   ├── roles.ts            # ROLES map, getRoleById, getRoleRoute helpers
 │   ├── menu.constants.ts   # Admin sidebar menu items
 │   ├── cashier-menu.constants.ts   # Cashier sidebar menu items
-│   └── kitchen-menu.constants.ts  # Kitchen sidebar menu items
-├── hooks/                  # 17 custom hooks (all TanStack Query wrappers)
+│   └── kitchen-menu.constants.ts   # Kitchen sidebar menu items
+├── hooks/                  # 19 custom hooks (TanStack Query wrappers + WebSocket + TTS)
+├── lib/
+│   ├── utils.ts            # cn() — clsx + tailwind-merge
+│   └── socket.ts           # Socket.IO client instance (/orders namespace)
 ├── pages/
 │   ├── LoginPage.tsx
 │   ├── AdminPage.tsx       # Admin shell with collapsible Sidebar + Navbar
 │   ├── CashierPage.tsx     # Cashier shell (starts collapsed, emerald identity)
 │   ├── KitchenPage.tsx     # Kitchen shell (xl: breakpoint for desktop transition)
-│   ├── admin/              # 8 Admin sub-views
-│   ├── cashier/            # 3 Cashier sub-views
-│   └── kitchen/            # 2 Kitchen sub-views
+│   ├── admin/              # 8 Admin sub-views (DashboardView, UsuariosView, ProductosView, TurnosView, OrdenesView, ReportesView, ProfileView, SettingsView)
+│   ├── cashier/            # 3 Cashier sub-views (PedidosView, HistorialView, EstadisticasView)
+│   └── kitchen/            # 2 Kitchen sub-views (PedidosView, HistorialView)
 ├── schemas/
 │   ├── auth.schema.ts      # loginSchema, createUserSchema, updateUserSchema
 │   └── products.schema.ts  # createProductSchema, updateProductSchema
@@ -70,22 +86,22 @@ src/
 │   └── themeStore.ts       # Light/Dark mode (persist: 'theme-storage')
 ├── types/
 │   ├── auth.ts             # User, AuthResponse, LoginCredentials, UserWithRole, Role
-│   ├── cashierSession.ts   # CashierSession, SessionStatistics, CreateSessionDto, CloseSessionDto
-│   ├── order.ts            # Order, OrderDetail, CreateOrderDto, OrderStatus, OrderType, PaymentMethod
+│   ├── cashierSession.ts   # CashierSession, SessionStatistics, CreateSessionDto, CloseSessionDto, CloseSessionResponse
+│   ├── order.ts            # Order, OrderDetail, OrderItem, CreateOrderDto, OrderItemDto, OrderStatus, OrderType, PaymentMethod
 │   ├── products.ts         # Product, Category, ProductsGroupedByCategory
 │   ├── adminMetrics.ts     # DashboardMetricsResponse, TopProduct, MetricsParams, Period
 │   └── dashboard.types.ts  # Dashboard-specific display types
 ├── utils/
-│   ├── voice.utils.ts      # Web Speech API — speakOrderReady() with LATAM voice prioritization
-│   ├── print.utils.tsx     # Thermal printer via hidden iframe (80mm ticket)
+│   ├── audioQueue.ts       # AudioQueueManager — sequential audio playback with autoplay unlock
+│   ├── print.utils.tsx     # Cross-platform printing: Desktop (auto-print) + Android (manual button)
 │   ├── session.utils.ts    # groupSessionsByDate, formatDateHeader
 │   ├── date.utils.ts       # formatDate, formatDateLong, formatTime (es-ES locale)
 │   ├── role.utils.ts       # getRoleBadgeConfig, getRoleNameInSpanish
-│   ├── product.utils.ts    # Product-specific format helpers
+│   ├── product.utils.ts    # Product-specific format helpers (formatPrice)
 │   ├── error-handlers.ts   # Centralized Axios error message extraction
 │   └── string.utils.ts     # General string formatting
 ├── App.tsx                 # Root router (BrowserRouter, ProtectedRoute guards)
-├── main.tsx                # Entry point: QueryClientProvider, Toaster, StrictMode
+├── main.tsx                # Entry point: QueryClientProvider, Toaster, ReactQueryDevtools, StrictMode
 └── index.css               # Tailwind v4 design system (OKLCH tokens, role identities, typography classes)
 ```
 
@@ -101,17 +117,22 @@ src/
 
 ### 💰 Cashier Session (`CashierSession`)
 - **Lifecycle**: `OPEN` → `CLOSED`.
-- **Key fields**: `idSession`, `userId`, `openingDate`, `closingDate`, `initialAmount`, `totalCash`, `totalQr`, `totalSales`, `orderCount`, `difference`, `status`.
-- **DTOs**: `CreateSessionDto` (userId, openingDate, initialAmount, observations?), `CloseSessionDto` (closingCashAmount, closingDate, closingQrAmount).
-- **Statistics**: `SessionStatistics` includes `expectedCash`, `expectedQr`, `averageOrderValue`, `responsiblePerson`.
+- **Key fields**: `idSession`, `userId`, `openingDate`, `closingDate`, `initialAmount`, `totalCash`, `totalQr`, `closingCashAmount`, `closingQrAmount`, `totalSales`, `orderCount`, `difference`, `observations`, `status`, `user?`.
+- **DTOs**:
+  - `CreateSessionDto`: `userId`, `initialAmount`, `observations?` — **note**: `openingDate` is no longer sent; the server generates it.
+  - `CloseSessionDto`: `closingCashAmount`, `closingQrAmount`, `observations?` — **note**: `closingDate` is server-generated.
+- **Close Response**: `CloseSessionResponse` returns `{ message, summary }` with detailed financial breakdown including `initialCash`, `cashSales`, `totalExpectedCash`, `declaredCash`, `totalExpectedQr`, `declaredQr`, `difference`, `totalOrders`, `startTime`, `endTime`.
+- **Statistics**: `SessionStatistics` includes `expectedCash`, `expectedQr`, `totalOrders`, `cashOrderCount`, `qrOrderCount`, `initialAmount`, `openingDate`, `averageOrderValue`, `totalSales`, `status`, `responsiblePerson`.
 - **State**: `useCashierStore` persists `currentSession` and `isSessionActive`. `setSession()` is the canonical method — it checks `session.status === 'OPEN'` automatically.
+- **Session Guard**: `RequireCashierSession` component queries the backend (`GET /cashier-sessions/current/:userId`) as the source of truth, then syncs to Zustand. This prevents stale local state from showing incorrect views.
 
 ### 📝 Order (`Order`)
 - **Statuses**: `PENDING` → `IN_PREPARATION` → `READY` → `DELIVERED` (or `CANCELLED`).
 - **Types**: `DINE_IN` | `TAKEOUT`.
 - **Payment**: `CASH` | `QR`.
-- **Key fields**: `orderNumber`, `subtotal`, `total`, `amountPaid`, `changeAmount`, `customer`, `tableNumber`, `observations`, `cookId`.
+- **Key fields**: `orderNumber`, `subtotal`, `total`, `amountPaid`, `changeAmount`, `customer`, `tableNumber`, `observations`, `cookId`, `preparationStartDate`, `completedDate`.
 - **Details**: `OrderDetail[]` with `productId`, `quantity`, `unitPrice`, `subtotal`, and the full `Product` object.
+- **OrderItem**: Extends `Product` with `quantity` — used for cart state and display.
 
 ### 🍱 Product & Category
 - **Product**: `idProduct`, `code`, `name`, `description`, `price` (string decimal), `imageUrl`, `isActive`.
@@ -128,24 +149,24 @@ src/
 ## 🔀 Routing Strategy
 
 ```
-/login                     → LoginPage (public, rediriges to role route if authenticated)
+/login                     → LoginPage (public, redirects to role route if authenticated)
 /admin/*                   → AdminPage (ProtectedRoute: ['ADMIN'])
   /admin                   → DashboardView
   /admin/usuarios          → UsuariosView
   /admin/productos         → ProductosView
   /admin/turnos            → TurnosView
   /admin/ordenes           → OrdenesView
-  /admin/reportes          → ReportesView
+  /admin/reportes          → ReportesView (SalesLineChart + export actions)
   /admin/profile           → ProfileView
   /admin/settings          → SettingsView
 /cashier/*                 → CashierPage (ProtectedRoute: ['CASHIER'])
   /cashier                 → redirects to /cashier/pedidos
-  /cashier/pedidos         → PedidosView
+  /cashier/pedidos         → PedidosView (wrapped in RequireCashierSession)
   /cashier/historial       → HistorialView
   /cashier/estadisticas    → EstadisticasView
 /kitchen/*                 → KitchenPage (ProtectedRoute: ['KITCHEN'])
   /kitchen                 → redirects to /kitchen/pedidos
-  /kitchen/pedidos         → PedidosView (kitchen)
+  /kitchen/pedidos         → PedidosView (kitchen — WebSocket-driven)
   /kitchen/historial       → HistorialView (kitchen)
 /                          → Redirects to role route or /login
 /*                         → Redirects to /
@@ -179,7 +200,66 @@ src/
     │ JWT from localStorage (request interceptor)
     ▼
  FastCashierBE (http://localhost:3000/api)
+    ▲
+    │ (real-time events)
+    │
+ Socket.IO (/orders namespace)
+    │
+    │ invalidates queries
+    ▼
+ useKitchenSocket hook → queryClient.invalidateQueries()
 ```
+
+---
+
+## 🔌 WebSocket Integration
+
+### Socket Configuration (`src/lib/socket.ts`)
+- Uses `socket.io-client` connecting to the `/orders` namespace.
+- URL derived from `VITE_API_URL` (strips `/api` suffix) or defaults to `http://localhost:3000`.
+- Transport: `websocket` only (no long-polling).
+- `autoConnect: true` — connects on import.
+
+### Events Handled (`useKitchenSocket` hook)
+| Event | Action |
+| :--- | :--- |
+| `new_order` | Invalidates `['kitchen-orders']`, shows toast notification |
+| `order_status_updated` | Invalidates `['kitchen-orders']`, shows cancellation alert if status is `CANCELLED` (8s duration) |
+| `connect_error` | Logs error only if socket is actively trying to connect |
+
+---
+
+## 🔊 Audio Notification System (TTS)
+
+The project uses a **backend-driven TTS** system instead of the browser's SpeechSynthesis API. This ensures consistent voice quality across all platforms, including Android PWAs.
+
+### Architecture
+1. **`ttsService.ts`** — Fetches MP3 audio from `GET /api/tts/pedido/:numero`. Parses order numbers (e.g., `ORD-0045` → `45`). Returns a `blob:` URL.
+2. **`audioQueue.ts`** — `AudioQueueManager` class (extends `EventTarget`):
+   - `unlock()` — Plays a silent WAV to bypass browser autoplay restrictions (dispatches `unlockchange` event).
+   - `enqueue(blobUrl)` — Adds audio to queue, processes sequentially.
+   - `processQueue()` — Plays one audio at a time, revokes blob URLs after playback.
+3. **`useTtsAudio` hook** — React wrapper exposing `isAudioUnlocked`, `unlockAudio()`, `playOrderAudio(orderNumber)`.
+
+### Flow
+Kitchen `PedidosView` calls `playOrderAudio(orderNumber)` in the `onSuccess` callback of `useUpdateOrderStatus` when the new status is `READY`.
+
+---
+
+## 🖨️ Printing System
+
+Cross-platform thermal printing using `printComponent()` from `src/utils/print.utils.tsx`:
+
+| Platform | Behavior |
+| :--- | :--- |
+| **Desktop** | Opens new window → auto-triggers `window.print()` → auto-closes via `onafterprint` |
+| **Android** | Opens new window with visible "🖨️ IMPRIMIR TICKET" button — user triggers print manually (preserves user gesture for Android's print engine) |
+
+### Printable Components
+- `ThermalTicket` — Order receipt (80mm width, monospace, `es-ES` date formatting).
+- `ThermalSessionTicket` — Session closure receipt with full cash/QR financial breakdown.
+
+> **Note**: This is a temporary frontend-only solution. Production-grade approach is server-side PDF (`GET /orders/:id/ticket/pdf`).
 
 ---
 
@@ -193,10 +273,13 @@ src/
 | `orderService` | GET | `/orders/kitchen-display` | Active orders for kitchen |
 | `orderService` | PATCH | `/orders/:id/status` | Update order status (+ cookId) |
 | `orderService` | GET | `/orders/history` | Kitchen completed order history |
-| `cashierSessionService` | POST | `/cashier-sessions` | Open session |
-| `cashierSessionService` | POST | `/cashier-sessions/:id/close` | Close session |
-| `cashierSessionService` | GET | `/cashier-sessions` | List sessions (filter: status/period) |
+| `cashierSessionService` | POST | `/cashier-sessions` | Open session (server sets openingDate) |
+| `cashierSessionService` | POST | `/cashier-sessions/:id/close` | Close session → returns `CloseSessionResponse` |
+| `cashierSessionService` | GET | `/cashier-sessions/current/:userId` | Get current active session for a user |
 | `cashierSessionService` | GET | `/cashier-sessions/:id/statistics` | Session stats |
+| `cashierSessionService` | GET | `/cashier-sessions` | List sessions (filter: period, startDate, endDate) |
+| `cashierSessionService` | GET | `/cashier-sessions/:id/report/pdf` | Download session closure PDF report |
+| `ttsService` | GET | `/tts/pedido/:numero` | Backend TTS — returns MP3 audio for order announcement |
 | `adminMetricsService` | GET | `/orders/metrics/dashboard` | Admin KPI dashboard |
 | `adminMetricsService` | GET | `/orders/metrics/cancellations` | Cancellation audit |
 | User mutations | POST | `/auth/register` | Create user |

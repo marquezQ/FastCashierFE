@@ -4,96 +4,140 @@ import {
   Users,
   Package,
   CheckCircle,
-  UserCheck
+  ClockAlert,
+  ArrowRight,
+  ClipboardList,
+  BarChart3
 } from 'lucide-react';
 import { StatCard } from './StatCard';
+import { RecentDiscrepancies } from './RecentDiscrepancies';
+import { FinancialDistribution } from './FinancialDistribution';
+import { OperationalPerformance } from './OperationalPerformance';
+import { Link } from 'react-router-dom';
+import type { DashboardSummaryResponse } from '@/types/dashboard.types';
+import { formatPrice } from '@/utils/product.utils';
 
-const DAILY_STATS = [
-  {
-    icon: ShoppingCart,
-    label: 'Pedidos de Hoy',
-    value: 24,
-    iconColor: 'text-blue-600',
-    iconBgColor: 'bg-blue-500/10',
-  },
-  {
-    icon: DollarSign,
-    label: 'Ventas de Hoy',
-    value: '$1,234',
-    iconColor: 'text-green-600',
-    iconBgColor: 'bg-green-500/10',
-  },
-  {
-    icon: DollarSign,
-    label: 'Ventas Semana',
-    value: '$8,450',
-    iconColor: 'text-emerald-600',
-    iconBgColor: 'bg-emerald-500/10',
-  },
-  {
-    icon: DollarSign,
-    label: 'Ventas Mes',
-    value: '$32,890',
-    iconColor: 'text-teal-600',
-    iconBgColor: 'bg-teal-500/10',
-  },
+const QUICK_LINKS = [
+  { label: 'Gestión de Órdenes', icon: ClipboardList, to: '/admin/ordenes', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+  { label: 'Reportes Financieros', icon: BarChart3, to: '/admin/reportes', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  { label: 'Control de Turnos', icon: ClockAlert, to: '/admin/turnos', color: 'text-orange-500', bg: 'bg-orange-500/10' }
 ];
 
-const BUSINESS_STATS = [
-  {
-    icon: Users,
-    label: 'Usuarios Totales',
-    value: 150,
-    iconColor: 'text-purple-600',
-    iconBgColor: 'bg-purple-500/10',
-  },
-  {
-    icon: UserCheck,
-    label: 'Usuarios Activos',
-    value: 89,
-    iconColor: 'text-violet-600',
-    iconBgColor: 'bg-violet-500/10',
-  },
-  {
-    icon: Package,
-    label: 'Productos Totales',
-    value: 320,
-    iconColor: 'text-orange-600',
-    iconBgColor: 'bg-orange-500/10',
-  },
-  {
-    icon: CheckCircle,
-    label: 'Productos Activos',
-    value: 285,
-    iconColor: 'text-amber-600',
-    iconBgColor: 'bg-amber-500/10',
-  },
-];
+export const StatsGrid = ({ data }: { data: DashboardSummaryResponse }) => {
+  const DAILY_STATS = [
+    {
+      icon: ShoppingCart,
+      label: 'Pedidos de Hoy',
+      value: data.general.todayOrders,
+      iconColor: 'text-blue-500',
+      iconBgColor: 'bg-blue-500/10 dark:bg-blue-500/20',
+    },
+    {
+      icon: DollarSign,
+      label: 'Ventas de Hoy',
+      value: formatPrice(data.general.todaySales.toString()),
+      iconColor: 'text-emerald-500',
+      iconBgColor: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    },
+    {
+      icon: ClockAlert,
+      label: 'Turnos en Total',
+      value: data.general.totalSessions,
+      iconColor: 'text-orange-500',
+      iconBgColor: 'bg-orange-500/10 dark:bg-orange-500/20',
+    },
+    {
+      icon: DollarSign,
+      label: 'Ventas Mes',
+      value: formatPrice(data.general.monthlySales.toString()),
+      iconColor: 'text-teal-500',
+      iconBgColor: 'bg-teal-500/10 dark:bg-teal-500/20',
+    },
+  ];
 
-export const StatsGrid = () => {
+  const BUSINESS_STATS = [
+    {
+      icon: Users,
+      label: 'Usuarios Totales',
+      value: data.entities.totalUsers,
+      iconColor: 'text-purple-500',
+      iconBgColor: 'bg-purple-500/10 dark:bg-purple-500/20',
+    },
+    {
+      icon: Package,
+      label: 'Productos Totales',
+      value: data.entities.totalProducts,
+      iconColor: 'text-amber-500',
+      iconBgColor: 'bg-amber-500/10 dark:bg-amber-500/20',
+    },
+    {
+      icon: CheckCircle,
+      label: 'Productos Activos',
+      value: data.entities.activeProducts,
+      iconColor: 'text-emerald-500',
+      iconBgColor: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    },
+  ];
+
   return (
-    <div className="space-y-8">
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="admin-h2">Estadísticas del Día</h2>
+    <div className="@container/dashboard space-y-8">
+      {/* Accesos Rápidos */}
+      <section>
+        <div className="grid gap-4 @[600px]/dashboard:grid-cols-3">
+          {QUICK_LINKS.map((link) => (
+            <Link 
+              key={link.to} 
+              to={link.to} 
+              className="group flex flex-col sm:flex-row items-center sm:justify-start justify-center gap-4 rounded-2xl border border-border/40 bg-card/40 dark:bg-card p-4 shadow-sm hover:shadow-md transition-all duration-300 dark:border-border/60 hover:bg-card/80 dark:hover:bg-card/90"
+            >
+              <div className={`p-2 rounded-xl ${link.bg} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                <link.icon className={`h-5 w-5 ${link.color}`} />
+              </div>
+              <div className="flex flex-1 items-center justify-between w-full">
+                <span className="font-bold text-sm tracking-tight">{link.label}</span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </div>
+            </Link>
+          ))}
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      </section>
+
+      {/* Sección principal: Tarjetas de resumen */}
+      <section>
+        <div className="mb-4">
+          <h2 className="admin-h2">Resumen General</h2>
+        </div>
+        <div className="grid gap-4 @[600px]/dashboard:grid-cols-2 @[1100px]/dashboard:grid-cols-4">
           {DAILY_STATS.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
-      </div>
+      </section>
 
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="admin-h2">Resumen del Negocio</h2>
+      {/* Sección Secundaria: Rendimiento, Distribución y Tablas */}
+      <section className="grid gap-6 @[900px]/dashboard:grid-cols-3">
+        <div className="@[900px]/dashboard:col-span-1">
+          <FinancialDistribution data={data.financial7d} />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="@[900px]/dashboard:col-span-2">
+          <div className="grid gap-6 @[500px]/dashboard:grid-cols-2 h-full">
+            <RecentDiscrepancies data={data.recentDiscrepancies} />
+            <OperationalPerformance data={data.performance7d} />
+          </div>
+        </div>
+      </section>
+
+      {/* Tercera Sección: Entidades */}
+      <section>
+        <div className="mb-4 mt-4">
+          <h2 className="admin-h2">Entidades del Sistema</h2>
+        </div>
+        <div className="grid gap-4 @[600px]/dashboard:grid-cols-2 @[900px]/dashboard:grid-cols-3">
           {BUSINESS_STATS.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 };

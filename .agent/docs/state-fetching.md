@@ -1,6 +1,6 @@
 # ⚙️ State & Data Fetching — FastCashierFE
 
-Complete reference for global state (Zustand), server state (TanStack Query), and the HTTP communication layer (Axios).
+Complete reference for global state (Zustand), server state (TanStack Query), real-time events (WebSocket), audio notifications (TTS), and the HTTP communication layer (Axios).
 
 ---
 
@@ -28,6 +28,7 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
   - `updateQuantity(productId, delta)` — applies delta, enforces minimum quantity of 1.
   - `clearCart()` — empties `orderItems`.
 - **Partialize**: Persists only `currentSession`, `isSessionActive`, and `orderItems`.
+- **Important**: `RequireCashierSession` component is the bridge between backend state and Zustand. It queries the backend as the source of truth and calls `setSession()` to sync. Never rely solely on Zustand for session validation.
 
 ### `themeStore.ts` — `useThemeStore`
 - **LocalStorage Key**: `theme-storage`
@@ -70,7 +71,7 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 #### Mutation Hooks (Write)
 | Hook | Exported Mutations | Invalidates | Side Effects |
 | :--- | :--- | :--- | :--- |
-| `useCashierSession` | `openSession`, `closeSession` | `['cashier-sessions']`, `['cashier-session-statistics']` | Syncs `useCashierStore` via `setSession()` / `closeSession()`, shows toast |
+| `useCashierSession` | `openSession`, `closeSession` | `['current-cashier-session']`, `['cashier-sessions']`, `['cashier-session-statistics']` | Syncs `useCashierStore` via `setSession()`, shows toast. **Close mutation does NOT auto-invalidate** — deferred to `handleFinalize` to prevent premature UI unmounting. |
 | `useCreateOrder` | `mutate / mutateAsync` | `['orders']`, `['cashier-session-statistics']` | `clearCart()` on success, toast with order number |
 | `useCancelOrder` | `mutate / mutateAsync` | `['orders', 'session']`, `['cashier-session-statistics']` | Toast on success/error |
 | `useUpdateOrderStatus` | `mutate / mutateAsync` | `['kitchen-orders']`, `['kitchen-history']` | Reads `authStore.user.idUser` for `cookId`, toast |
@@ -80,6 +81,16 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 | `useUpdateUser` | `mutate / mutateAsync` | `['users']` | Calls `PATCH /users/:id` |
 | `useDeleteUser` | `mutate / mutateAsync` | `['users']` | Calls `DELETE /users/:id` |
 | `useToggleUserStatus` | `mutate / mutateAsync` | `['users']` | Calls `PATCH /users/:id/status` |
+
+#### WebSocket Hook
+| Hook | Events | Purpose |
+| :--- | :--- | :--- |
+| `useKitchenSocket` | `new_order`, `order_status_updated`, `connect_error` | Real-time kitchen order updates. Invalidates `['kitchen-orders']` on events. Shows cancellation alerts. |
+
+#### Audio Hook
+| Hook | Returns | Purpose |
+| :--- | :--- | :--- |
+| `useTtsAudio` | `{ isAudioUnlocked, unlockAudio(), playOrderAudio(orderNumber) }` | Backend TTS audio playback. Fetches MP3 from `/api/tts/pedido/:numero`, enqueues into `AudioQueueManager`. |
 
 ### Data Synchronization Pattern
 ```typescript
@@ -98,6 +109,16 @@ useMutation({
     toast.error(error.response?.data?.message || 'Error genérico');
   },
 });
+```
+
+### Deferred Invalidation Pattern (Session Close)
+The `useCashierSession.closeSession` mutation intentionally does **NOT** invalidate queries or clear Zustand state in `onSuccess`. This prevents `RequireCashierSession` from unmounting the entire Navbar before the user sees the financial summary. Invalidation is handled manually in `handleFinalize`:
+```typescript
+// CloseSessionDialog.tsx — handleFinalize()
+clearSessionStore();                                            // Clear Zustand
+queryClient.invalidateQueries({ queryKey: ['current-cashier-session'] });
+queryClient.invalidateQueries({ queryKey: ['cashier-sessions'] });
+queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
 ```
 
 ### Manual Refetch Pattern
@@ -135,6 +156,30 @@ This prevents false logouts on login page authentication failures.
 ### FormData Exception
 `useCreateProduct` and `useUpdateProduct` override `Content-Type` to `multipart/form-data` when an image `File` is present. The Axios base config default is overridden per-request only.
 
+### TTS Service Exception
+`ttsService.ts` uses native `fetch()` instead of the Axios instance because it needs `response.blob()` handling for MP3 audio files. It reads `VITE_API_URL` directly from `import.meta.env`.
+
+---
+
+## 🔌 Real-Time Communication — Socket.IO
+
+### Connection (`src/lib/socket.ts`)
+```typescript
+import { io } from 'socket.io-client';
+
+const SOCKET_URL = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace('/api', '')
+    : 'http://localhost:3000';
+
+export const ordersSocket = io(`${SOCKET_URL}/orders`, {
+    autoConnect: true,
+    transports: ['websocket'],
+});
+```
+
+### Kitchen Integration
+`useKitchenSocket` is used in the Kitchen PedidosView. It listens for real-time events and triggers React Query invalidation to refresh the UI without manual polling.
+
 ---
 
 ## 🔑 Query Key Conventions
@@ -149,6 +194,7 @@ Consistent query keys are critical for invalidation. Follow this naming:
 | Kitchen orders | `['kitchen-orders']` |
 | Kitchen history | `['kitchen-history']` |
 | Cashier sessions | `['cashier-sessions']` |
+| Current cashier session | `['current-cashier-session', userId]` |
 | Session stats | `['cashier-session-statistics', sessionId]` |
 | Admin metrics | `['admin-metrics', params]` |
 
