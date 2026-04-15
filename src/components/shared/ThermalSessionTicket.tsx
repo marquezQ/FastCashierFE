@@ -19,12 +19,13 @@ export const ThermalSessionTicket = ({ summary }: ThermalSessionTicketProps) => 
 
     return (
         <div style={{
-            width: '80mm',
-            padding: '3mm',
+            width: '72mm',
+            padding: '0',
+            margin: '0',
             backgroundColor: 'white',
             color: 'black',
             fontFamily: 'monospace',
-            fontSize: '12px',
+            fontSize: '11px',
             lineHeight: '1.2'
         }}>
             {/* Header */}
@@ -39,7 +40,7 @@ export const ThermalSessionTicket = ({ summary }: ThermalSessionTicketProps) => 
             </div>
 
             {/* Info */}
-            <div style={{ marginBottom: '8px', fontSize: '11px' }}>
+            <div style={{ marginBottom: '8px', fontSize: '10px' }}>
                 <div>INICIO: {startTime}</div>
                 <div>FIN: {endTime}</div>
                 <div>ÓRDENES ATENDIDAS: {summary.totalOrders}</div>
@@ -94,7 +95,7 @@ export const ThermalSessionTicket = ({ summary }: ThermalSessionTicketProps) => 
             </div>
 
             {/* Difference */}
-            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
                 <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
                     SOBRANTE / FALTANTE TOTAL
                 </div>
@@ -105,12 +106,6 @@ export const ThermalSessionTicket = ({ summary }: ThermalSessionTicketProps) => 
                 }}>
                     {((Number(summary.declaredCash || 0) - Number(summary.totalExpectedCash || 0)) + (Number(summary.declaredQr || 0) - Number(summary.totalExpectedQr || 0))) > 0 ? '+' : ''}{formatPrice(((Number(summary.declaredCash || 0) - Number(summary.totalExpectedCash || 0)) + (Number(summary.declaredQr || 0) - Number(summary.totalExpectedQr || 0))).toString())}
                 </div>
-            </div>
-
-            {/* Footer */}
-            <div style={{ textAlign: 'center', marginTop: '15px', fontSize: '10px' }}>
-                <div>CIERRE GENERADO POR SISTEMA</div>
-                <div style={{ marginTop: '5px' }}>www.fastcashier.com</div>
             </div>
         </div>
     );

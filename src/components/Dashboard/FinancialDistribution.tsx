@@ -2,11 +2,7 @@ import { Card } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { formatPrice } from '@/utils/product.utils';
-
-const CHART_DATA = [
-  { name: 'Efectivo', value: 8500, fill: 'var(--color-cash)' },
-  { name: 'QR / Transf', value: 3840, fill: 'var(--color-qr)' },
-];
+import type { DashboardSummaryResponse } from '@/types/dashboard.types';
 
 const chartConfig = {
   cash: {
@@ -19,11 +15,16 @@ const chartConfig = {
   },
 };
 
-export const FinancialDistribution = () => {
+export const FinancialDistribution = ({ data }: { data: DashboardSummaryResponse['financial7d'] }) => {
+  const CHART_DATA = [
+    { name: 'Efectivo', value: Number(data.totalCash), fill: 'var(--color-cash)' },
+    { name: 'QR / Transf', value: Number(data.totalQr), fill: 'var(--color-qr)' },
+  ].filter(item => item.value > 0);
+
   const total = CHART_DATA.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
-    <Card className="@container/financial rounded-3xl border-border/40 p-6 shadow-sm dark:border-white/6 bg-card/60 backdrop-blur-md flex flex-col h-full">
+    <Card className="@container/financial rounded-3xl border-border/40 p-6 shadow-sm dark:border-border/60 bg-card/60 dark:bg-card backdrop-blur-md flex flex-col h-full">
       <div className="mb-4 flex items-center justify-between shrink-0">
         <h2 className="admin-h2 text-foreground">Distribución Financiera</h2>
         <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2 shrink-0">Últimos 7d</span>

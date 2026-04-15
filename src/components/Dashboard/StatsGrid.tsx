@@ -14,61 +14,8 @@ import { RecentDiscrepancies } from './RecentDiscrepancies';
 import { FinancialDistribution } from './FinancialDistribution';
 import { OperationalPerformance } from './OperationalPerformance';
 import { Link } from 'react-router-dom';
-
-const DAILY_STATS = [
-  {
-    icon: ShoppingCart,
-    label: 'Pedidos de Hoy',
-    value: 24,
-    iconColor: 'text-blue-500',
-    iconBgColor: 'bg-blue-500/10 dark:bg-blue-500/20',
-  },
-  {
-    icon: DollarSign,
-    label: 'Ventas de Hoy',
-    value: '$1,234',
-    iconColor: 'text-emerald-500',
-    iconBgColor: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-  },
-  {
-    icon: ClockAlert,
-    label: 'Turnos en Total',
-    value: 120, // Hardcoded for now
-    iconColor: 'text-orange-500',
-    iconBgColor: 'bg-orange-500/10 dark:bg-orange-500/20',
-  },
-  {
-    icon: DollarSign,
-    label: 'Ventas Mes',
-    value: '$32,890',
-    iconColor: 'text-teal-500',
-    iconBgColor: 'bg-teal-500/10 dark:bg-teal-500/20',
-  },
-];
-
-const BUSINESS_STATS = [
-  {
-    icon: Users,
-    label: 'Usuarios Totales',
-    value: 150,
-    iconColor: 'text-purple-500',
-    iconBgColor: 'bg-purple-500/10 dark:bg-purple-500/20',
-  },
-  {
-    icon: Package,
-    label: 'Productos Totales',
-    value: 320,
-    iconColor: 'text-amber-500',
-    iconBgColor: 'bg-amber-500/10 dark:bg-amber-500/20',
-  },
-  {
-    icon: CheckCircle,
-    label: 'Productos Activos',
-    value: 285,
-    iconColor: 'text-emerald-500',
-    iconBgColor: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-  },
-];
+import type { DashboardSummaryResponse } from '@/types/dashboard.types';
+import { formatPrice } from '@/utils/product.utils';
 
 const QUICK_LINKS = [
   { label: 'Gestión de Órdenes', icon: ClipboardList, to: '/admin/ordenes', color: 'text-blue-500', bg: 'bg-blue-500/10' },
@@ -76,7 +23,62 @@ const QUICK_LINKS = [
   { label: 'Control de Turnos', icon: ClockAlert, to: '/admin/turnos', color: 'text-orange-500', bg: 'bg-orange-500/10' }
 ];
 
-export const StatsGrid = () => {
+export const StatsGrid = ({ data }: { data: DashboardSummaryResponse }) => {
+  const DAILY_STATS = [
+    {
+      icon: ShoppingCart,
+      label: 'Pedidos de Hoy',
+      value: data.general.todayOrders,
+      iconColor: 'text-blue-500',
+      iconBgColor: 'bg-blue-500/10 dark:bg-blue-500/20',
+    },
+    {
+      icon: DollarSign,
+      label: 'Ventas de Hoy',
+      value: formatPrice(data.general.todaySales.toString()),
+      iconColor: 'text-emerald-500',
+      iconBgColor: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    },
+    {
+      icon: ClockAlert,
+      label: 'Turnos en Total',
+      value: data.general.totalSessions,
+      iconColor: 'text-orange-500',
+      iconBgColor: 'bg-orange-500/10 dark:bg-orange-500/20',
+    },
+    {
+      icon: DollarSign,
+      label: 'Ventas Mes',
+      value: formatPrice(data.general.monthlySales.toString()),
+      iconColor: 'text-teal-500',
+      iconBgColor: 'bg-teal-500/10 dark:bg-teal-500/20',
+    },
+  ];
+
+  const BUSINESS_STATS = [
+    {
+      icon: Users,
+      label: 'Usuarios Totales',
+      value: data.entities.totalUsers,
+      iconColor: 'text-purple-500',
+      iconBgColor: 'bg-purple-500/10 dark:bg-purple-500/20',
+    },
+    {
+      icon: Package,
+      label: 'Productos Totales',
+      value: data.entities.totalProducts,
+      iconColor: 'text-amber-500',
+      iconBgColor: 'bg-amber-500/10 dark:bg-amber-500/20',
+    },
+    {
+      icon: CheckCircle,
+      label: 'Productos Activos',
+      value: data.entities.activeProducts,
+      iconColor: 'text-emerald-500',
+      iconBgColor: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    },
+  ];
+
   return (
     <div className="@container/dashboard space-y-8">
       {/* Accesos Rápidos */}
@@ -86,7 +88,7 @@ export const StatsGrid = () => {
             <Link 
               key={link.to} 
               to={link.to} 
-              className="group flex flex-col sm:flex-row items-center sm:justify-start justify-center gap-4 rounded-2xl border border-border/40 bg-card/40 p-4 shadow-sm hover:shadow-md transition-all duration-300 dark:border-white/6 hover:bg-card/80"
+              className="group flex flex-col sm:flex-row items-center sm:justify-start justify-center gap-4 rounded-2xl border border-border/40 bg-card/40 dark:bg-card p-4 shadow-sm hover:shadow-md transition-all duration-300 dark:border-border/60 hover:bg-card/80 dark:hover:bg-card/90"
             >
               <div className={`p-2 rounded-xl ${link.bg} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                 <link.icon className={`h-5 w-5 ${link.color}`} />
@@ -115,12 +117,12 @@ export const StatsGrid = () => {
       {/* Sección Secundaria: Rendimiento, Distribución y Tablas */}
       <section className="grid gap-6 @[900px]/dashboard:grid-cols-3">
         <div className="@[900px]/dashboard:col-span-1">
-          <FinancialDistribution />
+          <FinancialDistribution data={data.financial7d} />
         </div>
         <div className="@[900px]/dashboard:col-span-2">
           <div className="grid gap-6 @[500px]/dashboard:grid-cols-2 h-full">
-            <RecentDiscrepancies />
-            <OperationalPerformance />
+            <RecentDiscrepancies data={data.recentDiscrepancies} />
+            <OperationalPerformance data={data.performance7d} />
           </div>
         </div>
       </section>

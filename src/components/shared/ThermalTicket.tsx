@@ -14,16 +14,18 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
         minute: '2-digit'
     });
 
-    const orderNum = order.orderNumber?.split('-').pop() || order.idOrder;
+    const rawNum = order.orderNumber?.split('-').pop();
+    const orderNum = rawNum ? parseInt(rawNum, 10) : order.idOrder;
 
     return (
         <div style={{
-            width: '80mm',
-            padding: '3mm',
+            width: '72mm',
+            padding: '0',
+            margin: '0',
             backgroundColor: 'white',
             color: 'black',
             fontFamily: 'monospace',
-            fontSize: '12px',
+            fontSize: '11px',
             lineHeight: '1.2'
         }}>
             {/* Header - Optimized for Space & Thermal Wear */}
@@ -42,7 +44,7 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
             </div>
 
             {/* Info */}
-            <div style={{ marginBottom: '5px', fontSize: '11px' }}>
+            <div style={{ marginBottom: '5px', fontSize: '10px' }}>
                 <div>FECHA: {date}</div>
                 {order.customer && <div>CLIENTE: {order.customer.toUpperCase()}</div>}
                 <div>CAJERO: {order.cashier?.fullName.toUpperCase() || 'SISTEMA'}</div>
@@ -65,7 +67,7 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
                                 <td style={{ verticalAlign: 'top', paddingTop: '3px', paddingLeft: '5px' }}>
                                     {detail.product?.name.toUpperCase()}
                                 </td>
-                                <td style={{ verticalAlign: 'top', textAlign: 'right', paddingTop: '3px' }}>
+                                <td style={{ verticalAlign: 'top', textAlign: 'right', paddingTop: '3px', fontWeight: 'bold' }}>
                                     {formatPrice(detail.subtotal)}
                                 </td>
                             </tr>
@@ -75,9 +77,9 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
             </div>
 
             {/* Totals */}
-            <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
-                    <b>TOTAL:</b>
+            <div style={{ textAlign: 'right', marginBottom: '5px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '14px' }}>
+                    <b>TOTAL GENERAL:</b>
                     <b>{formatPrice(order.total)}</b>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginTop: '5px' }}>
@@ -92,16 +94,10 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
 
             {/* Observations */}
             {order.observations && (
-                <div style={{ marginBottom: '15px', fontSize: '10px', fontStyle: 'italic', border: '1px solid #ccc', padding: '5px' }}>
+                <div style={{ marginBottom: '5px', fontSize: '10px', fontStyle: 'italic', border: '1px solid #ccc', padding: '5px' }}>
                     OBS: {order.observations}
                 </div>
             )}
-
-            {/* Footer */}
-            <div style={{ textAlign: 'center', marginTop: '10px', fontSize: '10px' }}>
-                <div>¡GRACIAS POR SU COMPRA!</div>
-                <div style={{ marginTop: '5px' }}>www.fastcashier.com</div>
-            </div>
         </div>
     );
 };
