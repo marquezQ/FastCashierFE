@@ -42,7 +42,7 @@ export const AdminPage = () => {
           onLogout={handleLogout}
         />
 
-        <main className="p-6">
+        <main className="p-2 sm:p-4 lg:p-6">
           <div className="max-w-7xl mx-auto">
             <Routes>
               <Route index element={<DashboardView userName={user.fullName} />} />

@@ -29,16 +29,18 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
             lineHeight: '1.2'
         }}>
             {/* Header - Optimized for Space & Thermal Wear */}
-            <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-                <div style={{ fontSize: '18px', fontWeight: 'bold', margin: '0' }}>
-                    PEDIDO {orderNum}
-                </div>
-                <div style={{
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    margin: '2px 0'
-                }}>
-                    {order.orderType === 'DINE_IN' ? 'PARA LA MESA' : 'PARA LLEVAR'}
+            <div style={{ marginBottom: '5px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                        PEDIDO <span style={{ fontSize: '20px' }}>{orderNum}</span>
+                    </div>
+                    <div style={{
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'right'
+                    }}>
+                        {order.orderType === 'DINE_IN' ? 'PARA LA MESA' : 'PARA LLEVAR'}
+                    </div>
                 </div>
                 <div style={{ borderTop: '1px dashed black', marginTop: '2px' }}></div>
             </div>
@@ -77,7 +79,7 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
             </div>
 
             {/* Totals */}
-            <div style={{ textAlign: 'right', marginBottom: '5px' }}>
+            <div style={{ textAlign: 'right' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '14px' }}>
                     <b>TOTAL GENERAL:</b>
                     <b>{formatPrice(order.total)}</b>

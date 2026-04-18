@@ -52,12 +52,12 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
     return (
         <div
             className={cn(
-                "group relative flex flex-col bg-card rounded-[2rem] border-2 transition-all duration-500 shadow-sm overflow-hidden",
+                "@container group relative flex flex-col bg-card rounded-[2rem] border-2 transition-all duration-500 shadow-sm overflow-hidden",
                 isExpanded ? "border-primary/40 bg-primary/2" : "border-border/40 hover:border-primary/20"
             )}
         >
             {/* --- CABECERA (Collapsed View) --- */}
-            <div className="flex items-center p-5 md:p-7 gap-6">
+            <div className="flex flex-wrap @5xl:flex-nowrap items-start @5xl:items-center p-4 @3xl:p-5 @5xl:p-6 gap-4 @3xl:gap-6">
                 <SessionHeader
                     session={session}
                     netSales={netSales}
@@ -67,7 +67,7 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
                     isClosed={isClosed}
                 />
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 @3xl:gap-3 w-full @5xl:w-auto justify-end pt-2 @5xl:pt-0 border-t border-border/40 @5xl:border-0 mt-2 @5xl:mt-0">
                     {/* Botón Ver Pedidos con Contador */}
                     <div className="relative group/orders">
                         <Button
@@ -76,10 +76,11 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
                                 setIsOrdersDialogOpen(true);
                             }}
                             variant="outline"
-                            className="h-14 px-6 rounded-3xl bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 border-blue-500/20 shadow-sm gap-3 font-black uppercase tracking-tight shrink-0 flex items-center"
+                            className="h-10 @3xl:h-12 @5xl:h-14 px-4 @3xl:px-5 @5xl:px-6 rounded-3xl bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 border-blue-500/20 shadow-sm gap-2 @5xl:gap-3 font-black uppercase tracking-tight shrink-0 flex items-center text-xs @3xl:text-sm"
                         >
-                            <ShoppingBag className="h-6 w-6 transition-transform group-hover/orders:scale-110" />
-                            <span className="hidden sm:inline">Ver Pedidos</span>
+                            <ShoppingBag className="h-5 w-5 @3xl:h-6 @3xl:w-6 transition-transform group-hover/orders:scale-110" />
+                            <span className="hidden @2xl:inline">Ver Pedidos</span>
+                            <span className="inline @2xl:hidden">Pedidos</span>
                         </Button>
                     </div>
 
@@ -90,13 +91,13 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
                             setIsExpanded(!isExpanded);
                         }}
                         className={cn(
-                            "h-14 w-14 rounded-4xl flex items-center justify-center transition-all duration-300 ring-4 ring-primary/5 shrink-0",
+                            "h-10 w-10 @3xl:h-12 @3xl:w-12 @5xl:h-14 @5xl:w-14 rounded-full flex items-center justify-center transition-all duration-300 ring-4 ring-primary/5 shrink-0",
                             isExpanded
                                 ? "bg-primary text-primary-foreground shadow-xl shadow-primary/30 rotate-180"
                                 : "bg-muted/50 text-foreground hover:bg-primary/20 hover:text-primary hover:scale-105 active:scale-95"
                         )}
                     >
-                        <ChevronDown className="h-7 w-7" />
+                        <ChevronDown className="h-5 w-5 @3xl:h-6 @3xl:w-6 @5xl:h-7 @5xl:w-7" />
                     </button>
                 </div>
             </div>
@@ -112,10 +113,10 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
 
             {/* --- DETALLE ANALÍTICO (Expanded View) --- */}
             {isExpanded && (
-                <div className="px-6 md:px-8 pb-8 animate-in mt-2 slide-in-from-top-4 duration-500">
-                    <Separator className="mb-8 opacity-40" />
+                <div className="px-4 @3xl:px-6 @5xl:px-8 pb-6 @3xl:pb-8 animate-in mt-0 @3xl:mt-2 slide-in-from-top-4 duration-500">
+                    <Separator className="mb-4 @3xl:mb-6 opacity-40" />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                    <div className="grid grid-cols-1 @5xl:grid-cols-3 gap-4 @3xl:gap-6 items-stretch">
                         <SessionAuditSection
                             title="Cálculo del Sistema"
                             icon={Calculator}

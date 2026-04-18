@@ -56,7 +56,7 @@ export const CancellationsTab = ({ params }: CancellationsTabProps) => {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 px-4 md:px-0">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <div>
                     <h3 className="admin-h2">Control de Anulaciones</h3>
                     <p className="admin-subtitle uppercase tracking-widest mt-1">
@@ -74,7 +74,7 @@ export const CancellationsTab = ({ params }: CancellationsTabProps) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {cancelledOrders.length > 0 ? cancelledOrders.map((order) => (
                     <CancellationCard
                         key={order.idOrder}
