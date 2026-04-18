@@ -7,7 +7,8 @@ import {
     ShoppingBag,
     Store,
     Loader2,
-    AlertCircle
+    AlertCircle,
+    type LucideIcon
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -66,7 +67,7 @@ export const StatsTab = ({ params }: StatsTabProps) => {
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Top Row: Quick Metrics (3 Cards) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 md:px-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <MetricCard
                     title="Ventas"
                     value={formatPrice(summary.totalSales.toString())}
@@ -87,7 +88,7 @@ export const StatsTab = ({ params }: StatsTabProps) => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Kitchen Performance Card - 50% */}
                 <Card className="p-6 border-2 border-border bg-card shadow-sm rounded-3xl overflow-hidden relative group">
                     <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
@@ -200,7 +201,7 @@ interface MetricCardProps {
     title: string;
     value: string;
     subvalue?: string;
-    icon: any;
+    icon: LucideIcon;
     color: string;
 }
 

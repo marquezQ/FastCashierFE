@@ -17,6 +17,7 @@ export const OrdenesView = () => {
   // Automatically apply period changes when not using custom range
   useEffect(() => {
     if (period !== 'range') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveParams({ period });
     }
   }, [period]);
@@ -31,7 +32,7 @@ export const OrdenesView = () => {
   return (
     <div className="space-y-8 pb-10 max-w-7xl mx-auto animate-in fade-in duration-700">
       {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4 md:px-0">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
           <h1 className="admin-h1">Monitor de Órdenes</h1>
           <p className="admin-subtitle">Análisis de rendimiento, estadísticas de ventas y control de calidad</p>
@@ -63,7 +64,7 @@ export const OrdenesView = () => {
 
       {/* Subtle Date Range Inputs (Only visible when Range is selected) */}
       {period === 'range' && (
-        <div className="mx-4 md:mx-0 animate-in slide-in-from-top-4 duration-300">
+        <div className="animate-in slide-in-from-top-4 duration-300">
           <div className="flex flex-col md:flex-row items-end gap-4 bg-card/30 backdrop-blur-sm p-4 rounded-2xl border border-dashed border-border/60">
             <div className="flex-1 w-full space-y-1.5">
               <label className="admin-label-sm ml-1">Fecha Inicio</label>
@@ -84,7 +85,7 @@ export const OrdenesView = () => {
       )}
 
       <Tabs defaultValue="stats" className="space-y-8">
-        <div className="px-4 md:px-0">
+        <div>
           <div className="overflow-x-auto scrollbar-hide py-1">
             <TabsList className="h-14 bg-muted/40 p-1.5 rounded-4xl border border-border/40 w-fit gap-2">
               <TabsTrigger
