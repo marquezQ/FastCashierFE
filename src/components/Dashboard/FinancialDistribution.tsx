@@ -31,7 +31,7 @@ export const FinancialDistribution = ({ data }: { data: DashboardSummaryResponse
       </div>
 
       <div className="flex-1 flex flex-col @[350px]/financial:flex-row items-center justify-center gap-6 @[350px]/financial:gap-8 min-h-0">
-        <div className="h-[130px] w-[130px] @[280px]/financial:h-[150px] @[280px]/financial:w-[150px] @[400px]/financial:h-[170px] @[400px]/financial:w-[170px] relative shrink-0 transition-all duration-300">
+        <div className="h-32.5 w-32.5 @[280px]/financial:h-37.5 @[280px]/financial:w-37.5 @[400px]/financial:h-42.5 @[400px]/financial:w-42.5 relative shrink-0 transition-all duration-300">
           <ChartContainer config={chartConfig} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -64,7 +64,7 @@ export const FinancialDistribution = ({ data }: { data: DashboardSummaryResponse
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 w-full @[350px]/financial:w-auto shrink-0 flex-1 max-w-[240px]">
+        <div className="flex flex-col gap-4 w-full @[350px]/financial:w-auto shrink-0 flex-1 max-w-60">
           {CHART_DATA.map((item) => (
             <div key={item.name} className="flex flex-col">
               <div className="flex justify-between items-center mb-1 gap-2">
