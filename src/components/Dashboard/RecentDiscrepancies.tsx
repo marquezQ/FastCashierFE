@@ -15,7 +15,14 @@ export const RecentDiscrepancies = ({ data }: { data: DashboardSummaryResponse['
         <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2 shrink-0">Últimos 7d</span>
       </div>
 
-      <div className="flex-1 min-h-[150px] overflow-y-auto pr-1 space-y-3 pb-2 select-none" style={{ scrollbarWidth: 'thin' }}>
+      <div className="flex-1 min-h-37.5 overflow-y-auto pr-1 space-y-3 pb-2 select-none flex flex-col" style={{ scrollbarWidth: 'thin' }}>
+        {data.length === 0 && (
+          <div className="flex-1 flex flex-col items-center justify-center opacity-40 py-8 p-4 text-center">
+            <AlertCircle className="w-10 h-10 mb-3 text-muted-foreground" />
+            <p className="text-sm font-bold tracking-tight">No existen descuadres recientes</p>
+            <p className="text-[10px] uppercase font-black tracking-widest mt-1">Todo está al día</p>
+          </div>
+        )}
         {data.map((item, idx) => {
           const isNegative = item.difference < 0;
           return (
