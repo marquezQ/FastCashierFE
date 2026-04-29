@@ -6,3 +6,19 @@ export interface SalesReportPoint {
 }
 
 export type SalesReportResponse = SalesReportPoint[];
+
+export interface PaymentMethodPoint {
+  label: string;
+  efectivo: number;
+  qr: number;
+}
+
+export type PaymentMethodsReportResponse = PaymentMethodPoint[];
+
+export interface OrderTypePoint {
+  label: string;
+  mesa: number;
+  llevar: number;
+}
+
+export type OrderTypesReportResponse = OrderTypePoint[];
