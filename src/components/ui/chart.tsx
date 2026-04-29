@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
@@ -49,18 +47,32 @@ const ChartContainer = React.forwardRef<
   React.useLayoutEffect(() => {
     if (!containerRef.current) return
 
+    let timeoutId: ReturnType<typeof setTimeout>
+    let isFirstRender = true
+
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
       if (entry?.contentRect) {
         const { width, height } = entry.contentRect
         if (width > 0 && height > 0) {
-          setSize({ width, height })
+          if (isFirstRender) {
+            setSize({ width, height })
+            isFirstRender = false
+          } else {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(() => {
+              setSize({ width, height })
+            }, 150)
+          }
         }
       }
     })
 
     observer.observe(containerRef.current)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   return (
@@ -90,7 +102,7 @@ ChartContainer.displayName = "Chart"
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, config]) => config.theme || config.color
+    ([, config]) => config.theme || config.color
   )
 
   if (!colorConfig.length) {
@@ -122,13 +134,13 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
-    React.ComponentProps<typeof RechartsPrimitive.Tooltip> & {
-      hideLabel?: boolean
-      hideIndicator?: boolean
-      indicator?: "line" | "dot" | "dashed"
-      nameKey?: string
-      labelKey?: string
-    }
+  React.ComponentProps<typeof RechartsPrimitive.Tooltip> & {
+    hideLabel?: boolean
+    hideIndicator?: boolean
+    indicator?: "line" | "dot" | "dashed"
+    nameKey?: string
+    labelKey?: string
+  }
 >(
   (
     props: any,
@@ -335,8 +347,8 @@ function getPayloadConfigFromCustomKey(
 
   const payloadPayload =
     "payload" in payload &&
-    typeof payload.payload === "object" &&
-    payload.payload !== null
+      typeof payload.payload === "object" &&
+      payload.payload !== null
       ? payload.payload
       : undefined
 
