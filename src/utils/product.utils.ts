@@ -1,9 +1,7 @@
-import type { Product } from '@/types/products';
-
 // URL de imagen placeholder para productos sin imagen
 const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop';
 
-export const getProductImageUrl = (product: Product): string => {
+export const getProductImageUrl = (product: { imageUrl?: string | null }): string => {
   return product.imageUrl || PLACEHOLDER_IMAGE;
 };
 

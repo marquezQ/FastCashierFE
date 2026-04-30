@@ -5,6 +5,7 @@ import { LoginPage } from './pages/LoginPage';
 import { AdminPage } from './pages/AdminPage';
 import { CashierPage } from './pages/CashierPage';
 import { KitchenPage } from './pages/KitchenPage';
+import { DisplayPage } from './pages/DisplayPage';
 import { getRoleRoute } from './constants/roles';
 
 function App() {
@@ -63,6 +64,11 @@ function App() {
             )
           }
         />
+
+        {/* ============================================ */}
+        {/* RUTA PÚBLICA: DISPLAY PARA TV */}
+        {/* ============================================ */}
+        <Route path="/display/:token" element={<DisplayPage />} />
 
         {/* ============================================ */}
         {/* 404: CUALQUIER OTRA RUTA */}
