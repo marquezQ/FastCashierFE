@@ -364,4 +364,23 @@
       text-size-adjust: 100%;
     }
   }
+
+  /* ============================================ */
+  /* MENÚ DIGITAL — TV Display Animations        */
+  /* ============================================ */
+
+  /* Progress bar que se llena de 0% a 100% */
+  .animate-progress {
+    animation: progress-fill linear forwards;
+    transform-origin: left;
+  }
+
+  @keyframes progress-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
 }

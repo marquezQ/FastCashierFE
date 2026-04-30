@@ -5,6 +5,7 @@ import {
   Clock,
   ShoppingCart,
   BarChart3,
+  Tv,
 } from 'lucide-react';
 
 export const MENU_ITEMS = [
@@ -14,4 +15,5 @@ export const MENU_ITEMS = [
   { icon: Clock, label: 'Turnos', path: '/admin/turnos' },
   { icon: ShoppingCart, label: 'Órdenes', path: '/admin/ordenes' },
   { icon: BarChart3, label: 'Reportes', path: '/admin/reportes' },
+  { icon: Tv, label: 'Menú Digital', path: '/admin/menu-digital' },
 ] as const;

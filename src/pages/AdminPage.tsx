@@ -13,6 +13,7 @@ import { OrdenesView } from './admin/OrdenesView';
 import { ReportesView } from './admin/ReportesView';
 import { SettingsView } from './admin/SettingsView';
 import { ProfileView } from './admin/ProfileView';
+import { MenuDigitalView } from './admin/MenuDigitalView';
 
 export const AdminPage = () => {
   const { user } = useAuthStore();
@@ -51,6 +52,7 @@ export const AdminPage = () => {
               <Route path="/turnos" element={<TurnosView />} />
               <Route path="/ordenes" element={<OrdenesView />} />
               <Route path="reportes" element={<ReportesView />} />
+              <Route path="/menu-digital" element={<MenuDigitalView />} />
               <Route path="/profile" element={<ProfileView />} />
               <Route path="/settings" element={<SettingsView />} />
               <Route path="*" element={<Navigate to="/admin" replace />} />
