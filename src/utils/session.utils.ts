@@ -1,14 +1,24 @@
 import type { CashierSession } from '@/types/cashierSession';
 
 /**
- * Groups sessions by opening date (YYYY-MM-DD)
+ * Gets a YYYY-MM-DD string in local time
+ */
+const getLocalDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+/**
+ * Groups sessions by opening date (YYYY-MM-DD) in local time
  */
 export const groupSessionsByDate = (sessions: CashierSession[]) => {
     const groups: Record<string, CashierSession[]> = {};
 
     sessions.forEach(session => {
         const date = new Date(session.openingDate);
-        const dateString = date.toISOString().split('T')[0];
+        const dateString = getLocalDateString(date);
         if (!groups[dateString]) groups[dateString] = [];
         groups[dateString].push(session);
     });
@@ -22,11 +32,12 @@ export const groupSessionsByDate = (sessions: CashierSession[]) => {
 export const formatDateHeader = (dateStr: string) => {
     const date = new Date(dateStr + 'T00:00:00');
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0];
-
+    
+    const today = getLocalDateString(now);
+    
     const yesterdayDate = new Date();
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    const yesterday = yesterdayDate.toISOString().split('T')[0];
+    const yesterday = getLocalDateString(yesterdayDate);
 
     const formattedDate = date.toLocaleDateString('es-ES', {
         weekday: 'long',

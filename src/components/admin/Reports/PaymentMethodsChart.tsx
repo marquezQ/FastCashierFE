@@ -25,7 +25,7 @@ export function PaymentMethodsChart({ period }: { period: ReportPeriod }) {
         </div>
       </div>
 
-      <div className="w-full h-[300px] relative overflow-hidden min-h-[300px] min-w-0">
+      <div className="w-full h-75 relative overflow-hidden min-h-75 min-w-0">
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-20">
             <div className="h-10 w-10 border-[3px] border-primary/10 border-t-primary animate-spin rounded-full shadow-inner" />

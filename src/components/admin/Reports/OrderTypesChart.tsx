@@ -15,7 +15,7 @@ export function OrderTypesChart({ period }: { period: ReportPeriod }) {
 
   return (
     <div className="flex flex-col gap-6 relative">
-      <div className="hidden lg:block absolute left-[-16px] top-0 bottom-0 w-px bg-border/50" />
+      <div className="hidden lg:block absolute -left-4 top-0 bottom-0 w-px bg-border/50" />
       <div className="flex items-center gap-2">
         <div className="p-2 bg-primary/10 text-primary rounded-lg">
           <Utensils className="w-5 h-5" />
@@ -26,7 +26,7 @@ export function OrderTypesChart({ period }: { period: ReportPeriod }) {
         </div>
       </div>
 
-      <div className="w-full h-[300px] relative overflow-hidden min-h-[300px] min-w-0">
+      <div className="w-full h-75 relative overflow-hidden min-h-75 min-w-0">
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-20">
             <div className="h-10 w-10 border-[3px] border-primary/10 border-t-primary animate-spin rounded-full shadow-inner" />
