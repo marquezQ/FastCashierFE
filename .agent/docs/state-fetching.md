@@ -64,7 +64,13 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 | `useCashierSessionsHistory` | `['cashier-sessions']` | `GET /cashier-sessions` | All sessions (admin turnos/history) |
 | `useKitchenOrders` | `['kitchen-orders']` | `GET /orders/kitchen-display` | Live orders for kitchen display |
 | `useKitchenHistory` | `['kitchen-history']` | `GET /orders/history` | Completed orders for kitchen |
-| `useAdminMetrics` | `['admin-metrics', params]` | `GET /orders/metrics/dashboard` | Dashboard KPIs with period filter |
+| `useAdminMetrics` | `['admin-metrics', params]` | `GET /orders/metrics/dashboard` | Dashboard KPIs (legacy) |
+| `useDashboardSummary` | `['dashboard-summary']` | `GET /dashboard/summary` | Unified dashboard summary (Dashboard v2) |
+| `useSalesReport` | `['salesReport', period]` | `GET /reports/sales` | Sales evolution chart data |
+| `usePaymentMethodsReport` | `['paymentMethodsReport', period]` | `GET /reports/payment-methods` | Payment distribution chart data |
+| `useOrderTypesReport` | `['orderTypesReport', period]` | `GET /reports/order-types` | Order type distribution chart data |
+| `useDisplayConfigs` | `['display-configs']` | `GET /display-configs` | List of TV configurations (Admin) |
+| `useDisplayData` | `['display-data', token]` | `GET /display/:token` | **Public** — Active orders for TV display |
 | `useAdminNavigation` | — | — | Navigation helper (no API call) |
 | `useTest` | `['test']` | — | Dev/testing hook |
 
@@ -75,12 +81,15 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 | `useCreateOrder` | `mutate / mutateAsync` | `['orders']`, `['cashier-session-statistics']` | `clearCart()` on success, toast with order number |
 | `useCancelOrder` | `mutate / mutateAsync` | `['orders', 'session']`, `['cashier-session-statistics']` | Toast on success/error |
 | `useUpdateOrderStatus` | `mutate / mutateAsync` | `['kitchen-orders']`, `['kitchen-history']` | Reads `authStore.user.idUser` for `cookId`, toast |
-| `useCreateProduct` | `mutate / mutateAsync` | `['products']` | Sends `multipart/form-data` |
-| `useUpdateProduct` | `mutate / mutateAsync` | `['products']` | Sends `FormData` if image, JSON otherwise |
-| `useCreateUser` | `mutate / mutateAsync` | `['users']` | Calls `POST /auth/register` |
-| `useUpdateUser` | `mutate / mutateAsync` | `['users']` | Calls `PATCH /users/:id` |
-| `useDeleteUser` | `mutate / mutateAsync` | `['users']` | Calls `DELETE /users/:id` |
-| `useToggleUserStatus` | `mutate / mutateAsync` | `['users']` | Calls `PATCH /users/:id/status` |
+| `useCreateProduct` | `mutate / mutateAsync` | `['products']` | (in `useProductMutations.ts`) Sends `multipart/form-data` |
+| `useUpdateProduct` | `mutate / mutateAsync` | `['products']` | (in `useProductMutations.ts`) Sends `FormData` if image, JSON otherwise |
+| `useCreateUser` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `POST /auth/register` |
+| `useUpdateUser` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `PATCH /users/:id` |
+| `useDeleteUser` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `DELETE /users/:id` |
+| `useToggleUserStatus` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `PATCH /users/:id/status` |
+| `useCreateDisplayConfig` | `mutate` | `['display-configs']` | (in `useDisplay.ts`) Creates TV config |
+| `useUpdateDisplayConfig` | `mutate` | `['display-configs']` | (in `useDisplay.ts`) Updates TV config |
+| `useDeleteDisplayConfig` | `mutate` | `['display-configs']` | (in `useDisplay.ts`) Deletes TV config |
 
 #### WebSocket Hook
 | Hook | Events | Purpose |
@@ -197,5 +206,11 @@ Consistent query keys are critical for invalidation. Follow this naming:
 | Current cashier session | `['current-cashier-session', userId]` |
 | Session stats | `['cashier-session-statistics', sessionId]` |
 | Admin metrics | `['admin-metrics', params]` |
+| Dashboard summary | `['dashboard-summary']` |
+| Sales report | `['salesReport', period]` |
+| Payment methods report | `['paymentMethodsReport', period]` |
+| Order types report | `['orderTypesReport', period]` |
+| Display configs | `['display-configs']` |
+| Display data (Public) | `['display-data', token]` |
 
 > **Rule**: When adding a new query, register its key here and in all related mutations' `invalidateQueries` calls.

@@ -32,6 +32,7 @@ Operational guide for any AI agent working on this codebase. Read this before ev
 | **Admin color** | Use `primary`, `blue-500`, `.admin-h1`, `.admin-label-sm` |
 | **Cashier color** | Use `emerald-500/600`, `.cashier-h1`, `.cashier-label-sm` |
 | **Kitchen color** | Use `orange-500`, `amber-500`, `orange-600` |
+| **Public TV color** | Use `violet-400`, `indigo-500`, background `#05050A` |
 | **Card borders** | `border-border/40` or `border-border/50` — never full `border-border` |
 | **Dark borders** | `border border-white/[0.06]` for explicit dark mode card borders |
 | **Rounding** | `rounded-2xl` cards, `rounded-3xl` metric containers, `rounded-full` tags |
@@ -79,6 +80,13 @@ Operational guide for any AI agent working on this codebase. Read this before ev
 3. Audio announcement: Use `useTtsAudio` hook → `playOrderAudio(orderNumber)` — NOT browser SpeechSynthesis.
 4. Real-time updates: `useKitchenSocket` hook handles WebSocket events and auto-invalidates queries.
 5. Components live in `src/components/kitchen/`.
+
+### Starting a Public Display (TV) Feature
+1. Public displays are **unauthenticated**; they use a token in the URL: `/display/:token`.
+2. Always fetch data using `useDisplayData(token)` hook.
+3. Use `violet-400` / `indigo-500` colors and an ultra-dark background `#05050A`.
+4. Components live in `src/components/display/`.
+5. Polling is used (5 min) instead of WebSockets to ensure stability on Smart TVs.
 
 ---
 

@@ -18,13 +18,14 @@ This folder contains structured technical documentation designed to give any AI 
 
 ## 🏢 Project Overview
 
-**FastCashierFE** is the frontend for a fast-food restaurant POS system. It serves three distinct user roles, each with their own UI shell and color identity:
+**FastCashierFE** is the frontend for a fast-food restaurant POS system. It serves three distinct user roles and a public display system:
 
 | Role | Route | Identity | Key Functionality |
 | :--- | :--- | :--- | :--- |
 | ADMIN | `/admin/*` | 🔵 Blue | Dashboard KPIs, user CRUD, product CRUD, session history, cancellation audit, sales reports (Recharts), PDF/Excel export |
 | CASHIER | `/cashier/*` | 🟢 Emerald/Teal | Order creation, cart management, session open/close with financial summary, thermal printing (80mm), stats, history |
 | KITCHEN | `/kitchen/*` | 🟠 Amber/Orange | Real-time order queue (WebSocket), status progression, backend TTS audio announcements, history |
+| PUBLIC TV | `/display/:token` | 🟣 Violet/Indigo | Public order status display for customers, real-time updates, multi-screen support |
 
 ---
 
@@ -48,12 +49,12 @@ Tailwind CSS v4 (OKLCH tokens) · Radix UI / Shadcn
 TanStack Query v5 · Zustand v5 · Axios
 React Hook Form v7 · Zod v4 · Sonner (toasts)
 React Router DOM v7 · Lucide React
-Recharts 3 · Socket.IO Client 4 · PWA (vite-plugin-pwa)
+Recharts 3 · Socket.IO Client 4 · PWA (vite-plugin-pwa) · Framer Motion (motion)
 ```
 
 ---
 
 ## 🗂 Last Updated
-- **Date**: April 2026
+- **Date**: May 2026
 - **Analyzed by**: AI Agent (deep full-codebase scan)
-- **Covers**: React app source (`src/`), all 3 role shells, 19 hooks, 3 Zustand stores, 5 API services, 6 type files, 2 schemas, 8 utils, WebSocket layer, TTS audio system, thermal printing, full design system
+- **Covers**: React app source (`src/`), all 3 role shells + Public Displays, 24 hooks, 3 Zustand stores, 8 API services, 8 type files, 2 schemas, 8 utils, WebSocket layer, TTS audio system, thermal printing, advanced reporting, full design system

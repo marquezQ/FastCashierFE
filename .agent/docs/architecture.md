@@ -37,6 +37,9 @@ src/
 │   ├── cashierSessionService.ts  # Session open/close/current/stats/history
 │   ├── orderService.ts     # Order CRUD, kitchen display, status updates
 │   ├── adminMetricsService.ts    # Dashboard KPIs and cancellation audit
+│   ├── displayService.ts   # Public TV display configs and data (public/private mix)
+│   ├── reportService.ts    # Advanced reports: Sales, Payment methods, Order types
+│   ├── dashboardService.ts # Unified dashboard summary (Dashboard v2)
 │   └── ttsService.ts       # Backend TTS: parseOrderNumber() + fetchOrderAudio()
 ├── components/             # All UI components
 │   ├── ui/                 # 23 low-level Radix/Shadcn primitives (Button, Dialog, Chart, etc.)
@@ -65,7 +68,11 @@ src/
 │   ├── menu.constants.ts   # Admin sidebar menu items
 │   ├── cashier-menu.constants.ts   # Cashier sidebar menu items
 │   └── kitchen-menu.constants.ts   # Kitchen sidebar menu items
-├── hooks/                  # 19 custom hooks (TanStack Query wrappers + WebSocket + TTS)
+├── hooks/                  # 24 custom hooks (TanStack Query wrappers + WebSocket + TTS)
+│   ├── useProductMutations.ts # Consolidated product CRUD
+│   ├── useUserMutations.ts    # Consolidated user CRUD
+│   ├── useDisplay.ts         # Public TV hooks
+│   └── ...                   # (see state-fetching.md for full list)
 ├── lib/
 │   ├── utils.ts            # cn() — clsx + tailwind-merge
 │   └── socket.ts           # Socket.IO client instance (/orders namespace)
@@ -76,7 +83,8 @@ src/
 │   ├── KitchenPage.tsx     # Kitchen shell (xl: breakpoint for desktop transition)
 │   ├── admin/              # 8 Admin sub-views (DashboardView, UsuariosView, ProductosView, TurnosView, OrdenesView, ReportesView, ProfileView, SettingsView)
 │   ├── cashier/            # 3 Cashier sub-views (PedidosView, HistorialView, EstadisticasView)
-│   └── kitchen/            # 2 Kitchen sub-views (PedidosView, HistorialView)
+│   ├── kitchen/            # 2 Kitchen sub-views (PedidosView, HistorialView)
+│   └── DisplayPage.tsx     # Public TV display view (token-based)
 ├── schemas/
 │   ├── auth.schema.ts      # loginSchema, createUserSchema, updateUserSchema
 │   └── products.schema.ts  # createProductSchema, updateProductSchema
@@ -90,7 +98,9 @@ src/
 │   ├── order.ts            # Order, OrderDetail, OrderItem, CreateOrderDto, OrderItemDto, OrderStatus, OrderType, PaymentMethod
 │   ├── products.ts         # Product, Category, ProductsGroupedByCategory
 │   ├── adminMetrics.ts     # DashboardMetricsResponse, TopProduct, MetricsParams, Period
-│   └── dashboard.types.ts  # Dashboard-specific display types
+│   ├── dashboard.types.ts  # Dashboard-specific display types
+│   ├── display.ts          # Public TV DisplayConfig and DisplayData types
+│   └── reports.ts          # Advanced report response types
 ├── utils/
 │   ├── audioQueue.ts       # AudioQueueManager — sequential audio playback with autoplay unlock
 │   ├── print.utils.tsx     # Cross-platform printing: Desktop (auto-print) + Android (manual button)
@@ -168,6 +178,7 @@ src/
   /kitchen                 → redirects to /kitchen/pedidos
   /kitchen/pedidos         → PedidosView (kitchen — WebSocket-driven)
   /kitchen/historial       → HistorialView (kitchen)
+/display/:token            → DisplayPage (Public, token-based data fetching)
 /                          → Redirects to role route or /login
 /*                         → Redirects to /
 ```
@@ -263,6 +274,18 @@ Cross-platform thermal printing using `printComponent()` from `src/utils/print.u
 
 ---
 
+## 📺 Public Display System (TV)
+
+The project includes a public-facing display system for customers to track their order status (PENDING / READY).
+
+### Architecture
+1. **Admin Management**: Admins create "Display Configurations" (tokens) via `ProductosView` or a dedicated Settings view. Each configuration can have its own name (e.g., "Main TV", "Side TV").
+2. **Token-based Access**: Displays do not require a user login. They access data via a unique UUID token in the URL: `/display/:token`.
+3. **Public API**: `displayService.ts` uses a separate `publicApi` Axios instance (without auth interceptors) to fetch data from `/display/:token`.
+4. **Polling Strategy**: To ensure reliability on smart TVs where WebSockets might be unstable or blocked, the display uses a 5-minute refetch interval (`useDisplayData` hook).
+
+---
+
 ## 📡 Complete API Endpoint Map
 
 | Service | Method | Endpoint | Purpose |
@@ -288,3 +311,12 @@ Cross-platform thermal printing using `printComponent()` from `src/utils/print.u
 | User mutations | PATCH | `/users/:id/status` | Toggle user active status |
 | Product mutations | POST | `/products` | Create product (FormData) |
 | Product mutations | PATCH | `/products/:id` | Update product (FormData or JSON) |
+| `reportService` | GET | `/reports/sales` | Sales evolution report |
+| `reportService` | GET | `/reports/payment-methods` | Distribution by payment method |
+| `reportService` | GET | `/reports/order-types` | Distribution by order type (Dine-in/Takeout) |
+| `displayService` | GET | `/display-configs` | List all TV configurations (Admin) |
+| `displayService` | POST | `/display-configs` | Create new TV configuration (Admin) |
+| `displayService` | PATCH | `/display-configs/:id` | Update TV configuration (Admin) |
+| `displayService` | DELETE | `/display-configs/:id` | Delete TV configuration (Admin) |
+| `displayService` | GET | `/display/:token` | **Public** — get active orders for TV |
+| `dashboardService` | GET | `/dashboard/summary` | Unified dashboard summary KPIs |

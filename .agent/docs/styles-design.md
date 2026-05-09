@@ -40,6 +40,14 @@ This is a core design rule. Every UI area has a distinct color identity to preve
 | `--kitchen-sidebar-primary` | `oklch(0.65 0.22 45)` | Active nav item |
 | Tailwind classes | `orange-500`, `amber-500`, `orange-600` | Order cards, action buttons, alerts |
 
+### 🟣 Public TV Display Identity — Violet/Indigo
+| Variable | Value | Purpose |
+| :--- | :--- | :--- |
+| Background | `#05050A` | Ultra-dark OLED-optimized background for TVs |
+| Primary Icon | `violet-400` | Branding and status icons |
+| Tailwind classes | `violet-400`, `indigo-500` | Branding, progress bars, highlights |
+| Animation | `.animate-progress` | TV-specific loading/refresh progress bar |
+
 > **Rule**: When building components, ask "which role/domain does this UI belong to?" and apply the corresponding color family strictly.
 
 ---
@@ -151,6 +159,7 @@ We use Tailwind 4 `@container` for components that need to be responsive to thei
 
 ## 🎭 Animation & Interactivity
 
+- **Engine**: Tailwind 4 Transitions + **Framer Motion** (`motion` package) for complex layout and entrance animations.
 - **Global utility**: `.transition-smooth` = `transition-all duration-200 ease-in-out`.
 - **Layout transitions**: Sidebar collapse uses `transition-all duration-300` on the content wrapper.
 - **Alert pulse**: `animate-pulse` on `AlertCircle` when an order exceeds 20 minutes wait time.
@@ -169,6 +178,7 @@ We use Tailwind 4 `@container` for components that need to be responsive to thei
 .transition-smooth    /* transition-all duration-200 ease-in-out */
 .gradient-primary     /* 135deg gradient using --primary */
 .text-gradient-primary /* Clipped text gradient from primary to primary/60 */
+.animate-progress      /* TV Display refresh progress (scaleX(0) to scaleX(1)) */
 ```
 
 ### Custom Scrollbar Styling

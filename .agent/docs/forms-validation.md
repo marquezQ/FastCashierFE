@@ -36,6 +36,14 @@ Complete reference for form handling patterns using React Hook Form, Zod schemas
 
 **Inferred types**: `CreateProductFormValues`, `UpdateProductFormValues`.
 
+### `display.schema.ts`
+
+| Schema | Export | Key Validations |
+| :--- | :--- | :--- |
+| Display Config | `displayConfigSchema` | `name` (required), `rotationInterval` (3-60s), `transitionType` (slide/fade/zoom), `productsPerSlide` (1-6), `isActive` |
+
+**Inferred types**: `DisplayConfigFormValues`.
+
 ---
 
 ## 📋 Implementation Pattern
