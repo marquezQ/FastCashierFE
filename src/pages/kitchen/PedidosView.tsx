@@ -53,14 +53,14 @@ export const PedidosView = () => {
     };
 
     return (
-        <div className="flex w-full gap-4 md:gap-6 h-[calc(100vh-100px)] items-start overflow-x-auto pb-4 no-scrollbar">
+        <div className="flex w-full gap-3 md:gap-4 h-[calc(100vh-7rem)] md:h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)] items-start overflow-x-auto pb-2 no-scrollbar">
             {/* Column: PENDIENTE */}
             <KitchenOrderColumn
                 title="Pendiente"
                 icon={<Sparkles className="h-5 w-5 text-orange-500" />}
                 count={pendingOrders.length}
                 variant="new"
-                className="flex-[0.7] min-w-50 shrink-0 xl:shrink"
+                className="flex-[0.62] min-w-54 shrink-0 xl:shrink"
             >
                 {pendingOrders.map(order => (
                     <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
@@ -79,7 +79,7 @@ export const PedidosView = () => {
                 icon={<CookingPot className="h-5 w-5 text-amber-500" />}
                 count={preparingOrders.length}
                 variant="preparing"
-                className="flex-1 min-w-75 shrink-0 xl:shrink"
+                className="flex-1 min-w-80 shrink-0 xl:shrink"
             >
                 {preparingOrders.map(order => (
                     <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
@@ -98,7 +98,7 @@ export const PedidosView = () => {
                 icon={<CheckCircle className="h-5 w-5 text-emerald-500" />}
                 count={readyOrders.length}
                 variant="ready"
-                className="flex-1 min-w-75 shrink-0 xl:shrink"
+                className="flex-1 min-w-80 shrink-0 xl:shrink"
             >
                 {readyOrders.map(order => (
                     <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />

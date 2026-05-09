@@ -32,30 +32,30 @@ export const KitchenOrderColumn = ({
 
     return (
         <div className={cn(
-            "flex flex-col h-full rounded-2xl border transition-all duration-300 shadow-sm",
+            "flex flex-col h-full rounded-xl border transition-all duration-300 shadow-sm",
             variantStyles[variant],
             className
         )}>
             {/* Column Header */}
             <div className={cn(
-                "flex items-center justify-between p-4 border-b rounded-t-2xl",
+                "flex items-center justify-between px-3 py-2.5 md:px-4 md:py-3 border-b rounded-t-xl",
                 headerStyles[variant]
             )}>
                 <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-background/50 backdrop-blur-sm shadow-sm">
+                    <div className="p-1.5 md:p-2 rounded-lg bg-background/50 backdrop-blur-sm shadow-sm">
                         {icon}
                     </div>
-                    <h3 className="font-bold text-base md:text-lg tracking-tight uppercase">
+                    <h3 className="font-black text-sm md:text-base tracking-tight uppercase whitespace-nowrap">
                         {title}
                     </h3>
                 </div>
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-background/50 backdrop-blur-sm shadow-sm font-black text-sm">
+                <div className="flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-full bg-background/50 backdrop-blur-sm shadow-sm font-black text-sm tabular-nums">
                     {count}
                 </div>
             </div>
 
             {/* Column Content */}
-            <div className="flex-1 p-3 overflow-y-auto space-y-4 no-scrollbar">
+            <div className="flex-1 p-2.5 md:p-3 overflow-y-auto space-y-3 no-scrollbar">
                 {children}
             </div>
         </div>
