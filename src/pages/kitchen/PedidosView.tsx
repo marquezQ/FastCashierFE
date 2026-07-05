@@ -40,6 +40,7 @@ export const PedidosView = () => {
     const readyOrders = orders.filter(o => o.orderStatus === 'READY');
 
     const handleAction = (orderId: number, nextStatus: OrderStatus) => {
+        if (updateStatusMutation.isPending) return;
         updateStatusMutation.mutate({ orderId, status: nextStatus }, {
             onSuccess: () => {
                 if (nextStatus === 'READY') {
@@ -53,63 +54,69 @@ export const PedidosView = () => {
     };
 
     return (
-        <div className="flex w-full gap-3 md:gap-4 h-[calc(100vh-7rem)] md:h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)] items-start overflow-x-auto pb-2 no-scrollbar">
-            {/* Column: PENDIENTE */}
-            <KitchenOrderColumn
-                title="Pendiente"
-                icon={<Sparkles className="h-5 w-5 text-orange-500" />}
-                count={pendingOrders.length}
-                variant="new"
-                className="flex-[0.62] min-w-54 shrink-0 xl:shrink"
-            >
-                {pendingOrders.map(order => (
-                    <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
-                ))}
-                {pendingOrders.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-orange-500/20 rounded-xl opacity-40">
-                        <Package className="h-8 w-8 mb-2" />
-                        <span className="text-xs font-bold uppercase">Sin pendientes</span>
-                    </div>
-                )}
-            </KitchenOrderColumn>
+        <>
+            {updateStatusMutation.isPending && (
+                <div className="fixed inset-0 bg-black/25 backdrop-blur-[2px] z-50 cursor-wait animate-in fade-in duration-200" />
+            )}
 
-            {/* Column: EN PREPARACIÓN */}
-            <KitchenOrderColumn
-                title="En Preparación"
-                icon={<CookingPot className="h-5 w-5 text-amber-500" />}
-                count={preparingOrders.length}
-                variant="preparing"
-                className="flex-1 min-w-80 shrink-0 xl:shrink"
-            >
-                {preparingOrders.map(order => (
-                    <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
-                ))}
-                {preparingOrders.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-amber-500/20 rounded-xl opacity-40">
-                        <CookingPot className="h-8 w-8 mb-2" />
-                        <span className="text-xs font-bold uppercase">Puestos vacíos</span>
-                    </div>
-                )}
-            </KitchenOrderColumn>
+            <div className="flex w-full gap-3 md:gap-4 h-[calc(100vh-7rem)] md:h-[calc(100vh-8rem)] xl:h-[calc(100vh-9rem)] items-start overflow-x-auto pb-2 no-scrollbar">
+                {/* Column: PENDIENTE */}
+                <KitchenOrderColumn
+                    title="Pendiente"
+                    icon={<Sparkles className="h-5 w-5 text-orange-500" />}
+                    count={pendingOrders.length}
+                    variant="new"
+                    className="flex-[0.62] min-w-54 shrink-0 xl:shrink"
+                >
+                    {pendingOrders.map(order => (
+                        <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
+                    ))}
+                    {pendingOrders.length === 0 && (
+                        <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-orange-500/20 rounded-xl opacity-40">
+                            <Package className="h-8 w-8 mb-2" />
+                            <span className="text-xs font-bold uppercase">Sin pendientes</span>
+                        </div>
+                    )}
+                </KitchenOrderColumn>
 
-            {/* Column: LISTOS PARA SERVIR */}
-            <KitchenOrderColumn
-                title="Listos para Servir"
-                icon={<CheckCircle className="h-5 w-5 text-emerald-500" />}
-                count={readyOrders.length}
-                variant="ready"
-                className="flex-1 min-w-80 shrink-0 xl:shrink"
-            >
-                {readyOrders.map(order => (
-                    <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
-                ))}
-                {readyOrders.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-emerald-500/20 rounded-xl opacity-40">
-                        <CheckCircle className="h-8 w-8 mb-2" />
-                        <span className="text-xs font-bold uppercase">Todo entregado</span>
-                    </div>
-                )}
-            </KitchenOrderColumn>
-        </div>
+                {/* Column: EN PREPARACIÓN */}
+                <KitchenOrderColumn
+                    title="En Preparación"
+                    icon={<CookingPot className="h-5 w-5 text-amber-500" />}
+                    count={preparingOrders.length}
+                    variant="preparing"
+                    className="flex-1 min-w-80 shrink-0 xl:shrink"
+                >
+                    {preparingOrders.map(order => (
+                        <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
+                    ))}
+                    {preparingOrders.length === 0 && (
+                        <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-amber-500/20 rounded-xl opacity-40">
+                            <CookingPot className="h-8 w-8 mb-2" />
+                            <span className="text-xs font-bold uppercase">Puestos vacíos</span>
+                        </div>
+                    )}
+                </KitchenOrderColumn>
+
+                {/* Column: LISTOS PARA SERVIR */}
+                <KitchenOrderColumn
+                    title="Listos para Servir"
+                    icon={<CheckCircle className="h-5 w-5 text-emerald-500" />}
+                    count={readyOrders.length}
+                    variant="ready"
+                    className="flex-1 min-w-80 shrink-0 xl:shrink"
+                >
+                    {readyOrders.map(order => (
+                        <KitchenOrderCard key={order.idOrder} order={order} onAction={handleAction} />
+                    ))}
+                    {readyOrders.length === 0 && (
+                        <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-emerald-500/20 rounded-xl opacity-40">
+                            <CheckCircle className="h-8 w-8 mb-2" />
+                            <span className="text-xs font-bold uppercase">Todo entregado</span>
+                        </div>
+                    )}
+                </KitchenOrderColumn>
+            </div>
+        </>
     );
 };
