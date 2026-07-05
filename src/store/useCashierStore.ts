@@ -12,6 +12,9 @@ interface CashierState {
     // Cart State (Frontend Only)
     orderItems: OrderItem[];
 
+    // Settings (Persisted locally)
+    ticketWidth: '80MM' | '56MM';
+
     // Actions
     /**
      * Updates the local session state. 
@@ -28,6 +31,9 @@ interface CashierState {
     removeItem: (productId: number) => void;
     updateQuantity: (productId: number, delta: number) => void;
     clearCart: () => void;
+
+    // Settings Actions
+    setTicketWidth: (width: '80MM' | '56MM') => void;
 }
 
 export const useCashierStore = create<CashierState>()(
@@ -36,6 +42,7 @@ export const useCashierStore = create<CashierState>()(
             currentSession: null,
             isSessionActive: false,
             orderItems: [],
+            ticketWidth: '80MM',
 
             setSession: (session) => set({
                 currentSession: session,
@@ -61,7 +68,7 @@ export const useCashierStore = create<CashierState>()(
                     set({
                         orderItems: orderItems.map(item =>
                             item.idProduct === product.idProduct
-                                ? { ...item, quantity: item.quantity + 1 }
+                               ? { ...item, quantity: item.quantity + 1 }
                                 : item
                         ),
                     });
@@ -87,14 +94,17 @@ export const useCashierStore = create<CashierState>()(
             },
 
             clearCart: () => set({ orderItems: [] }),
+
+            setTicketWidth: (width) => set({ ticketWidth: width }),
         }),
         {
             name: 'cashier-storage',
-            // Only persist session-related data and cart if needed
+            // Only persist session-related data, settings, and cart if needed
             partialize: (state) => ({
                 currentSession: state.currentSession,
                 isSessionActive: state.isSessionActive,
                 orderItems: state.orderItems,
+                ticketWidth: state.ticketWidth,
             }),
         }
     )

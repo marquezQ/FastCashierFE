@@ -4,6 +4,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { Clock } from 'lucide-react';
 import { UserMenu } from '../Navbar/UserMenu';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { TicketWidthToggle } from '../Navbar/TicketWidthToggle';
 import { CloseSessionDialog } from '@/components/cashier/CloseSessionDialog';
 
 interface CashierNavbarProps {
@@ -98,6 +99,7 @@ export const CashierNavbar = ({
                 <div className="flex-1" />
 
                 <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
+                    <TicketWidthToggle />
                     <ThemeToggle />
                     <UserMenu
                         user={user}
