@@ -1,29 +1,39 @@
 name: Deploy Frontend
+
 on:
   push:
-    branches: [develop]
+    branches: [develop]  # Cambia a main si ya migraste la rama principal
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy en VPS
-        uses: appleboy/ssh-action@v1
+      - name: Deploy Frontend en VPS
+        uses: appleboy/ssh-action@v1.2.2  # Versión fija, más predecible
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e  # Aborta si cualquier comando falla (evita falsos éxitos)
-            if [ ! -f /swapfile ]; then
-              sudo fallocate -l 1G /swapfile
-              sudo chmod 600 /swapfile
-              sudo mkswap /swapfile
-              sudo swapon /swapfile
-              echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-            fi
+            set -e
+
+            echo "========== Verificando conexión =========="
+            whoami
+            hostname
+
+            echo "========== Actualizando código =========="
             cd /var/www/fastcashier/frontend
-            git fetch origin develop
-            git reset --hard origin/develop  # Fuerza sincronización exacta con remoto
-            npm install
-            NODE_OPTIONS="--max-old-space-size=768" npm run build
-            rm -rf node_modules
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "========== Instalando dependencias =========="
+            npm ci
+
+            echo "========== Compilando =========="
+            npm run build
+
+            echo "========== Recargando Nginx =========="
+            sudo systemctl reload nginx
+
+            echo "========== Deploy finalizado =========="
