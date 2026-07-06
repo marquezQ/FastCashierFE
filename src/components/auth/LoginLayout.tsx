@@ -15,7 +15,7 @@ export const LoginLayout = ({ children }: LoginLayoutProps) => {
             <Store className="size-8 text-primary" />
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-            FastCashier
+            {import.meta.env.VITE_BUSINESS_NAME || 'FastCashier'}
           </h1>
         </div>
         <p className="text-muted-foreground text-lg">
@@ -44,7 +44,7 @@ export const LoginLayout = ({ children }: LoginLayoutProps) => {
 
       {/* Footer */}
       <p className="mt-8 text-xs text-muted-foreground opacity-50">
-        &copy; {new Date().getFullYear()} FastCashier System. v1.0.0
+        &copy; {new Date().getFullYear()} {import.meta.env.VITE_BUSINESS_NAME || 'FastCashier'} System. v{__APP_VERSION__}
       </p>
     </div>
   );

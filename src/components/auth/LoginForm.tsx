@@ -108,29 +108,31 @@ export const LoginForm = ({ form, onSubmit, isLoading }: LoginFormProps) => {
         </form>
       </Form>
 
-      {/* Quick Access */}
-      <div className="mt-8 pt-6 border-t border-border/40">
-        <p className="text-[10px] text-center text-muted-foreground mb-4 uppercase tracking-widest font-medium">
-          Accesos Rápidos
-        </p>
-        <div className="flex gap-2 justify-center">
-          {QUICK_ACCESS_USERS.map((user) => (
-            <button
-              key={user.email}
-              type="button"
-              className={`w-8 h-8 rounded-full bg-${user.color}-100 dark:bg-${user.color}-900/40 text-${user.color}-600 dark:text-${user.color}-400 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform disabled:opacity-50 disabled:cursor-not-allowed`}
-              title={`${user.title}: ${user.email}`}
-              onClick={() => handleQuickAccess(user.email)}
-              disabled={isLoading}
-            >
-              <span className="text-[10px] font-bold">{user.label}</span>
+      {/* Quick Access — solo visible en modo demo */}
+      {import.meta.env.VITE_APP_MODE === 'demo' && (
+        <div className="mt-8 pt-6 border-t border-border/40">
+          <p className="text-[10px] text-center text-muted-foreground mb-4 uppercase tracking-widest font-medium">
+            Accesos Rápidos (Demo)
+          </p>
+          <div className="flex gap-2 justify-center">
+            {QUICK_ACCESS_USERS.map((user) => (
+              <button
+                key={user.email}
+                type="button"
+                className={`w-8 h-8 rounded-full bg-${user.color}-100 dark:bg-${user.color}-900/40 text-${user.color}-600 dark:text-${user.color}-400 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform disabled:opacity-50 disabled:cursor-not-allowed`}
+                title={`${user.title}: ${user.email}`}
+                onClick={() => handleQuickAccess(user.email)}
+                disabled={isLoading}
+              >
+                <span className="text-[10px] font-bold">{user.label}</span>
             </button>
-          ))}
+            ))}
+          </div>
+          <p className="text-[10px] text-center text-muted-foreground mt-2">
+            Pass: <span className="font-mono font-bold">123456</span>
+          </p>
         </div>
-        <p className="text-[10px] text-center text-muted-foreground mt-2">
-          Pass: <span className="font-mono font-bold">123456</span>
-        </p>
-      </div>
+      )}
     </div>
   );
 };
