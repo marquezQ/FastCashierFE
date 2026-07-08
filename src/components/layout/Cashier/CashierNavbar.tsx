@@ -103,8 +103,7 @@ export const CashierNavbar = ({
                     <ThemeToggle />
                     <UserMenu
                         user={user}
-                        onNavigateProfile={() => onNavigate('/cashier/profile')}
-                        onNavigateSettings={() => onNavigate('/cashier/settings')}
+                        onNavigateChangePassword={() => onNavigate('/cashier/change-password')}
                         onLogout={onLogout}
                     />
                 </div>

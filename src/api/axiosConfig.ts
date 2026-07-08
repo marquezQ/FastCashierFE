@@ -26,13 +26,15 @@ api.interceptors.response.use(
   (error) => {
     // Solo redirigir al login si:
     // 1. Es un 401
-    // 2. NO es la ruta de login (para permitir mostrar errores)
+    // 2. NO es la ruta de login (para permitir mostrar errores de credenciales)
     // 3. El usuario ya tenía un token (estaba autenticado)
     const isLoginRequest = error.config?.url?.includes('/auth/login');
     const hadToken = !!localStorage.getItem('token');
-    
+
     if (error.response?.status === 401 && !isLoginRequest && hadToken) {
       localStorage.removeItem('token');
+      localStorage.removeItem('auth-storage');
+      localStorage.removeItem('cashier-storage');
       window.location.href = '/login';
     }
     return Promise.reject(error);

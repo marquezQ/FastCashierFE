@@ -9,6 +9,7 @@ import { HistorialView } from './cashier/HistorialView';
 import { EstadisticasView } from './cashier/EstadisticasView';
 import { RequireCashierSession } from '@/components/cashier/RequireCashierSession';
 import { cn } from '@/lib/utils';
+import { ChangePasswordView } from './ChangePasswordView';
 
 export const CashierPage = () => {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ export const CashierPage = () => {
               <Route path="/pedidos" element={<PedidosView />} />
               <Route path="/historial" element={<HistorialView />} />
               <Route path="/estadisticas" element={<EstadisticasView />} />
+              <Route path="/change-password" element={<ChangePasswordView role="CASHIER" />} />
               <Route path="*" element={<Navigate to="/cashier" replace />} />
             </Routes>
           </RequireCashierSession>
