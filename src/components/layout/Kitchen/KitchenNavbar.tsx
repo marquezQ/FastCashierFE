@@ -71,8 +71,7 @@ export const KitchenNavbar = ({
                     <ThemeToggle />
                     <UserMenu
                         user={user}
-                        onNavigateProfile={() => onNavigate('/kitchen/profile')}
-                        onNavigateSettings={() => onNavigate('/kitchen/settings')}
+                        onNavigateChangePassword={() => onNavigate('/kitchen/change-password')}
                         onLogout={onLogout}
                     />
                 </div>

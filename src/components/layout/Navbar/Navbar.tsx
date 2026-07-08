@@ -33,8 +33,7 @@ export const Navbar = ({
         <ThemeToggle />
         <UserMenu
           user={user}
-          onNavigateProfile={() => onNavigate('/admin/profile')}
-          onNavigateSettings={() => onNavigate('/admin/settings')}
+          onNavigateChangePassword={() => onNavigate('/admin/change-password')}
           onLogout={onLogout}
         />
       </div>

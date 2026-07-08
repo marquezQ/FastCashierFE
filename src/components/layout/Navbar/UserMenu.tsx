@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { User, Settings, LogOut } from 'lucide-react';
+import { KeyRound, LogOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
 
 interface UserMenuProps {
@@ -16,12 +16,11 @@ interface UserMenuProps {
     email: string;
     avatar?: string;
   };
-  onNavigateProfile: () => void;
-  onNavigateSettings: () => void;
+  onNavigateChangePassword: () => void;
   onLogout: () => void;
 }
 
-export const UserMenu = ({ user, onNavigateProfile, onNavigateSettings, onLogout }: UserMenuProps) => {
+export const UserMenu = ({ user, onNavigateChangePassword, onLogout }: UserMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,13 +39,9 @@ export const UserMenu = ({ user, onNavigateProfile, onNavigateSettings, onLogout
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onNavigateProfile}>
-          <User className="mr-2 h-4 w-4" />
-          <span>Perfil</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={onNavigateSettings}>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Configuración</span>
+        <DropdownMenuItem onClick={onNavigateChangePassword}>
+          <KeyRound className="mr-2 h-4 w-4" />
+          <span>Cambiar Contraseña</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

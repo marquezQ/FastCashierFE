@@ -8,6 +8,7 @@ import { KitchenNavbar } from '@/components/layout/Kitchen/KitchenNavbar';
 import { PedidosView } from './kitchen/PedidosView';
 import { HistorialView } from './kitchen/HistorialView';
 import { cn } from '@/lib/utils';
+import { ChangePasswordView } from './ChangePasswordView';
 
 export const KitchenPage = () => {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ export const KitchenPage = () => {
             <Route index element={<Navigate to="/kitchen/pedidos" replace />} />
             <Route path="/pedidos" element={<PedidosView />} />
             <Route path="/historial" element={<HistorialView />} />
+            <Route path="/change-password" element={<ChangePasswordView role="KITCHEN" />} />
             <Route path="*" element={<Navigate to="/kitchen" replace />} />
           </Routes>
         </main>
