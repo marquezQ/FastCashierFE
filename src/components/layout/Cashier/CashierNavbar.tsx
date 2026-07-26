@@ -60,8 +60,8 @@ export const CashierNavbar = ({
                         onNavigate={onNavigate}
                     />
 
-                    {/* Session Status - Ultra Compact on Mobile */}
-                    <div className="flex items-center gap-2 md:gap-6 min-w-0 shrink">
+                    {/* Session Status - Hidden on Mobile to save space */}
+                    <div className="hidden md:flex items-center gap-2 md:gap-6 min-w-0 shrink">
                         {/* Status Indicator */}
                         <div className="flex items-center gap-1.5 shrink-0">
                             <div className={`h-2 w-2 md:h-2.5 md:w-2.5 rounded-full shrink-0 ${isSessionActive ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-slate-300 dark:bg-slate-600'}`} />
