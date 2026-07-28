@@ -89,7 +89,7 @@ src/
 │   ├── auth.schema.ts      # loginSchema, createUserSchema, updateUserSchema
 │   └── products.schema.ts  # createProductSchema, updateProductSchema
 ├── store/
-│   ├── authStore.ts        # JWT auth, login/logout (persist: 'auth-storage')
+│   ├── authStore.ts        # Auth UI state + setSession/logout (persist: 'auth-storage')
 │   ├── useCashierStore.ts  # Active session + shopping cart (persist: 'cashier-storage')
 │   └── themeStore.ts       # Light/Dark mode (persist: 'theme-storage')
 ├── types/
@@ -122,7 +122,7 @@ src/
 ### 👤 User & Auth
 - **Roles**: `ADMIN` (ID 1), `CASHIER` (ID 2), `KITCHEN` (ID 3).
 - **User fields**: `idUser`, `fullName`, `email`, `roleId`, `isActive`, `phone`, `lastAccess`.
-- **Session**: JWT stored both in `localStorage` (key `'token'`) and Zustand `auth-storage`.
+- **Session**: JWT stored only in `localStorage` (key `'token'`) for the Axios interceptor. Zustand persists user data and `isAuthenticated`, but not the token.
 - **Auto-logout**: 401 interceptor in `axiosConfig.ts` detects expired tokens, clears `localStorage` and hard-redirects to `/login`.
 
 ### 💰 Cashier Session (`CashierSession`)

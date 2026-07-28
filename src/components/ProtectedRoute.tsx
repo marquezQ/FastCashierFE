@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { getRoleRoute } from '../constants/roles';
+import { getRoleById, getRoleRoute } from '../constants/roles';
 import type { RoleName } from '../types/auth';
 
 interface ProtectedRouteProps {
@@ -8,15 +8,17 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { isAuthenticated, role, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   // No autenticado → login
-  if (!isAuthenticated || !role || !user) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
+  const role = getRoleById(user.roleId)?.name;
+
   // Rol no permitido → su dashboard
-  if (!allowedRoles.includes(role)) {
+  if (!role || !allowedRoles.includes(role)) {
     const redirectTo = getRoleRoute(user.roleId);
     return <Navigate to={redirectTo} replace />;
   }
