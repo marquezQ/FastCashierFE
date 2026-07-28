@@ -10,11 +10,15 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 
 ### `authStore.ts` — `useAuthStore`
 - **LocalStorage Key**: `auth-storage`
-- **State**: `user: User | null`, `token: string | null`, `role: RoleName | null`, `isAuthenticated: boolean`.
+- **State**: `user: User | null`, `isAuthenticated: boolean`.
 - **Actions**:
-  - `login(credentials)` — calls `POST /auth/login`, stores token also in raw `localStorage['token']` for Axios interceptors, sets full state.
+  - `setSession(auth)` — validates the returned role, stores the JWT in raw `localStorage['token']` for Axios interceptors, and sets local auth state.
   - `logout()` — removes `localStorage['token']`, resets all state to null/false.
-- **Note**: `role` is derived at login time from `getRoleById(user.roleId)`. The raw `user.roleId` is always available for lookups.
+- **Note**: `role` is derived from `user.roleId` when it is needed; it is not stored separately.
+
+### `useLogin` — authentication mutation
+- **Service**: `authService.login(credentials)` calls `POST /auth/login`.
+- **Hook**: `useLogin()` wraps the service with `useMutation`, disables retries, removes cached server data from a previous user, then delegates local state to `authStore.setSession()`.
 
 ### `useCashierStore.ts` — `useCashierStore`
 - **LocalStorage Key**: `cashier-storage`
