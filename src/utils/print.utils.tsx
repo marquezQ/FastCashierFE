@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -28,21 +29,22 @@ const PRINT_STYLES = `
   * { box-sizing: border-box; }
   .print-actions {
     text-align: center;
-    padding: 16px 8px;
+    padding: 24px 16px;
     border-top: 1px dashed #ccc;
-    margin-top: 10px;
+    margin-top: 15px;
   }
   .print-actions button {
-    font-size: 16px;
+    font-size: 28px;
     font-weight: bold;
-    padding: 12px 32px;
+    padding: 24px 32px;
     border: 2px solid #000;
     background: #000;
     color: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     width: 100%;
-    max-width: 280px;
+    max-width: 400px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   }
   @media print {
     .print-actions { display: none !important; }
@@ -81,11 +83,11 @@ export const printComponent = <T,>(
   const win = window.open('about:blank', '_blank');
   if (!win) return;
 
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
+   
   win.document.open();
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
+   
   win.document.write(html);
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
+   
   win.document.close();
 
   if (!IS_ANDROID) {

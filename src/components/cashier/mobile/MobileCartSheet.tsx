@@ -16,6 +16,8 @@ import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
 import type { PaymentMethod, Order, OrderType } from '@/types/order';
 import { OrderProcessDialog } from '@/components/shared/OrderProcessDialog';
+import { printComponent } from '@/utils/print.utils';
+import { ThermalTicket } from '@/components/shared/ThermalTicket';
 
 interface MobileCartSheetProps {
     open: boolean;
@@ -97,12 +99,19 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                 setLastCreatedOrder(data);
                 setDialogMode('success');
 
+                // Auto-print upon successful order creation
+                printComponent(ThermalTicket, { order: data });
+
                 // Clear form for next order
                 setCustomerName('');
                 setSelectedOrderType('DINE_IN');
                 setPaymentMethod('CASH');
                 setCashReceived('');
                 setObservations('');
+
+                // Auto-close the cart sheet so the user doesn't have to close it manually
+                // after dismissing the success dialog
+                onOpenChange(false);
             }
         });
     };

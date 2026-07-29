@@ -13,6 +13,8 @@ import { formatPrice } from '@/utils/product.utils';
 import { toast } from 'sonner';
 import type { PaymentMethod, Order, OrderType } from '@/types/order';
 import { OrderProcessDialog } from '../shared/OrderProcessDialog';
+import { printComponent } from '@/utils/print.utils';
+import { ThermalTicket } from '../shared/ThermalTicket';
 
 export const OrderSummary = () => {
     const { orderItems, updateQuantity, removeItem, clearCart, currentSession } = useCashierStore();
@@ -86,6 +88,9 @@ export const OrderSummary = () => {
             onSuccess: (data) => {
                 setLastCreatedOrder(data);
                 setDialogMode('success');
+
+                // Auto-print upon successful order creation
+                printComponent(ThermalTicket, { order: data });
 
                 // Clear fields for the next order
                 setCustomerName('');
