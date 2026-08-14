@@ -1,4 +1,4 @@
-import { ShoppingBag } from 'lucide-react';
+import { MoveRight, ShoppingBag } from 'lucide-react';
 import {
     Table,
     TableBody,
@@ -25,15 +25,20 @@ export const SessionOrdersTable = ({
 }: SessionOrdersTableProps) => {
     return (
         <div className="rounded-3xl border-2 border-primary/5 overflow-hidden bg-card/50 mt-6">
+            <div className="md:hidden flex items-center gap-1.5 px-4 pt-3 pb-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                    <MoveRight className="h-3 w-3" /> Desliza para ver más
+                </span>
+            </div>
             <Table>
                 <TableHeader className="bg-muted/50">
                     <TableRow className="hover:bg-transparent border-primary/10 h-14">
-                        <TableHead className="w-32 font-black text-[10px] uppercase tracking-widest px-6">Pedido</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest px-4">Cliente</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-center px-4">Total</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-center px-4">Estado</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-center px-4">Hora</TableHead>
-                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-right pr-6">Acción</TableHead>
+                        <TableHead className="w-32 font-black text-[10px] uppercase tracking-widest px-3 md:px-6">Pedido</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest px-3 md:px-4">Cliente</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-center px-3 md:px-4">Total</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-center px-3 md:px-4">Estado</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-center px-3 md:px-4">Hora</TableHead>
+                        <TableHead className="font-black text-[10px] uppercase tracking-widest text-right pr-4 md:pr-6">Acción</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

@@ -50,7 +50,7 @@ export const SessionOrdersDialog = ({
         <>
             <Dialog open={open} onOpenChange={onOpenChange}>
                 <DialogContent className="max-w-[95vw] lg:max-w-7xl rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
-                    <DialogHeader className="bg-primary/5 p-8 pb-6 border-b border-primary/10">
+                    <DialogHeader className="bg-primary/5 p-4 md:p-8 pb-4 md:pb-6 border-b border-primary/10">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
@@ -82,7 +82,7 @@ export const SessionOrdersDialog = ({
                         </div>
                     </DialogHeader>
 
-                    <div className="p-8 pt-0 max-h-[75vh] overflow-y-auto">
+                    <div className="p-4 md:p-8 pt-0 max-h-[75vh] overflow-y-auto">
                         <SessionOrdersTable
                             orders={filteredOrders}
                             isLoading={isLoading}

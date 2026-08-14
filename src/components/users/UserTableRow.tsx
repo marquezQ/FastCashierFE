@@ -59,7 +59,7 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
 
   return (
     <>
-      <TableRow key={user.idUser} className="h-20">
+      <TableRow key={user.idUser} className="h-auto md:h-20">
         <UserTableCellUser user={user} />
         <UserTableCellRole roleConfig={roleConfig} roleName={user.role.roleName} />
         <UserTableCellStatus isActive={user.isActive} />
@@ -90,16 +90,16 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
 };
 
 const UserTableCellUser = ({ user }: { user: UserWithRole }) => (
-  <TableCell className="py-4 px-6">
-    <div className="flex items-center gap-4">
-      <Avatar className="size-12">
-        <AvatarFallback className="bg-muted text-base font-semibold">
+  <TableCell className="py-3 md:py-4 px-3 md:px-6">
+    <div className="flex items-center gap-2.5 md:gap-4 min-w-37.5 md:min-w-0">
+      <Avatar className="size-10 md:size-12 shrink-0">
+        <AvatarFallback className="bg-muted text-sm md:text-base font-semibold">
           {getInitials(user.fullName)}
         </AvatarFallback>
       </Avatar>
-      <div>
-        <div className="font-semibold text-base">{user.fullName}</div>
-        <div className="text-sm text-muted-foreground mt-0.5">
+      <div className="min-w-0">
+        <div className="font-semibold text-sm md:text-base truncate">{user.fullName}</div>
+        <div className="text-xs md:text-sm text-muted-foreground mt-0.5 truncate">
           {user.email}
         </div>
       </div>
@@ -117,12 +117,12 @@ const UserTableCellRole = ({
   const RoleIcon = roleConfig.icon;
 
   return (
-    <TableCell className="py-4 px-6">
+    <TableCell className="py-3 md:py-4 px-4 md:px-6">
       <Badge
         variant="outline"
-        className={`${roleConfig.className} text-sm px-3 py-1.5`}
+        className={`${roleConfig.className} text-xs md:text-sm px-2.5 md:px-3 py-1 md:py-1.5 whitespace-nowrap`}
       >
-        <RoleIcon className="size-4" />
+        <RoleIcon className="size-3.5 md:size-4" />
         {getRoleNameInSpanish(roleName)}
       </Badge>
     </TableCell>
@@ -130,13 +130,13 @@ const UserTableCellRole = ({
 };
 
 const UserTableCellStatus = ({ isActive }: { isActive: boolean }) => (
-  <TableCell className="py-4 px-6">
+  <TableCell className="py-3 md:py-4 px-4 md:px-6">
     <Badge
       variant="outline"
       className={`${isActive
           ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
           : 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-800'
-        } text-sm px-3 py-1.5`}
+        } text-xs md:text-sm px-2.5 md:px-3 py-1 md:py-1.5 whitespace-nowrap`}
     >
       {isActive ? 'Activo' : 'Inactivo'}
     </Badge>
@@ -144,7 +144,7 @@ const UserTableCellStatus = ({ isActive }: { isActive: boolean }) => (
 );
 
 const UserTableCellDate = ({ createdAt }: { createdAt: string }) => (
-  <TableCell className="py-4 text-base px-6">{formatDate(createdAt)}</TableCell>
+  <TableCell className="py-3 md:py-4 text-sm md:text-base px-4 md:px-6 whitespace-nowrap">{formatDate(createdAt)}</TableCell>
 );
 
 const UserTableCellActions = ({
@@ -154,23 +154,23 @@ const UserTableCellActions = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => (
-  <TableCell className="py-4 text-right px-6">
-    <div className="flex items-center justify-end gap-3">
+  <TableCell className="py-3 md:py-4 text-right px-4 md:px-6">
+    <div className="flex items-center justify-end gap-2 md:gap-3">
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+        className="h-9 w-9 md:h-10 md:w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
         onClick={onEdit}
       >
-        <Pencil className="size-5" />
+        <Pencil className="size-4 md:size-5" />
       </Button>
       <Button
         variant="ghost"
         size="icon"
-        className="h-10 w-10 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+        className="h-9 w-9 md:h-10 md:w-10 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
         onClick={onDelete}
       >
-        <Trash2 className="size-5" />
+        <Trash2 className="size-4 md:size-5" />
       </Button>
     </div>
   </TableCell>

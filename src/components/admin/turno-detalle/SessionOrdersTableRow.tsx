@@ -24,28 +24,28 @@ export const SessionOrdersTableRow = ({ order, onViewDetail }: SessionOrdersTabl
 
     return (
         <TableRow className="group hover:bg-primary/5 border-primary/5 transition-colors h-20">
-            <TableCell className="px-6">
-                <span className="font-black text-lg text-foreground">
+            <TableCell className="px-3 md:px-6">
+                <span className="font-black text-base md:text-lg text-foreground whitespace-nowrap">
                     #{order.orderNumber?.split('-').pop() ?? '----'}
                 </span>
             </TableCell>
-            <TableCell className="px-4">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-muted group-hover:bg-background transition-colors border shadow-sm shrink-0">
-                        <UserIcon className="h-4 w-4 text-muted-foreground" />
+            <TableCell className="px-2 md:px-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                    <div className="p-1.5 md:p-2 rounded-full bg-muted group-hover:bg-background transition-colors border shadow-sm shrink-0">
+                        <UserIcon className="h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground" />
                     </div>
-                    <span className="text-sm font-bold truncate max-w-37.5">
+                    <span className="text-xs md:text-sm font-bold truncate max-w-28 md:max-w-37.5">
                         {order.customer || 'Público General'}
                     </span>
                 </div>
             </TableCell>
-            <TableCell className="text-center px-4">
+            <TableCell className="text-center px-2 md:px-4">
                 <div className="flex flex-col items-center gap-1">
-                    <span className="text-sm font-black text-foreground tabular-nums">
+                    <span className="text-xs md:text-sm font-black text-foreground tabular-nums">
                         {formatPrice(order.total)}
                     </span>
                     <div className={cn(
-                        "flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-tight",
+                        "flex items-center gap-1 px-1.5 md:px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-tight",
                         order.paymentMethod === 'CASH'
                             ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50'
                             : 'bg-violet-500/10 text-violet-600 border-violet-200/50'
@@ -64,24 +64,24 @@ export const SessionOrdersTableRow = ({ order, onViewDetail }: SessionOrdersTabl
                     </div>
                 </div>
             </TableCell>
-            <TableCell className="text-center px-4">
-                <Badge variant="outline" className={cn(status.color, "px-3 py-1 text-[10px] font-black uppercase border-2 shadow-none")}>
+            <TableCell className="text-center px-2 md:px-4">
+                <Badge variant="outline" className={cn(status.color, "px-2 py-0.5 md:px-3 md:py-1 text-[10px] font-black uppercase border-2 shadow-none whitespace-nowrap")}>
                     {status.label}
                 </Badge>
             </TableCell>
-            <TableCell className="text-center px-4">
-                <span className="text-xs font-bold text-muted-foreground whitespace-nowrap">
+            <TableCell className="text-center px-2 md:px-4">
+                <span className="text-[11px] md:text-xs font-bold text-muted-foreground whitespace-nowrap">
                     {new Date(order.orderDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                 </span>
             </TableCell>
-            <TableCell className="text-right pr-6">
+            <TableCell className="text-right pr-3 md:pr-6">
                 <Button
                     variant="outline"
                     size="icon"
-                    className="h-10 w-10 rounded-xl text-primary border-primary/20 hover:bg-primary hover:text-white transition-all duration-300"
+                    className="h-9 w-9 md:h-10 md:w-10 rounded-xl text-primary border-primary/20 hover:bg-primary hover:text-white transition-all duration-300"
                     onClick={() => onViewDetail(order)}
                 >
-                    <Eye className="h-5 w-5" />
+                    <Eye className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
             </TableCell>
         </TableRow>
