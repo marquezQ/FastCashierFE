@@ -6,11 +6,16 @@ import {
     ClipboardCheck,
     Calculator,
     Info,
+    Printer,
+    FileText,
     ShoppingBag
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatPrice } from '@/utils/product.utils';
-import type { CashierSession } from '@/types/cashierSession';
+import { api } from '@/api/axiosConfig';
+import { printComponent } from '@/utils/print.utils';
+import { ThermalSessionTicket } from '@/components/shared/ThermalSessionTicket';
+import type { CashierSession, CloseSessionResponse } from '@/types/cashierSession';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { SessionHeader } from './turno-detalle/SessionHeader';
@@ -49,6 +54,40 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
 
     const netSales = parseFloat(session.totalSales || "0");
 
+    const closedSummary: CloseSessionResponse['summary'] | null = isClosed ? {
+        sessionId: session.idSession,
+        startTime: session.openingDate,
+        endTime: session.closingDate ?? new Date().toISOString(),
+        initialCash: Number(session.initialAmount),
+        cashSales: Number(session.totalCash),
+        totalExpectedCash: initialBase + sysCashSales,
+        declaredCash: Number(session.closingCashAmount),
+        totalExpectedQr: sysQrSales,
+        declaredQr: Number(session.closingQrAmount),
+        difference: Number(session.difference),
+        totalOrders: session.orderCount,
+    } : null;
+
+    const handlePrintSummary = () => {
+        if (!closedSummary) return;
+        printComponent(ThermalSessionTicket, { summary: closedSummary });
+    };
+
+    const handleDownloadPdf = async () => {
+        if (!isClosed) return;
+        try {
+            const res = await api.get(`/cashier-sessions/${session.idSession}/report/pdf`, {
+                responseType: 'blob'
+            });
+            const blob = new Blob([res.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(() => window.URL.revokeObjectURL(url), 100);
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+        }
+    };
+
     return (
         <div
             className={cn(
@@ -83,6 +122,41 @@ export const TurnoDetalleCard = ({ session }: TurnoDetalleCardProps) => {
                             <span className="inline @2xl:hidden">Pedidos</span>
                         </Button>
                     </div>
+
+                    {isClosed && (
+                        <>
+                            {/* Botón Imprimir Resumen (Térmica) */}
+                            <div className="relative group/print">
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handlePrintSummary();
+                                    }}
+                                    variant="outline"
+                                    className="h-10 @3xl:h-12 @5xl:h-14 px-4 @3xl:px-5 @5xl:px-6 rounded-3xl bg-slate-100 text-slate-700 hover:bg-slate-700 hover:text-white transition-all duration-300 border-slate-300/60 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-200 dark:hover:text-slate-900 shadow-sm gap-2 @5xl:gap-3 font-black uppercase tracking-tight shrink-0 flex items-center text-xs @3xl:text-sm active:scale-95"
+                                >
+                                    <Printer className="h-5 w-5 @3xl:h-6 @3xl:w-6 transition-transform group-hover/print:scale-110" />
+                                    <span>Resumen</span>
+                                </Button>
+                            </div>
+
+                            {/* Botón Reporte PDF */}
+                            <div className="relative group/pdf">
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDownloadPdf();
+                                    }}
+                                    variant="outline"
+                                    className="h-10 @3xl:h-12 @5xl:h-14 px-4 @3xl:px-5 @5xl:px-6 rounded-3xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 border-primary/20 shadow-sm gap-2 @5xl:gap-3 font-black uppercase tracking-tight shrink-0 flex items-center text-xs @3xl:text-sm active:scale-95"
+                                >
+                                    <FileText className="h-5 w-5 @3xl:h-6 @3xl:w-6 transition-transform group-hover/pdf:scale-110" />
+                                    <span className="hidden @2xl:inline">Reporte PDF</span>
+                                    <span className="inline @2xl:hidden">PDF</span>
+                                </Button>
+                            </div>
+                        </>
+                    )}
 
                     {/* Botón Expansión */}
                     <button
