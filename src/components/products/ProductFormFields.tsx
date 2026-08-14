@@ -1,5 +1,5 @@
 import type { Control, FieldValues, Path } from 'react-hook-form';
-import { Package, Tag, DollarSign, FileText, FolderOpen } from 'lucide-react';
+import { Package, DollarSign, FileText, FolderOpen } from 'lucide-react';
 import {
     FormControl,
     FormField,
@@ -27,41 +27,6 @@ import type { Category } from '@/types/products';
 interface BaseFieldProps<T extends FieldValues> {
     control: Control<T>;
     isLoading?: boolean;
-}
-
-// Code Field Component
-interface CodeFieldProps<T extends FieldValues> extends BaseFieldProps<T> {
-    name: Path<T>;
-}
-
-export function CodeField<T extends FieldValues>({
-    control,
-    name,
-    isLoading
-}: CodeFieldProps<T>) {
-    return (
-        <FormField
-            control={control}
-            name={name}
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Código del Producto</FormLabel>
-                    <FormControl>
-                        <div className="relative group">
-                            <Tag className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                            <Input
-                                placeholder="Ej: PROD-001"
-                                className="pl-9 h-11"
-                                disabled={isLoading}
-                                {...field}
-                            />
-                        </div>
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
-    );
 }
 
 // Name Field Component

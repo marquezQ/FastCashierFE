@@ -32,7 +32,6 @@ export const ProductosView = () => {
       }
 
       await createProduct.mutateAsync({
-        code: data.code,
         name: data.name,
         price: data.price,
         description: data.description,
@@ -70,9 +69,6 @@ export const ProductosView = () => {
       // Preparar datos para enviar (solo campos que cambiaron)
       const updateData: UpdateProductFormValues = {};
 
-      if (data.code !== undefined && data.code !== selectedProduct.code) {
-        updateData.code = data.code;
-      }
       if (data.name !== undefined && data.name !== selectedProduct.name) {
         updateData.name = data.name;
       }

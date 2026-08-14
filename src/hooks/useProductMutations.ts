@@ -3,7 +3,6 @@ import { api } from '@/api/axiosConfig';
 import type { Product } from '@/types/products';
 
 interface CreateProductData {
-  code: string;
   name: string;
   price: number;
   description: string;
@@ -17,7 +16,6 @@ export const useCreateProduct = () => {
   return useMutation({
     mutationFn: async (productData: CreateProductData) => {
       const formData = new FormData();
-      formData.append('code', productData.code);
       formData.append('name', productData.name);
       formData.append('price', productData.price.toString());
       formData.append('description', productData.description);
@@ -42,7 +40,6 @@ export const useCreateProduct = () => {
 };
 
 interface UpdateProductData {
-  code?: string;
   name?: string;
   price?: number;
   description?: string;
@@ -60,7 +57,6 @@ export const useUpdateProduct = () => {
       if (data.image) {
         const formData = new FormData();
 
-        if (data.code !== undefined) formData.append('code', data.code);
         if (data.name !== undefined) formData.append('name', data.name);
         if (data.price !== undefined) formData.append('price', data.price.toString());
         if (data.description !== undefined) formData.append('description', data.description);

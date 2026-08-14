@@ -7,7 +7,6 @@ import { Form } from '@/components/ui/form';
 import { updateProductSchema, type UpdateProductFormValues } from '@/schemas/products.schema';
 import type { Category, Product } from '@/types/products';
 import {
-  CodeField,
   NameField,
   PriceField,
   DescriptionField,
@@ -45,7 +44,6 @@ export const EditProductForm = ({
   const form = useForm<UpdateProductFormValues>({
     resolver: zodResolver(updateProductSchema),
     defaultValues: {
-      code: product.code,
       name: product.name,
       price: parseFloat(product.price),
       description: product.description,
@@ -63,7 +61,6 @@ export const EditProductForm = ({
     const categoryId = category?.idCategory;
 
     form.reset({
-      code: product.code,
       name: product.name,
       price: parseFloat(product.price),
       description: product.description,
@@ -81,9 +78,6 @@ export const EditProductForm = ({
     // Filtrar solo los campos que realmente cambiaron
     const cleanedData: UpdateProductFormValues = {};
 
-    if (data.code !== undefined && data.code !== product.code) {
-      cleanedData.code = data.code;
-    }
     if (data.name !== undefined && data.name !== product.name) {
       cleanedData.name = data.name;
     }
@@ -141,8 +135,6 @@ export const EditProductForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <CodeField control={form.control} name="code" isLoading={isLoading} />
-
         <NameField control={form.control} name="name" isLoading={isLoading} />
 
         <PriceField control={form.control} name="price" isLoading={isLoading} />

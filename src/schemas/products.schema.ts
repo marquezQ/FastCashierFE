@@ -6,10 +6,6 @@ import * as z from 'zod';
 
 export const createProductSchema = z
   .object({
-    code: z
-      .string()
-      .min(1, 'El código es requerido')
-      .min(3, 'El código debe tener al menos 3 caracteres'),
     name: z
       .string()
       .min(1, 'El nombre es requerido')
@@ -49,10 +45,6 @@ export type CreateProductFormValues = z.infer<typeof createProductSchema>;
 // ============================================
 
 export const updateProductSchema = z.object({
-  code: z
-    .string()
-    .min(3, 'El código debe tener al menos 3 caracteres')
-    .optional(),
   name: z
     .string()
     .min(3, 'El nombre debe tener al menos 3 caracteres')

@@ -7,7 +7,6 @@ import { Form } from '@/components/ui/form';
 import { createProductSchema, type CreateProductFormValues } from '@/schemas/products.schema';
 import type { Category } from '@/types/products';
 import {
-  CodeField,
   NameField,
   PriceField,
   DescriptionField,
@@ -36,7 +35,6 @@ export const CreateProductForm = ({
   const form = useForm<CreateProductFormValues>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
-      code: '',
       name: '',
       price: 0,
       description: '',
@@ -74,8 +72,6 @@ export const CreateProductForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <CodeField control={form.control} name="code" isLoading={isLoading} />
-
         <NameField control={form.control} name="name" isLoading={isLoading} />
 
         <PriceField control={form.control} name="price" isLoading={isLoading} />
