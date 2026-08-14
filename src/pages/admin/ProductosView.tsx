@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useProducts } from '@/hooks/useProducts';
 import { ProductsGrid } from '@/components/products/ProductsGrid';
+import { MobileProductsGrid } from '@/components/products/mobile/MobileProductsGrid';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { CreateProductDialog } from '@/components/products/CreateProductDialog';
@@ -16,6 +18,7 @@ export const ProductosView = () => {
   const { data: categories, isLoading, error } = useProducts();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
+  const isMobile = useIsMobile();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -114,11 +117,6 @@ export const ProductosView = () => {
     }
   };
 
-  const handleCreateCategory = () => {
-    // TODO: Abrir modal/dialog para crear categoría
-    toast.info('Funcionalidad de crear categoría próximamente');
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -146,14 +144,19 @@ export const ProductosView = () => {
         </div>
       )}
 
-      {!isLoading && !error && categories && (
+      {!isLoading && !error && categories && (isMobile ? (
+        <MobileProductsGrid
+          categories={categories}
+          onEditProduct={handleEdit}
+          onActiveTabChange={setActiveCategoryId}
+        />
+      ) : (
         <ProductsGrid
           categories={categories}
           onEditProduct={handleEdit}
-          onCreateCategory={handleCreateCategory}
           onActiveTabChange={setActiveCategoryId}
         />
-      )}
+      ))}
 
       <CreateProductDialog
         open={isCreateDialogOpen}

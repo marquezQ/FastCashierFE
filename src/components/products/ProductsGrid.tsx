@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Package, Plus } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from './ProductCard';
 import type { ProductsGroupedByCategory } from '@/types/products';
@@ -10,14 +9,12 @@ import type { Product } from '@/types/products';
 interface ProductsGridProps {
   categories: ProductsGroupedByCategory;
   onEditProduct?: (product: Product) => void;
-  onCreateCategory?: () => void;
   onActiveTabChange?: (categoryId: number) => void;
 }
 
 export const ProductsGrid = ({
   categories,
   onEditProduct,
-  onCreateCategory,
   onActiveTabChange,
 }: ProductsGridProps) => {
   const [activeTab, setActiveTab] = useState(categories[0]?.idCategory.toString() || '');
@@ -47,8 +44,8 @@ export const ProductsGrid = ({
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div className="w-full sm:flex-1 min-w-0">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-full flex-1 min-w-0">
           <div className="overflow-x-auto overflow-y-hidden">
             <TabsList className="inline-flex! justify-start! h-10 w-max! p-1!">
               {categories.map((category) => (
@@ -68,18 +65,6 @@ export const ProductsGrid = ({
             </TabsList>
           </div>
         </div>
-        {onCreateCategory && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onCreateCategory}
-            className="w-full sm:w-auto shrink-0"
-          >
-            <Plus className="size-4 mr-2" />
-            <span className="hidden sm:inline">Nueva Categoría</span>
-            <span className="sm:hidden">Nueva</span>
-          </Button>
-        )}
       </div>
 
       {categories.map((category) => (
