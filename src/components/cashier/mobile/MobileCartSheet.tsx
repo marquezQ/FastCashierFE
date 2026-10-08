@@ -134,7 +134,7 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                     className="rounded-t-3xl h-[85vh] max-h-[85vh] flex flex-col p-0 overflow-hidden"
                 >
                     {/* Drag handle */}
-                    <div className="flex justify-center pt-3 pb-1 shrink-0">
+                    <div className="flex justify-center pt-2 pb-1 shrink-0">
                         <div className="h-1 w-10 rounded-full bg-muted-foreground/30" />
                     </div>
 
@@ -149,9 +149,10 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                         </div>
                         <button
                             onClick={() => onOpenChange(false)}
-                            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors active:scale-95"
+                            className="h-9 w-9 rounded-full flex items-center justify-center bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all active:scale-90 font-bold shrink-0"
+                            aria-label="Cerrar carrito"
                         >
-                            <X className="h-4 w-4" />
+                            <X className="h-5 w-5 stroke-[2.5]" />
                         </button>
                     </div>
 
@@ -167,7 +168,7 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                                 <p className="text-xs mt-1">Agrega productos desde el catálogo</p>
                             </div>
                         ) : (
-                            <div className="p-3 space-y-2">
+                            <div className="space-y-2">
                                 {orderItems.map((item) => (
                                     <div
                                         key={item.idProduct}
