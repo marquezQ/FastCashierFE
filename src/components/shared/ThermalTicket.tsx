@@ -124,3 +124,5 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
         </div>
     );
 };
+
+
