@@ -64,27 +64,37 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
             </div>
 
             {/* Items */}
-            <div style={{ borderBottom: '1px solid black', marginBottom: '5px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: fontSize }}>
+            <div style={{ marginBottom: '5px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: fontSize, tableLayout: 'fixed' }}>
                     <thead>
-                        <tr style={{ borderBottom: '1px solid black' }}>
-                            <th style={{ textAlign: 'left', paddingBottom: '3px' }}>CANT</th>
-                            <th style={{ textAlign: 'left', paddingBottom: '3px' }}>DETALLE</th>
-                            <th style={{ textAlign: 'right', paddingBottom: '3px' }}>TOTAL</th>
+                        <tr>
+                            <th style={{ border: '1px dashed black', textAlign: 'center', padding: '2px', width: '15%' }}>CANT</th>
+                            <th style={{ border: '1px dashed black', textAlign: 'left', padding: '2px', width: '40%' }}>DETALLE</th>
+                            <th style={{ border: '1px dashed black', textAlign: 'right', padding: '2px', width: '22%' }}>P.U.</th>
+                            <th style={{ border: '1px dashed black', textAlign: 'right', padding: '2px', width: '23%' }}>TOTAL</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {order.details?.map((detail, index) => (
-                            <tr key={index}>
-                                <td style={{ verticalAlign: 'top', paddingTop: '3px' }}>{detail.quantity}</td>
-                                <td style={{ verticalAlign: 'top', paddingTop: '3px', paddingLeft: '5px' }}>
-                                    {detail.product?.name.toUpperCase()}
-                                </td>
-                                <td style={{ verticalAlign: 'top', textAlign: 'right', paddingTop: '3px', fontWeight: 'bold' }}>
-                                    {formatPrice(detail.subtotal)}
-                                </td>
-                            </tr>
-                        ))}
+                        {order.details?.map((detail, index) => {
+                            const name = detail.product?.name.toUpperCase() || '';
+                            const maxLen = isCompact ? 14 : 22;
+                            const truncatedName = name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
+                            
+                            return (
+                                <tr key={index}>
+                                    <td style={{ border: '1px dashed black', verticalAlign: 'middle', padding: '2px', textAlign: 'center' }}>{detail.quantity}</td>
+                                    <td style={{ border: '1px dashed black', verticalAlign: 'middle', padding: '2px', wordWrap: 'break-word' }}>
+                                        {truncatedName}
+                                    </td>
+                                    <td style={{ border: '1px dashed black', verticalAlign: 'middle', padding: '2px', textAlign: 'right' }}>
+                                        {parseFloat(detail.unitPrice).toFixed(2)}
+                                    </td>
+                                    <td style={{ border: '1px dashed black', verticalAlign: 'middle', padding: '2px', textAlign: 'right', fontWeight: 'bold' }}>
+                                        {parseFloat(detail.subtotal).toFixed(2)}
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
@@ -107,7 +117,7 @@ export const ThermalTicket = ({ order }: ThermalTicketProps) => {
 
             {/* Observations */}
             {order.observations && (
-                <div style={{ marginBottom: '5px', fontSize: infoFontSize, fontStyle: 'italic', border: '1px solid #ccc', padding: '5px' }}>
+                <div style={{ marginBottom: '5px', fontSize: infoFontSize, fontStyle: 'italic', border: '1px dashed black', padding: '4px' }}>
                     OBS: {order.observations}
                 </div>
             )}

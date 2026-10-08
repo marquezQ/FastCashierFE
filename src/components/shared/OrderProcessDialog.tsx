@@ -49,13 +49,17 @@ export const OrderProcessDialog = ({
     const isSuccess = mode === 'success' && order;
     const currentItems = isSuccess
         ? (order?.details || []).map(d => ({
-            ...(d.product || {}),
             name: d.product?.name || 'Producto',
             quantity: d.quantity || 0,
             price: d.unitPrice || '0',
-            subtotal: d.subtotal
+            subtotal: d.subtotal || (parseFloat(d.unitPrice || '0') * (d.quantity || 0)).toString()
         }))
-        : (previewData?.items || []);
+        : (previewData?.items || []).map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            subtotal: (parseFloat(String(item.price)) * item.quantity).toString()
+        }));
 
     const currentTotal = isSuccess ? parseFloat(order?.total || '0') : (previewData?.total || 0);
     const currentAmountPaid = isSuccess ? parseFloat(order?.amountPaid || '0') : (previewData?.amountPaid || 0);
@@ -157,19 +161,24 @@ export const OrderProcessDialog = ({
                         <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground flex items-center gap-1 px-1">
                             <Receipt className="h-3 w-3" /> Detalle de Venta
                         </span>
-                        <div className="space-y-1.5 px-1">
+                        <div className="space-y-2.5 px-1">
                             {currentItems.map((item, idx) => (
-                                <div key={idx} className="flex justify-between items-center text-sm group">
-                                    <div className="flex items-center gap-2 min-w-0">
-                                        <Badge variant="outline" className="h-5 px-1.5 font-bold text-[10px] bg-muted/50 border-0 text-foreground">
+                                <div key={idx} className="flex justify-between items-center group">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-lg shrink-0 tabular-nums">
                                             {item.quantity}
-                                        </Badge>
-                                        <span className="truncate font-medium text-foreground/80">
-                                            {('product' in item ? (item as any).product.name : (item as any).name)}
                                         </span>
+                                        <div className="flex flex-col min-w-0">
+                                            <span className="truncate font-bold text-base text-foreground leading-tight">
+                                                {item.name}
+                                            </span>
+                                            <span className="text-sm text-muted-foreground font-medium">
+                                                {formatPrice(item.price.toString())} c/u
+                                            </span>
+                                        </div>
                                     </div>
-                                    <span className="font-mono text-xs font-medium text-muted-foreground">
-                                        {formatPrice(('subtotal' in item ? (item as any).subtotal : (parseFloat(item.price) * item.quantity).toString()))}
+                                    <span className="font-mono text-base font-bold text-foreground">
+                                        {formatPrice(item.subtotal)}
                                     </span>
                                 </div>
                             ))}

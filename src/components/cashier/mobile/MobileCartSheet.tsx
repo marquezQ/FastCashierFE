@@ -131,7 +131,7 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                 <SheetContent
                     side="bottom"
                     hideClose
-                    className="rounded-t-3xl max-h-[85vh] flex flex-col p-0 overflow-hidden"
+                    className="rounded-t-3xl h-[85vh] max-h-[85vh] flex flex-col p-0 overflow-hidden"
                 >
                     {/* Drag handle */}
                     <div className="flex justify-center pt-3 pb-1 shrink-0">
@@ -139,7 +139,7 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                     </div>
 
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 pb-3 shrink-0">
+                    <div className="flex items-center justify-between px-4 shrink-0">
                         <div className="flex items-center gap-2">
                             <ShoppingCart className="h-5 w-5 text-(--cashier-sidebar-primary)" />
                             <span className="font-bold text-base tracking-tight">Pedido Actual</span>
@@ -174,8 +174,8 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                                         className="flex items-center gap-2 p-2.5 rounded-xl border border-border/40 bg-background shadow-sm"
                                     >
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-bold text-sm truncate leading-tight">{item.name}</p>
-                                            <p className="text-[11px] text-muted-foreground tabular-nums">
+                                            <p className="font-bold text-base truncate leading-tight">{item.name}</p>
+                                            <p className="text-sm text-muted-foreground tabular-nums">
                                                 {formatPrice(item.price)} c/u · <span className="font-semibold text-foreground">{formatPrice((parseFloat(item.price) * item.quantity).toString())}</span>
                                             </p>
                                         </div>
@@ -207,7 +207,7 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-7 w-7 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 shrink-0 active:scale-90"
+                                            className="h-8 w-8 text-destructive bg-destructive/10 hover:bg-destructive/20 shrink-0 active:scale-90"
                                             onClick={() => removeItem(item.idProduct)}
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -226,7 +226,7 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                                 <div className="flex items-end justify-between px-1">
                                     <div>
                                         <p className="cashier-label-sm">Total a Pagar</p>
-                                        <span className="text-2xl font-black text-(--cashier-sidebar-primary) tracking-tight tabular-nums">
+                                        <span className="text-3xl font-black text-(--cashier-sidebar-primary) tracking-tight tabular-nums">
                                             {formatPrice(total.toString())}
                                         </span>
                                     </div>
@@ -293,10 +293,10 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                                     <div className="space-y-1.5">
                                         <Label className="cashier-label-sm">Recibido</Label>
                                         <div className="relative">
-                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
+                                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">$</span>
                                             <Input
                                                 type="number"
-                                                className="h-9 pl-5 text-sm font-medium focus-visible:ring-(--cashier-sidebar-primary) bg-background"
+                                                className="h-10 pl-6 text-base font-bold focus-visible:ring-(--cashier-sidebar-primary) bg-background"
                                                 placeholder="0.00"
                                                 value={cashReceived}
                                                 onChange={(e) => setCashReceived(e.target.value)}
@@ -309,14 +309,14 @@ export const MobileCartSheet = ({ open, onOpenChange }: MobileCartSheetProps) =>
                                 {/* Customer + Observations */}
                                 <div className="space-y-2">
                                     <Input
-                                        className="h-9 text-xs bg-background focus-visible:ring-(--cashier-sidebar-primary)"
-                                        placeholder="Cliente (Opcional)"
+                                        className="h-10 text-sm font-medium bg-background focus-visible:ring-(--cashier-sidebar-primary)"
+                                        placeholder="Nombre del Cliente (Opcional)"
                                         value={customerName}
                                         onChange={(e) => setCustomerName(e.target.value)}
                                     />
                                     <Input
-                                        className="h-9 text-xs bg-background focus-visible:ring-(--cashier-sidebar-primary)"
-                                        placeholder="Observaciones..."
+                                        className="h-10 text-sm font-medium bg-background focus-visible:ring-(--cashier-sidebar-primary)"
+                                        placeholder="Observaciones de la orden..."
                                         value={observations}
                                         onChange={(e) => setObservations(e.target.value)}
                                     />
