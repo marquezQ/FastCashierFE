@@ -85,12 +85,14 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 | `useCreateOrder` | `mutate / mutateAsync` | `['orders']`, `['cashier-session-statistics']` | `clearCart()` on success, toast with order number |
 | `useCancelOrder` | `mutate / mutateAsync` | `['orders', 'session']`, `['cashier-session-statistics']` | Toast on success/error |
 | `useUpdateOrderStatus` | `mutate / mutateAsync` | `['kitchen-orders']`, `['kitchen-history']` | Reads `authStore.user.idUser` for `cookId`, toast |
+| `useRevertOrderStatus` | `mutate / mutateAsync` | `['kitchen-orders']`, `['kitchen-history']`, `['orders']`, `['cashier-session-statistics']`, `['dashboard-summary']`, `['admin-metrics']` | Reverts one order status, toast |
 | `useCreateProduct` | `mutate / mutateAsync` | `['products']` | (in `useProductMutations.ts`) Sends `multipart/form-data` |
 | `useUpdateProduct` | `mutate / mutateAsync` | `['products']` | (in `useProductMutations.ts`) Sends `FormData` if image, JSON otherwise |
 | `useCreateUser` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `POST /auth/register` |
 | `useUpdateUser` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `PATCH /users/:id` |
 | `useDeleteUser` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `DELETE /users/:id` |
 | `useToggleUserStatus` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `PATCH /users/:id/status` |
+| `useResetUserPassword` | `mutate / mutateAsync` | `['users']` | (in `useUserMutations.ts`) Calls `PATCH /users/:id/reset-password`, resets to `123456` |
 | `useCreateDisplayConfig` | `mutate` | `['display-configs']` | (in `useDisplay.ts`) Creates TV config |
 | `useUpdateDisplayConfig` | `mutate` | `['display-configs']` | (in `useDisplay.ts`) Updates TV config |
 | `useDeleteDisplayConfig` | `mutate` | `['display-configs']` | (in `useDisplay.ts`) Deletes TV config |
@@ -98,7 +100,7 @@ All stores use `persist` middleware with `localStorage`. The theme is also appli
 #### WebSocket Hook
 | Hook | Events | Purpose |
 | :--- | :--- | :--- |
-| `useKitchenSocket` | `new_order`, `order_status_updated`, `connect_error` | Real-time kitchen order updates. Invalidates `['kitchen-orders']` on events. Shows cancellation alerts. |
+| `useKitchenSocket` | `new_order`, `order_status_updated`, `connect_error` | Real-time kitchen order updates. Invalidates `['kitchen-orders']`, `['kitchen-history']`, `['orders']`, `['cashier-session-statistics']`, `['dashboard-summary']` and `['admin-metrics']` on events. Shows cancellation alerts. |
 
 #### Audio Hook
 | Hook | Returns | Purpose |

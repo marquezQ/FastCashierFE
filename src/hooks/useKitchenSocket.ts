@@ -7,19 +7,28 @@ import type { Order } from '@/types/order';
 export const useKitchenSocket = () => {
     const queryClient = useQueryClient();
 
-    const handleNewOrder = useCallback((order: Order) => {
-        // Invalidate the kitchen orders query to fetch the latest data
+    const invalidateOrderQueries = useCallback(() => {
         queryClient.invalidateQueries({ queryKey: ['kitchen-orders'] });
+        queryClient.invalidateQueries({ queryKey: ['kitchen-history'] });
+        queryClient.invalidateQueries({ queryKey: ['orders'] });
+        queryClient.invalidateQueries({ queryKey: ['cashier-session-statistics'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-metrics'] });
+    }, [queryClient]);
+
+    const handleNewOrder = useCallback((order: Order) => {
+        // Refresca todas las vistas afectadas por un nuevo pedido
+        invalidateOrderQueries();
 
         // Optionally show a notification
         toast.success(`Nuevo Pedido #${order.orderNumber}`, {
             description: `Cliente: ${order.customer || 'Mostrador'}`,
         });
-    }, [queryClient]);
+    }, [invalidateOrderQueries]);
 
     const handleOrderStatusUpdated = useCallback((order: Order) => {
-        // Invalidate the kitchen orders query when a status changes
-        queryClient.invalidateQueries({ queryKey: ['kitchen-orders'] });
+        // Refresca tablero, historial y vistas que dependen del estado
+        invalidateOrderQueries();
 
         // If the order was cancelled, show a high-priority alert
         if (order.orderStatus === 'CANCELLED') {
@@ -28,7 +37,7 @@ export const useKitchenSocket = () => {
                 duration: 8000,
             });
         }
-    }, [queryClient]);
+    }, [invalidateOrderQueries]);
 
     useEffect(() => {
         // Setup event listeners

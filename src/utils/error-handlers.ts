@@ -6,6 +6,19 @@ interface ApiErrorResponse {
   statusCode?: number;
 }
 
+export const getApiErrorMessage = (error: unknown, fallback: string): string => {
+  if (error instanceof AxiosError) {
+    const data = error.response?.data as ApiErrorResponse;
+    return data?.message?.toString() || data?.error || fallback;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return fallback;
+};
+
 export const handleLoginError = (error: unknown): string => {
   if (error instanceof AxiosError) {
     const data = error.response?.data as ApiErrorResponse;

@@ -3,14 +3,17 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Pencil, Trash2 } from 'lucide-react';
+import { KeyRound, Pencil, Trash2 } from 'lucide-react';
 import type { UserWithRole } from '@/types/auth';
 import { getInitials } from '@/utils/string.utils';
 import { formatDate } from '@/utils/date.utils';
 import { getRoleBadgeConfig, getRoleNameInSpanish } from '@/utils/role.utils';
+import { ROLES } from '@/constants/roles';
+import { getApiErrorMessage } from '@/utils/error-handlers';
 import { DeleteUserDialog } from './DeleteUserDialog';
 import { EditUserDialog } from './EditUserDialog';
-import { useDeleteUser, useUpdateUser } from '@/hooks/useUserMutations';
+import { ResetPasswordDialog } from './ResetPasswordDialog';
+import { useDeleteUser, useResetUserPassword, useUpdateUser } from '@/hooks/useUserMutations';
 import type { UpdateUserFormValues } from '@/schemas/auth.schema';
 import { toast } from 'sonner';
 
@@ -22,8 +25,12 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
   const roleConfig = getRoleBadgeConfig(user.role.roleName);
   const deleteUser = useDeleteUser();
   const updateUser = useUpdateUser();
+  const resetPassword = useResetUserPassword();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] = useState(false);
+  const canResetPassword =
+    user.roleId === ROLES.CASHIER.id || user.roleId === ROLES.KITCHEN.id;
 
   const handleEdit = () => {
     setIsEditDialogOpen(true);
@@ -33,14 +40,17 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
     setIsDeleteDialogOpen(true);
   };
 
+  const handleResetPassword = async () => {
+    await resetPassword.mutateAsync(user.idUser);
+  };
+
   const handleUpdateSubmit = async (data: UpdateUserFormValues) => {
     try {
       await updateUser.mutateAsync({ id: user.idUser, data });
       toast.success('Usuario actualizado exitosamente');
       setIsEditDialogOpen(false);
-    } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || 'Error al actualizar el usuario';
-      toast.error(errorMessage);
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Error al actualizar el usuario'));
       throw error;
     }
   };
@@ -50,9 +60,8 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
       await deleteUser.mutateAsync(user.idUser);
       toast.success('Usuario eliminado exitosamente');
       setIsDeleteDialogOpen(false);
-    } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || 'Error al eliminar el usuario';
-      toast.error(errorMessage);
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Error al eliminar el usuario'));
       throw error;
     }
   };
@@ -67,6 +76,8 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
         <UserTableCellActions
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onResetPassword={() => setIsResetPasswordDialogOpen(true)}
+          canResetPassword={canResetPassword}
         />
       </TableRow>
 
@@ -84,6 +95,14 @@ export const UserTableRow = ({ user }: UserTableRowProps) => {
         user={user}
         onSubmit={handleUpdateSubmit}
         isLoading={updateUser.isPending}
+      />
+
+      <ResetPasswordDialog
+        open={isResetPasswordDialogOpen}
+        onOpenChange={setIsResetPasswordDialogOpen}
+        user={user}
+        onConfirm={handleResetPassword}
+        isLoading={resetPassword.isPending}
       />
     </>
   );
@@ -150,12 +169,28 @@ const UserTableCellDate = ({ createdAt }: { createdAt: string }) => (
 const UserTableCellActions = ({
   onEdit,
   onDelete,
+  onResetPassword,
+  canResetPassword,
 }: {
   onEdit: () => void;
   onDelete: () => void;
+  onResetPassword: () => void;
+  canResetPassword: boolean;
 }) => (
   <TableCell className="py-3 md:py-4 text-right px-4 md:px-6">
     <div className="flex items-center justify-end gap-2 md:gap-3">
+      {canResetPassword && (
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Restablecer contraseña"
+          aria-label="Restablecer contraseña"
+          className="h-9 w-9 md:h-10 md:w-10 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+          onClick={onResetPassword}
+        >
+          <KeyRound className="size-4 md:size-5" />
+        </Button>
+      )}
       <Button
         variant="ghost"
         size="icon"

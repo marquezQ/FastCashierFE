@@ -11,7 +11,7 @@ interface SessionOrdersTableRowProps {
     onViewDetail: (order: Order) => void;
 }
 
-export const statusConfig = {
+const statusConfig = {
     PENDING: { label: 'Pendiente', color: 'bg-amber-500/10 text-amber-600 border-amber-200/50' },
     IN_PREPARATION: { label: 'Preparación', color: 'bg-blue-500/10 text-blue-600 border-blue-200/50' },
     READY: { label: 'Listo', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50' },

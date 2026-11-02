@@ -1,6 +1,7 @@
 import { Clock, Users, Package, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { RevertOrderStatusButton } from '@/components/shared/RevertOrderStatusButton';
 import type { Order } from '@/types/order';
 
 interface KitchenHistoryCardProps {
@@ -87,6 +88,12 @@ export const KitchenHistoryCard = ({ order }: KitchenHistoryCardProps) => {
                     </div>
                 )}
             </div>
+
+            {isDelivered && (
+                <div className="flex justify-end px-4 pb-2">
+                    <RevertOrderStatusButton order={order} className="h-9 w-9 rounded-xl" />
+                </div>
+            )}
 
             {/* Footer - Date */}
             <div className="p-4 pt-0 mt-auto flex justify-between items-center text-[10px] font-bold text-muted-foreground/60">

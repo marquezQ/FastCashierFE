@@ -30,6 +30,11 @@ export const orderService = {
         return response.data;
     },
 
+    revertOrderStatus: async (orderId: number): Promise<Order> => {
+        const response = await api.patch<Order>(`/orders/${orderId}/status/revert`);
+        return response.data;
+    },
+
     getKitchenHistory: async (): Promise<Order[]> => {
         const response = await api.get<Order[]>('/orders/history');
         return response.data;

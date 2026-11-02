@@ -1,6 +1,7 @@
 import { Clock, UtensilsCrossed, Package, AlertCircle, CheckCircle2, PlayCircle, Send, Volume2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { RevertOrderStatusButton } from '@/components/shared/RevertOrderStatusButton';
 import { useTtsAudio } from '@/hooks/useTtsAudio';
 import type { Order, OrderStatus } from '@/types/order';
 
@@ -123,17 +124,21 @@ export const KitchenOrderCard = ({ order, onAction }: KitchenOrderCardProps) => 
                 )}
 
                 {isPreparing && (
-                    <Button
-                        onClick={() => onAction(order.idOrder, 'READY')}
-                        className="mx-auto flex min-w-40 items-center justify-center gap-2 px-5 font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 h-10"
-                    >
-                        <CheckCircle2 className="h-4 w-4" />
-                        Marcar Listo
-                    </Button>
+                    <div className="flex justify-center gap-2">
+                        <RevertOrderStatusButton order={order} className="h-10 w-11" />
+                        <Button
+                            onClick={() => onAction(order.idOrder, 'READY')}
+                            className="flex min-w-36 items-center justify-center gap-2 px-5 font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 h-10"
+                        >
+                            <CheckCircle2 className="h-4 w-4" />
+                            Marcar Listo
+                        </Button>
+                    </div>
                 )}
 
                 {isReady && (
                     <div className="flex justify-center gap-2">
+                        <RevertOrderStatusButton order={order} className="h-10 w-11" />
                         <Button
                             onClick={() => playOrderAudio(order.orderNumber ?? '----')}
                             variant="outline"

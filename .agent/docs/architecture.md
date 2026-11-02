@@ -234,8 +234,8 @@ src/
 ### Events Handled (`useKitchenSocket` hook)
 | Event | Action |
 | :--- | :--- |
-| `new_order` | Invalidates `['kitchen-orders']`, shows toast notification |
-| `order_status_updated` | Invalidates `['kitchen-orders']`, shows cancellation alert if status is `CANCELLED` (8s duration) |
+| `new_order` | Invalidates `['kitchen-orders']`, `['kitchen-history']`, `['orders']`, `['cashier-session-statistics']`, `['dashboard-summary']`, `['admin-metrics']`; shows toast notification |
+| `order_status_updated` | Invalidates the same order/stat query keys, shows cancellation alert if status is `CANCELLED` (8s duration) |
 | `connect_error` | Logs error only if socket is actively trying to connect |
 
 ---
@@ -295,6 +295,7 @@ The project includes a public-facing display system for customers to track their
 | `orderService` | POST | `/orders/:id/cancel` | Cancel order with reason |
 | `orderService` | GET | `/orders/kitchen-display` | Active orders for kitchen |
 | `orderService` | PATCH | `/orders/:id/status` | Update order status (+ cookId) |
+| `orderService` | PATCH | `/orders/:id/status/revert` | Revert exactly one status (IN_PREPARATION→PENDING, READY→IN_PREPARATION, DELIVERED→READY) |
 | `orderService` | GET | `/orders/history` | Kitchen completed order history |
 | `cashierSessionService` | POST | `/cashier-sessions` | Open session (server sets openingDate) |
 | `cashierSessionService` | POST | `/cashier-sessions/:id/close` | Close session → returns `CloseSessionResponse` |
@@ -309,6 +310,7 @@ The project includes a public-facing display system for customers to track their
 | User mutations | PATCH | `/users/:id` | Update user |
 | User mutations | DELETE | `/users/:id` | Delete user |
 | User mutations | PATCH | `/users/:id/status` | Toggle user active status |
+| User mutations | PATCH | `/users/:id/reset-password` | Reset CASHIER/KITCHEN password to `123456` (ADMIN only) |
 | Product mutations | POST | `/products` | Create product (FormData) |
 | Product mutations | PATCH | `/products/:id` | Update product (FormData or JSON) |
 | `reportService` | GET | `/reports/sales` | Sales evolution report |

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api/axiosConfig';
 import type { UserWithRole } from '@/types/auth';
+import { getApiErrorMessage } from '@/utils/error-handlers';
+import { toast } from 'sonner';
 
 // Tipos para las mutaciones
 interface CreateUserData {
@@ -60,6 +62,25 @@ export const useDeleteUser = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+};
+
+// Hook para restablecer la contraseña de un usuario a la predeterminada
+export const useResetUserPassword = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { data } = await api.patch<{ message: string }>(`/users/${id}/reset-password`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('Contraseña restablecida a 123456');
+    },
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, 'Error al restablecer la contraseña'));
     },
   });
 };
